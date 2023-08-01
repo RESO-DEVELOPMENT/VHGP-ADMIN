@@ -16,15 +16,14 @@ import { getAnalytics } from "firebase/analytics";
 // };
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDc5FQ0odIKMJOWG1QWxEGcyoeJAnO1HOE",
-    authDomain: "vinhome-e51b5.firebaseapp.com",
-    projectId: "vinhome-e51b5",
-    storageBucket: "vinhome-e51b5.appspot.com",
-    messagingSenderId: "479702387333",
-    appId: "1:479702387333:web:3f689952b5eafb4509b7ec",
-    measurementId: "G-1VCS4WRP7V"
-  };
-
+  apiKey: "AIzaSyCYuZ3q5TnMbkO5okCnjxG3jzQr5NomaaY",
+  authDomain: "vhgp-9b167.firebaseapp.com",
+  projectId: "vhgp-9b167",
+  storageBucket: "vhgp-9b167.appspot.com",
+  messagingSenderId: "933202759364",
+  appId: "1:933202759364:web:f094fb749b7c9e9a9ec391",
+  measurementId: "G-9SW4E5ZBM6",
+};
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
