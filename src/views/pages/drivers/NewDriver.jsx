@@ -133,13 +133,13 @@ export const NewDriver = () => {
       // valid = true;
       setPasswordState("valid");
     }
-    // if (images.length === 0) {
-    //     valid = false;
-    //     setImageState("invalid");
-    // } else {
-    //     // valid = true;
-    //     setImageState("valid");
-    // }
+    if (images.length === 0) {
+      valid = false;
+      setImageState("invalid");
+    } else {
+      // valid = true;
+      setImageState("valid");
+    }
 
     if (vehicleType === "") {
       valid = false;
@@ -268,7 +268,9 @@ export const NewDriver = () => {
                 className="align-items-center"
               >
                 <CardHeader className="border-0" style={{ padding: "1rem" }}>
-                  <h2 className="mb-0">Hình ảnh</h2>
+                  <h2 className="mb-0">
+                    Hình ảnh <span style={{ color: "red" }}>*</span>
+                  </h2>
                 </CardHeader>
               </div>
               <div className="col-md-12">
@@ -318,11 +320,19 @@ export const NewDriver = () => {
                             </div>
                           )}
                         </ImageUploading>
-                        {/* {imageState === "invalid" && (
-                                                    <div className="invalid" style={{ textAlign: "center", fontSize: "80%", color: "#fb6340", marginTop: "0.25rem" }}>
-                                                        Hình ảnh không được để trống
-                                                    </div>
-                                                )} */}
+                        {imageState === "invalid" && (
+                          <div
+                            className="invalid"
+                            style={{
+                              textAlign: "center",
+                              fontSize: "80%",
+                              color: "#fb6340",
+                              marginTop: "0.25rem",
+                            }}
+                          >
+                            Hình ảnh không được để trống
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
