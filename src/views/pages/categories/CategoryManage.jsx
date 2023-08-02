@@ -19,8 +19,30 @@ import ImageUploading from "react-images-uploading";
 import { debounce } from "lodash";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router";
-import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Modal, Row, Spinner, Table } from "reactstrap";
-import { deleteCategory, getListCategorys, getListStoreCategorysByKey, postCategory } from "../../../apis/categoryApiService";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Modal,
+  Row,
+  Spinner,
+  Table,
+} from "reactstrap";
+import {
+  deleteCategory,
+  getListCategorys,
+  getListStoreCategorysByKey,
+  postCategory,
+} from "../../../apis/categoryApiService";
 import { getListStoreByKey } from "../../../apis/storeApiService";
 import Lottie from "react-lottie";
 import animationData from "../../../assets/loading.json";
@@ -32,427 +54,612 @@ import { CategoryItem } from "./CategoryItem";
 import { getBase64Image } from "../../../constants";
 // core components
 function CategoryManage() {
-    const { storeCategoryModal, openDeleteModal, setOpenDeleteModal, openCategoryModal, setOpenCategoryModal } = useContext(AppContext);
-    let history = useHistory();
-    const defaultOptions = {
-        loop: true,
-        autoplay: true,
-        animationData: animationData,
-        rendererSettings: {
-            preserveAspectRatio: "xMidYMid slice",
-        },
-    };
-    const [categoryList, setCategoryList] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isLoadingCircle, setIsLoadingCircle] = useState(false);
-    const [categoryName, setcategoryName] = useState("");
-    const [categoryNameState, setcategoryNameState] = useState("");
-    const [imageState, setimageState] = useState("");
-    const [keyword, setKeyword] = useState("");
-    const [images, setImages] = useState([]);
-    const maxNumber = 69;
-    const onChange = (imageList, addUpdateIndex) => {
-        // data for submit
-        if (imageList.length > 0) {
-            setimageState("valid");
-        } else {
-            setimageState("invalid");
-        }
-        console.log(imageList.length);
-        setImages(imageList);
-    };
-    const validateCustomStylesForm = () => {
-        let valid = true;
-        if (categoryName === "") {
-            valid = false;
-            setcategoryNameState("invalid");
-        } else {
-            // valid = true;
-            setcategoryNameState("valid");
-        }
-        if (images.length === 0) {
-            valid = false;
-            setimageState("invalid");
-        } else {
-            // valid = true;
-            setimageState("valid");
-        }
+  const {
+    storeCategoryModal,
+    openDeleteModal,
+    setOpenDeleteModal,
+    openCategoryModal,
+    setOpenCategoryModal,
+  } = useContext(AppContext);
+  let history = useHistory();
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+  const [categoryList, setCategoryList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingCircle, setIsLoadingCircle] = useState(false);
+  const [categoryName, setcategoryName] = useState("");
+  const [categoryNameState, setcategoryNameState] = useState("");
+  const [imageState, setimageState] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [images, setImages] = useState([]);
+  const maxNumber = 69;
+  const onChange = (imageList, addUpdateIndex) => {
+    // data for submit
+    if (imageList.length > 0) {
+      setimageState("valid");
+    } else {
+      setimageState("invalid");
+    }
+    console.log(imageList.length);
+    setImages(imageList);
+  };
+  const validateCustomStylesForm = () => {
+    let valid = true;
+    if (categoryName === "") {
+      valid = false;
+      setcategoryNameState("invalid");
+    } else {
+      // valid = true;
+      setcategoryNameState("valid");
+    }
+    if (images.length === 0) {
+      valid = false;
+      setimageState("invalid");
+    } else {
+      // valid = true;
+      setimageState("valid");
+    }
 
-        return valid;
-    };
-    const hanldeSubmit = () => {
-        if (validateCustomStylesForm()) {
-            setIsLoadingCircle(true);
-            let cate = { name: categoryName, image: getBase64Image(images[0].data_url || "", images[0]?.file?.type) };
-            postCategory(cate)
-                .then((res) => {
-                    if (res.data) {
-                        console.log(res.data);
-                        setIsLoadingCircle(false);
-                        handleReload();
-                        setCategoryList([...categoryList, cate]);
-                        notify("Thêm danh mục thành công", "Success");
-                        setOpenCategoryModal(false);
-                        setImages([]);
-                        setcategoryName("");
-                        // history.push("/admin/categories");
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                    setIsLoadingCircle(false);
-                    notify("Đã xảy ra lỗi gì đó!!", "Error");
-                });
-        }
-    };
-    function fetchDropdownOptions(key) {
-        setIsLoading(true);
-        setCategoryList([]);
-        console.log(key);
-        if (key !== "") {
-            getListStoreCategorysByKey(key, 1, 100)
-                .then((res) => {
-                    const cate = res.data;
-                    console.log(cate);
-                    setTimeout(() => {
-                        setCategoryList(cate);
-                        setIsLoading(false);
-                    }, 1);
-                })
-                .catch((error) => console.log(error));
-        } else {
-            hanldeGetListCategorys();
-        }
-    }
-    const debounceDropDown = useCallback(
-        debounce((nextValue) => fetchDropdownOptions(nextValue), 1000),
-        []
-    );
-    function handleInputOnchange(e) {
-        const { value } = e.target;
-        setKeyword(value);
-        debounceDropDown(value);
-    }
-    const hanldeGetListCategorys = () => {
-        getListCategorys(1, 100).then((res) => {
-            const categorys = res.data;
-            setCategoryList(categorys);
-            setIsLoading(false);
+    return valid;
+  };
+  const hanldeSubmit = () => {
+    if (validateCustomStylesForm()) {
+      setIsLoadingCircle(true);
+      let cate = {
+        name: categoryName,
+        image: getBase64Image(images[0].data_url || "", images[0]?.file?.type),
+      };
+      postCategory(cate)
+        .then((res) => {
+          if (res.data) {
+            console.log(res.data);
+            setIsLoadingCircle(false);
+            handleReload();
+            setCategoryList([...categoryList, cate]);
+            notify("Thêm danh mục thành công", "Success");
+            setOpenCategoryModal(false);
+            setImages([]);
+            setcategoryName("");
+            // history.push("/admin/categories");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          setIsLoadingCircle(false);
+          notify("Đã xảy ra lỗi gì đó!!", "Error");
         });
-    };
-    useEffect(() => {
-        setIsLoading(true);
-        setTimeout(() => {
-            hanldeGetListCategorys();
-        }, 100);
-    }, []);
-    const hanldeDeleteCategory = (id) => {
-        setIsLoadingCircle(true);
-        deleteCategory(id)
-            .then((res) => {
-                if (res.data) {
-                    setIsLoading(false);
-                    notify("Xóa danh mục thành công", "Success");
-                    // let NewStoreCategory = storeCategoryList.filter((item) => item.name !== name);
-                    // setStoreCategoryList([...NewStoreCategory]);
-                    handleReload();
-                    setOpenDeleteModal(false);
-                    setIsLoadingCircle(false);
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-                setIsLoadingCircle(false);
-                setIsLoading(false);
-                notify("Đã xảy ra lỗi gì đó!!", "Error");
-            });
-    };
-    const handleReload = () => {
-        setIsLoading(true);
-        hanldeGetListCategorys();
-    };
+    }
+  };
+  function fetchDropdownOptions(key) {
+    setIsLoading(true);
+    setCategoryList([]);
+    console.log(key);
+    if (key !== "") {
+      getListStoreCategorysByKey(key, 1, 100)
+        .then((res) => {
+          const cate = res.data;
+          console.log(cate);
+          setTimeout(() => {
+            setCategoryList(cate);
+            setIsLoading(false);
+          }, 1);
+        })
+        .catch((error) => console.log(error));
+    } else {
+      hanldeGetListCategorys();
+    }
+  }
+  const debounceDropDown = useCallback(
+    debounce((nextValue) => fetchDropdownOptions(nextValue), 1000),
+    []
+  );
+  function handleInputOnchange(e) {
+    const { value } = e.target;
+    setKeyword(value);
+    debounceDropDown(value);
+  }
+  const hanldeGetListCategorys = () => {
+    getListCategorys(1, 100).then((res) => {
+      const categorys = res.data;
+      setCategoryList(categorys);
+      setIsLoading(false);
+    });
+  };
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      hanldeGetListCategorys();
+    }, 100);
+  }, []);
+  const hanldeDeleteCategory = (id) => {
+    setIsLoadingCircle(true);
+    deleteCategory(id)
+      .then((res) => {
+        if (res.data) {
+          setIsLoading(false);
+          notify("Xóa danh mục thành công", "Success");
+          // let NewStoreCategory = storeCategoryList.filter((item) => item.name !== name);
+          // setStoreCategoryList([...NewStoreCategory]);
+          handleReload();
+          setOpenDeleteModal(false);
+          setIsLoadingCircle(false);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setIsLoadingCircle(false);
+        setIsLoading(false);
+        notify("Đã xảy ra lỗi gì đó!!", "Error");
+      });
+  };
+  const handleReload = () => {
+    setIsLoading(true);
+    hanldeGetListCategorys();
+  };
 
-    return (
-        <>
-            <CategoryModal handleReload={handleReload} />
-            {/* <ProductModal openModal={openModal} handleReload={handleReload} /> */}
-            <SimpleHeader name="Danh Sách Danh Mục" parentName="Quản Lý" />
-            <Row>
-                <Col md="4">
-                    <Modal
-                        className="modal-dialog-centered"
-                        size="md"
-                        isOpen={openCategoryModal}
-                        toggle={() => {
-                            setOpenCategoryModal(false);
-                            setImages([]);
-                            setcategoryName("");
-                        }}
-                    >
-                        <div className="modal-body p-0">
-                            <Card>
-                                <div style={{ display: "flex", justifyContent: "space-between", width: "100%", padding: "10px 0px" }} className="align-items-center">
-                                    <CardHeader className="border-0" style={{ padding: "1rem" }}>
-                                        <h2 className="mb-0">Hình ảnh</h2>
-                                    </CardHeader>
-                                </div>
-                                <div className="col-md-12">
-                                    <form>
-                                        <div className="row">
-                                            <div className="" id="dropzone-single" style={{ width: "100%", padding: "0 30px 30px 30px" }}>
-                                                <div className="" style={{ height: "100%" }}>
-                                                    <ImageUploading value={images} onChange={onChange} maxNumber={maxNumber} dataURLKey="data_url" acceptType={["jpg", "png", "jpeg"]}>
-                                                        {({ imageList, onImageUpload, onImageRemoveAll, onImageUpdate, onImageRemove, isDragging, dragProps }) => (
-                                                            // write your building UI
-                                                            <div className="upload-img" onClick={onImageUpload}>
-                                                                {images.length <= 0 && (
-                                                                    <span style={isDragging ? { color: "red" } : null} {...dragProps}>
-                                                                        Tải ảnh
-                                                                    </span>
-                                                                )}
-                                                                {imageList.map((image, index) => (
-                                                                    <div key={index} className="upload-img">
-                                                                        <img src={image.data_url} alt="" width="100" />
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        )}
-                                                    </ImageUploading>
-                                                    {imageState === "invalid" && (
-                                                        <div className="invalid" style={{ fontSize: "80%", color: "#fb6340", marginTop: "0.25rem" }}>
-                                                            Hình ảnh không được để trống
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-
-                                <div className="col-md-12">
-                                    <form>
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <div className="form-group">
-                                                    <label className="form-control-label">Tên danh mục </label>
-                                                    <Input
-                                                        valid={categoryNameState === "valid"}
-                                                        invalid={categoryNameState === "invalid"}
-                                                        className="form-control"
-                                                        type="search"
-                                                        id="example-search-input"
-                                                        value={`${categoryName}`}
-                                                        onChange={(e) => {
-                                                            setcategoryName(e.target.value);
-                                                            if (e.target.value === "") {
-                                                                setcategoryNameState("invalid");
-                                                            } else {
-                                                                setcategoryNameState("valid");
-                                                            }
-                                                        }}
-                                                    />
-                                                    <div className="invalid-feedback">Tên danh mục không được để trống</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <Col className="mt-3  text-md-right mb-4" lg="12" xs="5">
-                                            <Button
-                                                onClick={() => {
-                                                    history.push("/admin/categories");
-                                                }}
-                                                // className="btn-neutral"
-                                                color="default"
-                                                size="lg"
-                                                style={{ background: "#fff", color: "#000", padding: "0.875rem 2rem", border: "none" }}
-                                            >
-                                                <div className="flex" style={{ alignItems: "center" }}>
-                                                    <i className="fa-solid fa-backward" style={{ fontSize: 18 }}></i>
-                                                    <span>Trở Về</span>
-                                                </div>
-                                            </Button>
-                                            <Button
-                                                onClick={() => {
-                                                    hanldeSubmit();
-                                                }}
-                                                className="btn-neutral"
-                                                color="default"
-                                                size="lg"
-                                                disabled={isLoadingCircle}
-                                                style={{ background: "var(--primary)", color: "#000", padding: "0.875rem 2rem" }}
-                                            >
-                                                <div className="flex" style={{ alignItems: "center", width: 99, justifyContent: "center" }}>
-                                                    {isLoadingCircle ? (
-                                                        <Spinner style={{ color: "#fff", width: "1.31rem", height: "1.31rem" }}>Loading...</Spinner>
-                                                    ) : (
-                                                        <>
-                                                            <i className="fa-solid fa-square-plus" style={{ fontSize: 18, color: "#fff" }}></i>
-                                                            <span style={{ color: "#fff" }}>Thêm mới</span>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </Button>
-                                        </Col>
-                                    </form>
-                                </div>
-                            </Card>
-                        </div>
-                    </Modal>
-                </Col>
-            </Row>
-            <Modal
-                className="modal-dialog-centered"
-                size="sm"
-                isOpen={openDeleteModal}
-                toggle={() => {
-                    setOpenDeleteModal(false);
-                }}
-            >
-                <div className="modal-body p-0">
-                    <Card className="bg-secondary border-0 mb-0">
-                        <div className="" style={{ paddingTop: 0 }}>
-                            <Container className="" fluid style={{ padding: "1.5rem 1.5rem 1rem 1.5rem " }}>
-                                <Row>
-                                    <div className="col-lg-12 ">
-                                        <h3>Bạn có chắc</h3>
-                                        <div style={{ display: "flex", flexDirection: "column", width: "100%", padding: "0px 0px 30px 0px" }} className="">
-                                            <span className="mb-0">
-                                                Danh mục: <span style={{ fontWeight: 700 }}>{storeCategoryModal.name}</span> sẽ bị xóa!!!{" "}
-                                            </span>
-                                            <span className="mb-0">Bạn sẽ không thể hoàn nguyên hành động này </span>
-                                        </div>
-                                        <div className="col-md-12"></div>
-                                    </div>
-                                </Row>
-                                <Col className="text-md-right mb-3" lg="12" xs="5">
-                                    <Row style={{ justifyContent: "flex-end" }}>
-                                        {" "}
-                                        <Button
-                                            onClick={() => {
-                                                setOpenDeleteModal(false);
-                                            }}
-                                            // className="btn-neutral"
-                                            color="default"
-                                            size="lg"
-                                            style={{ background: "#fff", color: "#000", padding: "0.875rem 1rem", border: "none" }}
-                                        >
-                                            <div className="flex" style={{ alignItems: "center", width: 80, justifyContent: "center" }}>
-                                                <span>Đóng</span>
-                                            </div>
-                                        </Button>
-                                        <Button
-                                            onClick={() => {
-                                                setIsLoadingCircle(true);
-                                                hanldeDeleteCategory(storeCategoryModal.id);
-                                                // hanldeDeleteStoreCate(storeCategoryModal.id, storeCategoryModal.name);
-                                            }}
-                                            className="btn-neutral"
-                                            disabled={isLoadingCircle}
-                                            color="default"
-                                            size="lg"
-                                            style={{ background: "var(--primary)", color: "#fff", padding: "0.875rem 1rem" }}
-                                        >
-                                            <div className="flex" style={{ alignItems: "center", width: 80, justifyContent: "center" }}>
-                                                {isLoadingCircle ? (
-                                                    <Spinner style={{ color: "rgb(250,250,250)", width: "1.31rem", height: "1.31rem" }}>Loading...</Spinner>
-                                                ) : (
-                                                    <>
-                                                        <span>Chắc chắn</span>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </Button>
-                                    </Row>
-                                </Col>
-                            </Container>
-                        </div>
-                    </Card>
+  return (
+    <>
+      <CategoryModal handleReload={handleReload} />
+      {/* <ProductModal openModal={openModal} handleReload={handleReload} /> */}
+      <SimpleHeader name="Danh Sách Danh Mục" parentName="Quản Lý" />
+      <Row>
+        <Col md="4">
+          <Modal
+            className="modal-dialog-centered"
+            size="md"
+            isOpen={openCategoryModal}
+            toggle={() => {
+              setOpenCategoryModal(false);
+              setImages([]);
+              setcategoryName("");
+            }}
+          >
+            <div className="modal-body p-0">
+              <Card>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%",
+                    padding: "10px 0px",
+                  }}
+                  className="align-items-center"
+                >
+                  <CardHeader className="border-0" style={{ padding: "1rem" }}>
+                    <h2 className="mb-0">Hình ảnh</h2>
+                  </CardHeader>
                 </div>
-            </Modal>
-            <Container className="mt--6" fluid>
-                <Row>
-                    <div className="col">
-                        <Card>
-                            <div style={{ display: "flex", justifyContent: "space-between", width: "100%", padding: "20px 0px" }} className="align-items-center">
-                                <CardHeader className="" style={{ padding: "0 0 0 20px" }}>
-                                    <div className="flex" style={{ alignItems: "center", gap: 20 }}>
-                                        <div className="mb-0">
-                                            <InputGroup className="input-group-lg input-group-flush" style={{ border: "1px solid #9e9e9e" }}>
-                                                <InputGroupAddon addonType="prepend">
-                                                    <InputGroupText style={{ padding: "0 15px" }}>
-                                                        <span className="fas fa-search" />
-                                                    </InputGroupText>
-                                                </InputGroupAddon>
-                                                <Input placeholder="Tìm kiếm bằng tên danh mục" type="search" onChange={handleInputOnchange} className="btn-lg" style={{ height: 46, width: 250 }} />
-                                            </InputGroup>
-                                        </div>
-                                    </div>
-                                </CardHeader>
-
-                                <Col className="mt-3 mt-md-0 text-md-right" lg="6" xs="5">
-                                    <Button
-                                        onClick={() => {
-                                            // history.push("/admin/category");
-                                            setOpenCategoryModal(true);
-                                        }}
-                                        className="btn-neutral"
-                                        color="default"
-                                        size="lg"
-                                        style={{ background: "var(--primary)", color: "#fff", fontWeight: 700, border: "1px solid var(--primary)" }}
-                                    >
-                                        + Thêm Danh Mục Mới
-                                    </Button>
-                                </Col>
+                <div className="col-md-12">
+                  <form>
+                    <div className="row">
+                      <div
+                        className=""
+                        id="dropzone-single"
+                        style={{ width: "100%", padding: "0 30px 30px 30px" }}
+                      >
+                        <div className="" style={{ height: "100%" }}>
+                          <ImageUploading
+                            value={images}
+                            onChange={onChange}
+                            maxNumber={maxNumber}
+                            dataURLKey="data_url"
+                            acceptType={["jpg", "png", "jpeg"]}
+                          >
+                            {({
+                              imageList,
+                              onImageUpload,
+                              onImageRemoveAll,
+                              onImageUpdate,
+                              onImageRemove,
+                              isDragging,
+                              dragProps,
+                            }) => (
+                              // write your building UI
+                              <div
+                                className="upload-img"
+                                onClick={onImageUpload}
+                              >
+                                {images.length <= 0 && (
+                                  <span
+                                    style={isDragging ? { color: "red" } : null}
+                                    {...dragProps}
+                                  >
+                                    Tải ảnh
+                                  </span>
+                                )}
+                                {imageList.map((image, index) => (
+                                  <div key={index} className="upload-img">
+                                    <img
+                                      src={image.data_url}
+                                      alt=""
+                                      width="100"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </ImageUploading>
+                          {imageState === "invalid" && (
+                            <div
+                              className="invalid"
+                              style={{
+                                fontSize: "80%",
+                                color: "#fb6340",
+                                marginTop: "0.25rem",
+                              }}
+                            >
+                              Hình ảnh không được để trống
                             </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
 
-                            {!isLoading && (
-                                <Table className="align-items-center table-flush" responsive hover={true} style={{ position: "relative" }}>
-                                    <div className={`loading-spin ${!isLoading && "loading-spin-done"}`}></div>
-                                    <thead className="thead-light">
-                                        <tr>
-                                            <th className="sort table-title" scope="col">
-                                                STT
-                                            </th>
-                                            <th className="sort table-title" scope="col">
-                                                Hình ảnh
-                                            </th>
+                <div className="col-md-12">
+                  <form>
+                    <div className="row">
+                      <div className="col-md-12">
+                        <div className="form-group">
+                          <label className="form-control-label">
+                            Tên danh mục{" "}
+                          </label>
+                          <Input
+                            valid={categoryNameState === "valid"}
+                            invalid={categoryNameState === "invalid"}
+                            className="form-control"
+                            type="search"
+                            id="example-search-input"
+                            value={`${categoryName}`}
+                            onChange={(e) => {
+                              setcategoryName(e.target.value);
+                              if (e.target.value === "") {
+                                setcategoryNameState("invalid");
+                              } else {
+                                setcategoryNameState("valid");
+                              }
+                            }}
+                          />
+                          <div className="invalid-feedback">
+                            Tên danh mục không được để trống
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <Col className="mt-3  text-md-right mb-4" lg="12" xs="5">
+                      <Button
+                        onClick={() => {
+                          setOpenCategoryModal(false);
+                        }}
+                        // className="btn-neutral"
+                        color="default"
+                        size="lg"
+                        style={{
+                          background: "#fff",
+                          color: "#000",
+                          padding: "0.875rem 2rem",
+                          border: "none",
+                        }}
+                      >
+                        <div className="flex" style={{ alignItems: "center" }}>
+                          <i
+                            className="fa-solid fa-backward"
+                            style={{ fontSize: 18 }}
+                          ></i>
+                          <span>Đóng</span>
+                        </div>
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          hanldeSubmit();
+                        }}
+                        className="btn-neutral"
+                        color="default"
+                        size="lg"
+                        disabled={isLoadingCircle}
+                        style={{
+                          background: "var(--primary)",
+                          color: "#000",
+                          padding: "0.875rem 2rem",
+                        }}
+                      >
+                        <div
+                          className="flex"
+                          style={{
+                            alignItems: "center",
+                            width: 99,
+                            justifyContent: "center",
+                          }}
+                        >
+                          {isLoadingCircle ? (
+                            <Spinner
+                              style={{
+                                color: "#fff",
+                                width: "1.31rem",
+                                height: "1.31rem",
+                              }}
+                            >
+                              Loading...
+                            </Spinner>
+                          ) : (
+                            <>
+                              <i
+                                className="fa-solid fa-square-plus"
+                                style={{ fontSize: 18, color: "#fff" }}
+                              ></i>
+                              <span style={{ color: "#fff" }}>Thêm mới</span>
+                            </>
+                          )}
+                        </div>
+                      </Button>
+                    </Col>
+                  </form>
+                </div>
+              </Card>
+            </div>
+          </Modal>
+        </Col>
+      </Row>
+      <Modal
+        className="modal-dialog-centered"
+        size="sm"
+        isOpen={openDeleteModal}
+        toggle={() => {
+          setOpenDeleteModal(false);
+        }}
+      >
+        <div className="modal-body p-0">
+          <Card className="bg-secondary border-0 mb-0">
+            <div className="" style={{ paddingTop: 0 }}>
+              <Container
+                className=""
+                fluid
+                style={{ padding: "1.5rem 1.5rem 1rem 1.5rem " }}
+              >
+                <Row>
+                  <div className="col-lg-12 ">
+                    <h3>Bạn có chắc</h3>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                        padding: "0px 0px 30px 0px",
+                      }}
+                      className=""
+                    >
+                      <span className="mb-0">
+                        Danh mục:{" "}
+                        <span style={{ fontWeight: 700 }}>
+                          {storeCategoryModal.name}
+                        </span>{" "}
+                        sẽ bị xóa!!!{" "}
+                      </span>
+                      <span className="mb-0">
+                        Bạn sẽ không thể hoàn nguyên hành động này{" "}
+                      </span>
+                    </div>
+                    <div className="col-md-12"></div>
+                  </div>
+                </Row>
+                <Col className="text-md-right mb-3" lg="12" xs="5">
+                  <Row style={{ justifyContent: "flex-end" }}>
+                    {" "}
+                    <Button
+                      onClick={() => {
+                        setOpenDeleteModal(false);
+                      }}
+                      // className="btn-neutral"
+                      color="default"
+                      size="lg"
+                      style={{
+                        background: "#fff",
+                        color: "#000",
+                        padding: "0.875rem 1rem",
+                        border: "none",
+                      }}
+                    >
+                      <div
+                        className="flex"
+                        style={{
+                          alignItems: "center",
+                          width: 80,
+                          justifyContent: "center",
+                        }}
+                      >
+                        <span>Đóng</span>
+                      </div>
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setIsLoadingCircle(true);
+                        hanldeDeleteCategory(storeCategoryModal.id);
+                        // hanldeDeleteStoreCate(storeCategoryModal.id, storeCategoryModal.name);
+                      }}
+                      className="btn-neutral"
+                      disabled={isLoadingCircle}
+                      color="default"
+                      size="lg"
+                      style={{
+                        background: "var(--primary)",
+                        color: "#fff",
+                        padding: "0.875rem 1rem",
+                      }}
+                    >
+                      <div
+                        className="flex"
+                        style={{
+                          alignItems: "center",
+                          width: 80,
+                          justifyContent: "center",
+                        }}
+                      >
+                        {isLoadingCircle ? (
+                          <Spinner
+                            style={{
+                              color: "rgb(250,250,250)",
+                              width: "1.31rem",
+                              height: "1.31rem",
+                            }}
+                          >
+                            Loading...
+                          </Spinner>
+                        ) : (
+                          <>
+                            <span>Chắc chắn</span>
+                          </>
+                        )}
+                      </div>
+                    </Button>
+                  </Row>
+                </Col>
+              </Container>
+            </div>
+          </Card>
+        </div>
+      </Modal>
+      <Container className="mt--6" fluid>
+        <Row>
+          <div className="col">
+            <Card>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  padding: "20px 0px",
+                }}
+                className="align-items-center"
+              >
+                <CardHeader className="" style={{ padding: "0 0 0 20px" }}>
+                  <div
+                    className="flex"
+                    style={{ alignItems: "center", gap: 20 }}
+                  >
+                    <div className="mb-0">
+                      <InputGroup
+                        className="input-group-lg input-group-flush"
+                        style={{ border: "1px solid #9e9e9e" }}
+                      >
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText style={{ padding: "0 15px" }}>
+                            <span className="fas fa-search" />
+                          </InputGroupText>
+                        </InputGroupAddon>
+                        <Input
+                          placeholder="Tìm kiếm bằng tên danh mục"
+                          type="search"
+                          onChange={handleInputOnchange}
+                          className="btn-lg"
+                          style={{ height: 46, width: 250 }}
+                        />
+                      </InputGroup>
+                    </div>
+                  </div>
+                </CardHeader>
 
-                                            <th className="sort table-title" scope="col">
-                                                Tên danh mục
-                                            </th>
-                                            {/* <th className="sort table-title" scope="col">
+                <Col className="mt-3 mt-md-0 text-md-right" lg="6" xs="5">
+                  <Button
+                    onClick={() => {
+                      // history.push("/admin/category");
+                      setOpenCategoryModal(true);
+                    }}
+                    className="btn-neutral"
+                    color="default"
+                    size="lg"
+                    style={{
+                      background: "var(--primary)",
+                      color: "#fff",
+                      fontWeight: 700,
+                      border: "1px solid var(--primary)",
+                    }}
+                  >
+                    + Thêm Danh Mục Mới
+                  </Button>
+                </Col>
+              </div>
+
+              {!isLoading && (
+                <Table
+                  className="align-items-center table-flush"
+                  responsive
+                  hover={true}
+                  style={{ position: "relative" }}
+                >
+                  <div
+                    className={`loading-spin ${
+                      !isLoading && "loading-spin-done"
+                    }`}
+                  ></div>
+                  <thead className="thead-light">
+                    <tr>
+                      <th className="sort table-title" scope="col">
+                        STT
+                      </th>
+                      <th className="sort table-title" scope="col">
+                        Hình ảnh
+                      </th>
+
+                      <th className="sort table-title" scope="col">
+                        Tên danh mục
+                      </th>
+                      {/* <th className="sort table-title" scope="col">
                                                 Mã danh mục
                                             </th> */}
-                                            <th className="sort table-title" scope="col">
-                                                Trạng thái
-                                            </th>
-                                            <th className="sort table-title" scope="col">
-                                                Hành động
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="list">
-                                        {categoryList.map((item, index) => {
-                                            return <CategoryItem data={item} key={index} index={index} />;
-                                        })}
-                                    </tbody>
-                                </Table>
-                            )}
-                            {categoryList.length === 0 && !isLoading && (
-                                <>
-                                    <div className="center_flex" style={{ padding: "50px 0 0 0" }}>
-                                        <img src="/icons/empty.png" alt="" style={{ textAlign: "center", width: 300 }} />
-                                    </div>
-                                    <h1 className="description" style={{ fontSize: 18, textAlign: "center", padding: "20px 0 50px 0" }}>
-                                        Không có danh mục nào!!!
-                                    </h1>
-                                </>
-                            )}
-                            {isLoading && (
-                                <CardBody className=" center_flex">
-                                    <Lottie options={defaultOptions} height={400} width={400} />
-                                </CardBody>
-                            )}
-                            {/* {!isLoading && driverList.length > 0 && (
+                      <th className="sort table-title" scope="col">
+                        Trạng thái
+                      </th>
+                      <th className="sort table-title" scope="col">
+                        Hành động
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="list">
+                    {categoryList.map((item, index) => {
+                      return (
+                        <CategoryItem data={item} key={index} index={index} />
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              )}
+              {categoryList.length === 0 && !isLoading && (
+                <>
+                  <div
+                    className="center_flex"
+                    style={{ padding: "50px 0 0 0" }}
+                  >
+                    <img
+                      src="/icons/empty.png"
+                      alt=""
+                      style={{ textAlign: "center", width: 300 }}
+                    />
+                  </div>
+                  <h1
+                    className="description"
+                    style={{
+                      fontSize: 18,
+                      textAlign: "center",
+                      padding: "20px 0 50px 0",
+                    }}
+                  >
+                    Không có danh mục nào!!!
+                  </h1>
+                </>
+              )}
+              {isLoading && (
+                <CardBody className=" center_flex">
+                  <Lottie options={defaultOptions} height={400} width={400} />
+                </CardBody>
+              )}
+              {/* {!isLoading && driverList.length > 0 && (
                                 <CardFooter className="py-4">
                                     <nav aria-label="...">
                                         <Pagination className="pagination justify-content-end mb-0" listClassName="justify-content-end mb-0">
@@ -487,12 +694,12 @@ function CategoryManage() {
                                     </nav>
                                 </CardFooter>
                             )} */}
-                        </Card>
-                    </div>
-                </Row>
-            </Container>
-        </>
-    );
+            </Card>
+          </div>
+        </Row>
+      </Container>
+    </>
+  );
 }
 
 export default CategoryManage;
