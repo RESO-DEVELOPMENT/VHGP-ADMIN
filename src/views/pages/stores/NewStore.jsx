@@ -114,12 +114,11 @@ export const NewStore = () => {
       setUserNameState("invalid");
       setUserNameMess("Tên đăng nhập không được để trống");
     } else if (!checkEmailValid()) {
-    
       valid = false;
       setUserNameState("invalid");
       setUserNameMess("Tên đăng nhập không hợp lệ");
     } else {
-          // valid = true;f
+      // valid = true;f
       setUserNameState("valid");
     }
 
@@ -391,10 +390,7 @@ export const NewStore = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Tên đăng nhập{" "}
-                          <span style={{ color: "green" }}>
-                            (cuahangcuatoi@gmail.com)
-                          </span>{" "}
+                          Email đăng nhập{" "}
                           <span style={{ color: "red" }}>*</span>
                         </label>
                         <Input
