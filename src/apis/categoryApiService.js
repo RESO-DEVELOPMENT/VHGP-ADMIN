@@ -49,14 +49,22 @@ export const getListStoreCategorysByKey = (key, page, size) => {
 
 //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/category-management/categories
 export const postCategory = (category) => {
-  return axios.post(`${BASE_URL_CORAL_TEAM_VERSION}${CATEGORY}/categories`, category);
+  return axios.post(
+    `${BASE_URL_CORAL_TEAM_VERSION}${CATEGORY}/categories`,
+    category
+  );
 };
 
 //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/category-management/categories/999
 export const putCategory = (category, imgUpdate) => {
   return axios.put(
     `${BASE_URL_CORAL_TEAM_VERSION}${CATEGORY}/categories/${category.id}?imgUpdate=${imgUpdate}`,
-    category
+    {
+      name: category.name,
+      image: category.image,
+      status: category.status,
+      priority: category.priority,
+    }
   );
 };
 //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/storeCategory-management/storeCategories/10
@@ -78,7 +86,10 @@ export const postStoreCategory = (storeCategory) => {
 
 //https://deliveryvhgp-webapi.azurewebsites.net/api/v2/brand-management/brands
 export const postBrand = (brand) => {
-  return axios.post(`${BASE_URL_CORAL_TEAM_VERSION}${"brand-management"}/brands`, brand);
+  return axios.post(
+    `${BASE_URL_CORAL_TEAM_VERSION}${"brand-management"}/brands`,
+    brand
+  );
 };
 //https://deliveryvhgp-webapi.azurewebsites.net/api/v2/brand-management/brands
 export const putBrand = (brand) => {
@@ -89,7 +100,9 @@ export const putBrand = (brand) => {
 };
 //https://deliveryvhgp-webapi.azurewebsites.net/api/v2/brand-management/brands/string
 export const deleteBrand = (id) => {
-  return axios.delete(`${BASE_URL_CORAL_TEAM_VERSION}${"brand-management"}/brands/${id}`);
+  return axios.delete(
+    `${BASE_URL_CORAL_TEAM_VERSION}${"brand-management"}/brands/${id}`
+  );
 };
 //https://deliveryvhgp-webapi.azurewebsites.net/api/v2/brand-management/brands/string
 export const deleteStoreCate = (id) => {
@@ -99,5 +112,7 @@ export const deleteStoreCate = (id) => {
 };
 //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/category-management/categories/9fec8575-2ce1-4a2d-b536-bfb1458fda09
 export const deleteCategory = (id) => {
-  return axios.delete(`${BASE_URL_CORAL_TEAM_VERSION}${"category-management"}/categories/${id}`);
+  return axios.delete(
+    `${BASE_URL_CORAL_TEAM_VERSION}${"category-management"}/categories/${id}`
+  );
 };
