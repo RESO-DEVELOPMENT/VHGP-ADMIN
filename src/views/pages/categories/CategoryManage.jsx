@@ -617,6 +617,10 @@ function CategoryManage() {
                         Trạng thái
                       </th>
                       <th className="sort table-title" scope="col">
+                        Thứ tự hiển thị
+                      </th>
+
+                      <th className="sort table-title" scope="col">
                         Hành động
                       </th>
                     </tr>
