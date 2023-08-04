@@ -153,10 +153,9 @@ export const ShipperModal = ({ handleReload }) => {
       value: shipperModal.vehicleType,
     });
     setVehicleColor(shipperModal.colour);
-    // setStatus({
-    //   label: store.status ? "Hoạt động" : "Ngừng hoạt động",
-    //   value: store.status ? true : false,
-    // });
+    setStatus(
+      shipperModal.status === "Active" ? optionsStatus[0] : optionsStatus[1]
+    );
     if (shipperModal.image !== null && shipperModal.image !== "") {
       setImages([{ data_url: shipperModal.image }]);
     } else {
@@ -206,8 +205,8 @@ export const ShipperModal = ({ handleReload }) => {
     }
   };
   const optionsStatus = [
-    { label: "Hoạt động", value: true },
-    { label: "Ngưng hoạt động", value: false },
+    { label: "Hoạt động", value: "Active" },
+    { label: "Ngưng hoạt động", value: "Deactive" },
   ];
   return (
     <>
