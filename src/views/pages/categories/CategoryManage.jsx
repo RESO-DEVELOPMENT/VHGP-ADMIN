@@ -75,6 +75,8 @@ function CategoryManage() {
   const [isLoadingCircle, setIsLoadingCircle] = useState(false);
   const [categoryName, setcategoryName] = useState("");
   const [categoryNameState, setcategoryNameState] = useState("");
+  const [priority, setPriority] = useState("");
+  const [priorityState, setPriorityState] = useState("");
   const [imageState, setimageState] = useState("");
   const [keyword, setKeyword] = useState("");
   const [images, setImages] = useState([]);
@@ -98,6 +100,13 @@ function CategoryManage() {
       // valid = true;
       setcategoryNameState("valid");
     }
+    if (priority === "") {
+      valid = false;
+      setPriorityState("invalid");
+    } else {
+      // valid = true;
+      setPriorityState("valid");
+    }
     if (images.length === 0) {
       valid = false;
       setimageState("invalid");
@@ -114,6 +123,7 @@ function CategoryManage() {
       let cate = {
         name: categoryName,
         image: getBase64Image(images[0].data_url || "", images[0]?.file?.type),
+        priority: priority,
       };
       postCategory(cate)
         .then((res) => {
@@ -232,7 +242,9 @@ function CategoryManage() {
                   className="align-items-center"
                 >
                   <CardHeader className="border-0" style={{ padding: "1rem" }}>
-                    <h2 className="mb-0">Hình ảnh</h2>
+                    <h2 className="mb-0">
+                      Hình ảnh <span style={{ color: "red" }}>*</span>
+                    </h2>
                   </CardHeader>
                 </div>
                 <div className="col-md-12">
@@ -309,7 +321,7 @@ function CategoryManage() {
                       <div className="col-md-12">
                         <div className="form-group">
                           <label className="form-control-label">
-                            Tên danh mục{" "}
+                            Tên danh mục <span style={{ color: "red" }}>*</span>
                           </label>
                           <Input
                             valid={categoryNameState === "valid"}
@@ -331,8 +343,35 @@ function CategoryManage() {
                             Tên danh mục không được để trống
                           </div>
                         </div>
+                        <div className="form-group">
+                          <label className="form-control-label">
+                            Thứ tự ưu tiên{" "}
+                            <span style={{ color: "red" }}>*</span>
+                          </label>
+                          <Input
+                            valid={priorityState === "valid"}
+                            invalid={priorityState === "invalid"}
+                            className="form-control"
+                            type="number"
+                            placeholder="Nhập thứ tự (số)"
+                            id="example-search-input"
+                            value={`${priority}`}
+                            onChange={(e) => {
+                              setPriority(e.target.value);
+                              if (e.target.value === "") {
+                                setPriorityState("invalid");
+                              } else {
+                                setPriorityState("valid");
+                              }
+                            }}
+                          />
+                          <div className="invalid-feedback">
+                            Thứ tự ưu tiên không được để trống
+                          </div>
+                        </div>
                       </div>
                     </div>
+
                     <Col className="mt-3  text-md-right mb-4" lg="12" xs="5">
                       <Button
                         onClick={() => {
