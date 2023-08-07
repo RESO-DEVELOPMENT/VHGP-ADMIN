@@ -34,7 +34,10 @@ import {
   Spinner,
   Table,
 } from "reactstrap";
-import { getListShipper } from "../../../apis/shiperApiService";
+import {
+  getListShipper,
+  getListShipperbyKey,
+} from "../../../apis/shiperApiService";
 
 import Lottie from "react-lottie";
 import animationData from "../../../assets/loading.json";
@@ -43,6 +46,7 @@ import { ShipperModal } from "../../../components/Modals/shipperModal";
 import { notify } from "../../../components/Toast/ToastCustom";
 import { AppContext } from "../../../context/AppProvider";
 import { DriverItem } from "./DriverItem";
+import { getListStoreByKey } from "../../../apis/storeApiService";
 // core components
 function DriverManage() {
   const { openModal, openDeleteModal, storeCategoryModal, setOpenDeleteModal } =
@@ -63,34 +67,32 @@ function DriverManage() {
     },
   };
 
-  //   function fetchDropdownOptions(key) {
-  //     setIsLoading(true);
-  //     setDriverList([]);
-  //     console.log(key);
-  //     if (key !== "") {
-  //       getListShipper(key, 1, 100)
-  //         .then((res) => {
-  //           const drivers = res.data;
-  //           console.log(drivers);
-  //           setTimeout(() => {
-  //             setDriverList(drivers);
-  //             setIsLoading(false);
-  //           }, 1);
-  //         })
-  //         .catch((error) => console.log(error));
-  //     } else {
-  //       hanldeGetListDriver();
-  //     }
-  //   }
-  //   const debounceDropDown = useCallback(
-  //     debounce((nextValue) => fetchDropdownOptions(nextValue), 1000),
-  //     []
-  //   );
-  //   function handleInputOnchange(e) {
-  //     const { value } = e.target;
-  //     setKeyword(value);
-  //     debounceDropDown(value);
-  //   }
+  function fetchDropdownOptions(key) {
+    setIsLoading(true);
+    setDriverList([]);
+    if (key !== "") {
+      getListShipperbyKey(key, 1, 100)
+        .then((res) => {
+          const drivers = res.data;
+          setTimeout(() => {
+            setDriverList(drivers);
+            setIsLoading(false);
+          }, 1);
+        })
+        .catch((error) => console.log(error));
+    } else {
+      hanldeGetListDriver();
+    }
+  }
+  const debounceDropDown = useCallback(
+    debounce((nextValue) => fetchDropdownOptions(nextValue), 1000),
+    []
+  );
+  function handleInputOnchange(e) {
+    const { value } = e.target;
+    setKeyword(value);
+    debounceDropDown(value);
+  }
   const hanldeGetListDriver = () => {
     setIsLoading(true);
     getListShipper(1, 100)
@@ -288,7 +290,7 @@ function DriverManage() {
                         <Input
                           placeholder="Tìm kiếm bằng tên tài xế"
                           type="search"
-                          //   onChange={handleInputOnchange}
+                          onChange={handleInputOnchange}
                           className="btn-lg"
                           style={{ height: 46, width: 250 }}
                         />
