@@ -242,7 +242,7 @@ export const Menus = () => {
               </CardBody>
             </Card>
           </Col>
-          <Col md="6" xl="4">
+          {/* <Col md="6" xl="4">
             <Card
               className={`card-stats menu ${mode === 3 ? "menu-active" : ""}`}
               onClick={() => hanldeChangeMode(3)}
@@ -283,7 +283,7 @@ export const Menus = () => {
                 </p>
               </CardBody>
             </Card>
-          </Col>
+          </Col> */}
         </Row>
         <Row>
           <Col md="6" xl="12">
