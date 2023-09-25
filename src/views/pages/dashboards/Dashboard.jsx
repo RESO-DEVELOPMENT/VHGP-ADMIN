@@ -14,134 +14,201 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from 'react'
 // node.js library that concatenates classes (strings)
 // javascipt plugin for creating charts
-import { Chart } from "chart.js";
+import { Chart } from 'chart.js'
 // react plugin used to create charts
 // reactstrap components
-import { Card, CardBody, Container, Row, Spinner } from "reactstrap";
+import { Card, CardBody, Container, Row, Spinner } from 'reactstrap'
 
 // core components
 // import CardsHeader from "../../../components/Headers/CardsHeader.js";
-import Select from "react-select";
-import CardsHeader from "../../../components/Headers/CardsHeader.js";
+import Select from 'react-select'
+import CardsHeader from '../../../components/Headers/CardsHeader.js'
 import {
   getOrderReport,
   getOrderReportPrice,
-} from "../../../apis/orderApiService.js";
-import { notify } from "../../../components/Toast/ToastCustom.js";
-import moment from "moment";
-import { AppContext } from "../../../context/AppProvider.jsx";
+} from '../../../apis/orderApiService.js'
+import { notify } from '../../../components/Toast/ToastCustom.js'
+import moment from 'moment'
+import { AppContext } from '../../../context/AppProvider.jsx'
 
 function Dashboard() {
-  const { setIsLoadingMain } = useContext(AppContext);
-  const [activeNav, setActiveNav] = React.useState(1);
-  const [dayFilter, setDayFilter] = React.useState("");
-  const [countStore, setCountStore] = React.useState(0);
-  const [countOrder, setCountOrder] = React.useState(0);
-  const [countShipper, setCountShipper] = React.useState(0);
-  const [countOrderDone, setCountOrderDone] = React.useState(0);
-  const [countOrderFail, setCountOrderFail] = React.useState(0);
-  const [countOrderNew, setCountOrderNew] = React.useState(0);
-  const [countOrderPaymentFail, setCountOrderPaymentFail] = React.useState(0);
-  const [chartExample1Data, setChartExample1Data] = React.useState("data1");
+  const calculateDateRange = (start) => {
+    moment.locale('en')
+    let startDateConvert = moment().subtract(start, 'days').format('ll')
+    let startDate =
+      startDateConvert.split(',')[0] + startDateConvert.split(',')[1]
+    let endDateConvert = moment().format('ll')
+    let endDate = endDateConvert.split(',')[0] + endDateConvert.split(',')[1]
 
-  const [totalOrder, setTotalOrder] = React.useState(0);
-  const [totalShipFree, setTotalShipFree] = React.useState(0);
-  const [totalPaymentVNPay, setTotalPaymentVNPay] = React.useState(0);
-  const [totalPaymentCash, setTotalPaymentCash] = React.useState(0);
-  const [totalSurcharge, setTotalSurcharge] = React.useState(0);
-  const [totalRevenueOrder, setTotalRevenueOrder] = React.useState(0);
-  const [totalProfitOrder, setTotalProfitOrder] = React.useState(0);
+    if (start === 1) {
+      startDateConvert = moment().format('ll')
+      startDate =
+        startDateConvert.split(',')[0] + startDateConvert.split(',')[1]
+
+      endDateConvert = moment().add(1, 'days').format('ll')
+      endDate = endDateConvert.split(',')[0] + endDateConvert.split(',')[1]
+    }
+    return { startDate, endDate }
+  }
+
+  let initialDate = calculateDateRange(1)
+
+  const { setIsLoadingMain } = useContext(AppContext)
+  const [activeNav, setActiveNav] = React.useState(1)
+  const [countStore, setCountStore] = React.useState(0)
+  const [countOrder, setCountOrder] = React.useState(0)
+  const [countShipper, setCountShipper] = React.useState(0)
+  const [countOrderDone, setCountOrderDone] = React.useState(0)
+  const [countOrderFail, setCountOrderFail] = React.useState(0)
+  const [countOrderNew, setCountOrderNew] = React.useState(0)
+  const [countOrderPaymentFail, setCountOrderPaymentFail] = React.useState(0)
+  const [chartExample1Data, setChartExample1Data] = React.useState('data1')
+
+  const [totalOrder, setTotalOrder] = React.useState(0)
+  const [totalShipFree, setTotalShipFree] = React.useState(0)
+  const [totalPaymentVNPay, setTotalPaymentVNPay] = React.useState(0)
+  const [totalPaymentCash, setTotalPaymentCash] = React.useState(0)
+  const [totalSurcharge, setTotalSurcharge] = React.useState(0)
+  const [totalRevenueOrder, setTotalRevenueOrder] = React.useState(0)
+  const [totalProfitOrder, setTotalProfitOrder] = React.useState(0)
   const [Date, setDate] = useState({
-    label: "Tất cả",
+    label: 'Hôm nay',
     value: 1,
-  });
+  })
+
+  //
   const toggleNavs = (e, index) => {
-    e.preventDefault();
-    setActiveNav(index);
-    setChartExample1Data(chartExample1Data === "data1" ? "data2" : "data1");
-  };
-  const hanldeGetReport = (day) => {
-    console.log("call api");
-    setIsLoadingMain(true);
-    getOrderReport(day)
+    e.preventDefault()
+    setActiveNav(index)
+    setChartExample1Data(chartExample1Data === 'data1' ? 'data2' : 'data1')
+  }
+
+  //
+  const handleGetReport = (startDate, endDate) => {
+    setIsLoadingMain(true)
+    getOrderReport(startDate, endDate)
       .then((res) => {
         if (res.data) {
-          console.log("call xong");
-          let report = res.data;
-          console.log(report);
-          setCountStore(report.totalStore);
-          setCountOrder(report.totalOrder);
-          setCountShipper(report.totalShipper);
-          setCountOrderDone(report.totalOrderCompleted);
-          setCountOrderFail(report.totalOrderCancel);
-          setCountOrderNew(report.totalOrderNew);
-          setCountOrderPaymentFail(report.totalOrderUnpaidVNpay);
+          let report = res.data.data
+          setCountStore(report.totalStore)
+          setCountOrder(report.totalOrder)
+          setCountShipper(report.totalShipper)
+          setCountOrderDone(report.totalOrderCompleted)
+          setCountOrderFail(report.totalOrderCancel)
+          setCountOrderNew(report.totalOrderNew)
+          setCountOrderPaymentFail(report.totalOrderUnpaidVNpay)
         }
       })
       .catch((error) => {
-        console.log(error);
-        notify("Đã xảy ra lỗi gì đó!!", "Error");
-      });
-    getOrderReportPrice(day)
+        console.log(error)
+        notify('Đã xảy ra lỗi gì đó!!', 'Error')
+      })
+    getOrderReportPrice(startDate, endDate)
       .then((res) => {
         if (res.data) {
-          let report = res.data;
+          let report = res.data.data
 
           setTimeout(() => {
-            setTotalOrder(report.totalOrder);
-            setTotalShipFree(report.totalShipFree);
-            setTotalPaymentVNPay(report.totalPaymentVNPay);
-            setTotalPaymentCash(report.totalPaymentCash);
-            setTotalSurcharge(report.totalSurcharge);
-            setTotalRevenueOrder(report.totalRevenueOrder);
-            setTotalProfitOrder(report.totalProfitOrder);
-            setIsLoadingMain(false);
-          }, 1000);
+            setTotalOrder(report.totalOrder)
+            setTotalShipFree(report.totalShipFree)
+            setTotalPaymentVNPay(report.totalPaymentVNPay)
+            setTotalPaymentCash(report.totalPaymentCash)
+            setTotalSurcharge(report.totalSurcharge)
+            setTotalRevenueOrder(report.totalRevenueOrder)
+            setTotalProfitOrder(report.totalProfitOrder)
+            setIsLoadingMain(false)
+          }, 1000)
         }
       })
       .catch((error) => {
-        console.log(error);
-        notify("Đã xảy ra lỗi gì đó!!", "Error");
-      });
-  };
-  useEffect(() => {
-    hanldeGetReport(dayFilter);
+        console.log(error)
+        notify('Đã xảy ra lỗi gì đó!!', 'Error')
+      })
+  }
 
-    return () => {};
-  }, [dayFilter]);
+  useEffect(() => {
+    handleGetReport(initialDate.startDate, initialDate.endDate)
+
+    return () => {}
+  }, [])
 
   const options = () => {
     return [
       {
-        label: "Tất cả",
+        label: 'Hôm nay',
         value: 1,
       },
       {
-        label: "Hôm nay",
+        label: '7 ngày',
         value: 2,
       },
-    ];
-  };
+      {
+        label: '30 ngày',
+        value: 3,
+      },
+      {
+        label: '365 ngày',
+        value: 4,
+      },
+    ]
+  }
+
   const customStylesPayment = {
     control: (provided, state) => ({
       ...provided,
-      background: "#fff",
-      borderColor: "rgb(200, 200, 200)",
-      minHeight: "30px",
-      height: "46px",
-      width: "200px",
+      background: '#fff',
+      borderColor: 'rgb(200, 200, 200)',
+      minHeight: '30px',
+      height: '46px',
+      width: '200px',
       boxShadow: state.isFocused ? null : null,
-      borderRadius: "0.5rem",
+      borderRadius: '0.5rem',
     }),
 
     input: (provided, state) => ({
       ...provided,
-      margin: "5px",
+      margin: '5px',
     }),
-  };
+  }
+
+  const handleReportByDateRange = (e) => {
+    setDate(e)
+    let date = {}
+
+    switch (e.value) {
+      // Today
+      case 1:
+        date = calculateDateRange(1)
+
+        handleGetReport(date.startDate, date.endDate)
+        break
+
+      // 7 days
+      case 2:
+        date = calculateDateRange(7)
+
+        handleGetReport(date.startDate, date.endDate)
+        break
+
+      // 30 days
+      case 3:
+        date = calculateDateRange(30)
+
+        handleGetReport(date.startDate, date.endDate)
+        break
+
+      // 365 days
+      case 4:
+        date = calculateDateRange(365)
+
+        handleGetReport(date.startDate, date.endDate)
+        break
+    }
+  }
+
   return (
     <>
       <CardsHeader
@@ -155,10 +222,10 @@ function Dashboard() {
       <Container className="mt--12" fluid>
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            margin: "10px 0 20px 0",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            margin: '10px 0 20px 0',
           }}
         >
           <h1>Báo cáo tổng quan</h1>
@@ -168,24 +235,14 @@ function Dashboard() {
             styles={customStylesPayment}
             value={Date}
             onChange={(e) => {
-              setDate(e);
-              if (e.value === 1) {
-                hanldeGetReport("");
-              } else {
-                let date = "";
-                moment.locale("en");
-                let dateConvert = moment().format("ll");
-                date = dateConvert.split(",")[0] + dateConvert.split(",")[1];
-                console.log(date);
-                hanldeGetReport(date);
-              }
+              handleReportByDateRange(e)
             }}
           />
         </div>
         <Row>
           <div className="col-lg-6">
             <Card
-              style={{ background: "rgba(255, 170, 76, 0.9)", height: 440 }}
+              style={{ background: 'rgba(255, 170, 76, 0.9)', height: 440 }}
             >
               <div className="col-md-12">
                 <form>
@@ -193,19 +250,19 @@ function Dashboard() {
                     <div
                       className=""
                       id="dropzone-single"
-                      style={{ width: "100%", padding: "0 15px 30px 15px" }}
+                      style={{ width: '100%', padding: '0 15px 30px 15px' }}
                     >
                       <div
                         className="center_flex"
                         style={{
                           paddingTop: 15,
                           paddingBottom: 30,
-                          flexDirection: "column",
+                          flexDirection: 'column',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 24,
                             fontWeight: 700,
                           }}
@@ -214,7 +271,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -224,14 +281,14 @@ function Dashboard() {
                       </div>
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "0px 10px 30px 10px",
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          padding: '0px 10px 30px 10px',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -240,7 +297,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 20,
                             fontWeight: 600,
                           }}
@@ -250,14 +307,14 @@ function Dashboard() {
                       </div>
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "0px 10px 30px 10px",
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          padding: '0px 10px 30px 10px',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -266,7 +323,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 20,
                             fontWeight: 600,
                           }}
@@ -276,14 +333,14 @@ function Dashboard() {
                       </div>
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "0px 10px 30px 10px",
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          padding: '0px 10px 30px 10px',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -292,7 +349,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 20,
                             fontWeight: 600,
                           }}
@@ -302,14 +359,14 @@ function Dashboard() {
                       </div>
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "0px 10px 30px 10px",
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          padding: '0px 10px 30px 10px',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -318,7 +375,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 20,
                             fontWeight: 600,
                           }}
@@ -328,17 +385,17 @@ function Dashboard() {
                       </div>
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          background: "rgba(250, 250, 250, 0.22)",
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          background: 'rgba(250, 250, 250, 0.22)',
                           borderRadius: 10,
-                          padding: "5px 10px",
+                          padding: '5px 10px',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -347,7 +404,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 20,
                             fontWeight: 600,
                           }}
@@ -362,26 +419,26 @@ function Dashboard() {
             </Card>
           </div>
           <div className="col-lg-6">
-            <Card style={{ background: "rgb(76, 175, 80)", height: 440 }}>
+            <Card style={{ background: 'rgb(76, 175, 80)', height: 440 }}>
               <div className="col-md-12">
                 <form>
                   <div className="row">
                     <div
                       className=""
                       id="dropzone-single"
-                      style={{ width: "100%", padding: "0 15px 30px 15px" }}
+                      style={{ width: '100%', padding: '0 15px 30px 15px' }}
                     >
                       <div
                         className="center_flex"
                         style={{
                           paddingTop: 15,
                           paddingBottom: 30,
-                          flexDirection: "column",
+                          flexDirection: 'column',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 24,
                             fontWeight: 700,
                           }}
@@ -390,7 +447,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -401,14 +458,14 @@ function Dashboard() {
 
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "0px 10px 20px 10px",
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          padding: '0px 10px 20px 10px',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -417,7 +474,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 20,
                             fontWeight: 600,
                           }}
@@ -427,14 +484,14 @@ function Dashboard() {
                       </div>
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "0px 10px 20px 10px",
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          padding: '0px 10px 20px 10px',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -443,7 +500,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 20,
                             fontWeight: 600,
                           }}
@@ -454,14 +511,14 @@ function Dashboard() {
 
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "0px 10px 20px 10px",
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          padding: '0px 10px 20px 10px',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -470,7 +527,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 20,
                             fontWeight: 600,
                           }}
@@ -480,17 +537,17 @@ function Dashboard() {
                       </div>
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          background: "rgba(250, 250, 250, 0.22)",
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          background: 'rgba(250, 250, 250, 0.22)',
                           borderRadius: 10,
-                          padding: "5px 10px",
+                          padding: '5px 10px',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -499,7 +556,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 22,
                             fontWeight: 600,
                           }}
@@ -509,14 +566,14 @@ function Dashboard() {
                       </div>
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          padding: "20px 10px 20px 10px",
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          padding: '20px 10px 20px 10px',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -525,7 +582,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 20,
                             fontWeight: 600,
                           }}
@@ -535,17 +592,17 @@ function Dashboard() {
                       </div>
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          background: "rgba(250, 250, 250, 0.22)",
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          background: 'rgba(250, 250, 250, 0.22)',
                           borderRadius: 10,
-                          padding: "5px 10px",
+                          padding: '5px 10px',
                         }}
                       >
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 16,
                             fontWeight: 600,
                           }}
@@ -554,7 +611,7 @@ function Dashboard() {
                         </span>
                         <span
                           style={{
-                            color: "#fff",
+                            color: '#fff',
                             fontSize: 22,
                             fontWeight: 600,
                           }}
@@ -2866,7 +2923,7 @@ function Dashboard() {
         </Row> */}
       </Container>
     </>
-  );
+  )
 }
 
-export default Dashboard;
+export default Dashboard
