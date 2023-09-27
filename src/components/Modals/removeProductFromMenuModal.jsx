@@ -34,7 +34,6 @@ export const RemoveProductFromMenuModal = ({ handleReload }) => {
     setIsLoadingCircle(true);
     removeProductFromMenu(menu, [deleteModal.data.id])
       .then((res) => {
-        console.log(res);
         setOpenRemoveProductFromMenuModal(false);
         notify("Xóa sản phẩm thành công", "Success");
         setDeleteModal({});
