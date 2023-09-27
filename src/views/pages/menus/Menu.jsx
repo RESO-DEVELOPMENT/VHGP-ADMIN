@@ -32,6 +32,7 @@ import { AppContext } from "../../../context/AppProvider";
 import { MenuItem } from "./MenuItem";
 import Lottie from "react-lottie";
 import animationData from "../../../assets/loading.json";
+import { RemoveProductFromMenuModal } from "../../../components/Modals/removeProductFromMenuModal";
 // import Empty from "../../../../public/icons/empty.svg";
 export const Menus = () => {
   const [hTabsIcons, setHTabsIcons] = React.useState("");
@@ -168,6 +169,7 @@ export const Menus = () => {
   return (
     <>
       <MenuUpdateModal handleReload={handleReload} />
+      <RemoveProductFromMenuModal handleReload={handleReload} />
       <SimpleHeader name="Danh Sách Thực Đơn" parentName="Quản Lý" />
       <Container className="mt--6" fluid>
         {/* MODE */}
@@ -579,11 +581,19 @@ export const Menus = () => {
                             <th className="sort table-title" scope="col">
                               STT
                             </th>
-                            <th className="sort table-title" scope="col">
+                            <th
+                              className="sort table-title"
+                              scope="col"
+                              align="left"
+                            >
                               Hình ảnh
                             </th>
 
-                            <th className="sort table-title" scope="col">
+                            <th
+                              className="sort table-title"
+                              scope="col"
+                              align="left"
+                            >
                               Tên sản phẩm
                             </th>
 
@@ -591,16 +601,32 @@ export const Menus = () => {
                                                             Mã sản phẩm
                                                         </th> */}
 
-                            <th className="sort table-title" scope="col">
+                            <th
+                              className="sort table-title"
+                              scope="col"
+                              align="left"
+                            >
                               Tên cửa hàng
                             </th>
-                            <th className="sort table-title" scope="col">
+                            <th
+                              className="sort table-title"
+                              scope="col"
+                              align="left"
+                            >
                               Danh mục
                             </th>
-                            <th className="sort table-title" scope="col">
-                              Giá
+                            <th
+                              className="sort table-title"
+                              scope="col"
+                              align="right"
+                            >
+                              {`Giá (VND)`}
                             </th>
-                            <th className="sort table-title" scope="col">
+                            <th
+                              className="sort table-title"
+                              scope="col"
+                              align="left"
+                            >
                               Trạng thái
                             </th>
                             <th className="sort table-title" scope="col">
