@@ -1,14 +1,24 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { NOT_FOUND_IMG } from "../../../constants";
 import { AppContext } from "../../../context/AppProvider";
+import { Tooltip } from "reactstrap";
 
 export const MenuItem = ({ data, index }) => {
-  const { setOpenModal, setCategoryModal } = useContext(AppContext);
+  const {
+    setOpenModal,
+    setCategoryModal,
+    setDeleteModal,
+    setOpenRemoveProductFromMenuModal,
+  } = useContext(AppContext);
+
+  const [tooltipOpenDelete, setTooltipOpenDelete] = useState(false);
+  const toggleDelete = () => setTooltipOpenDelete(!tooltipOpenDelete);
+
   return (
     <>
       <tr>
         <td className="budget table-text-product bold">{index + 1}</td>
-        <td className="budget table-text-product bold">
+        <td className="budget table-text-product bold" align="left">
           <div
             style={{
               width: 60,
@@ -26,15 +36,19 @@ export const MenuItem = ({ data, index }) => {
           </div>
         </td>
 
-        <td className="budget table-text-product bold">{data.name}</td>
+        <td className="budget table-text-product bold" align="left">
+          {data.name}
+        </td>
 
         {/* <td className="budget table-text-product bold">{data.id}</td> */}
 
-        <td className="budget table-text-product bold">{data.storeName}</td>
+        <td className="budget table-text-product bold" align="left">
+          {data.storeName}
+        </td>
         <td className="budget table-text-product bold">
           {data.productCategory}
         </td>
-        <td className="budget table-text-product bold">
+        <td className="budget table-text-product bold" align="right">
           {data.pricePerPack.toLocaleString()}
         </td>
 
@@ -43,7 +57,7 @@ export const MenuItem = ({ data, index }) => {
             {data.brandStoreName}
         </span>
     </td> */}
-        <td>
+        <td align="left">
           {!data.isActive ? (
             <span
               className={`badge  status-success`}
@@ -62,15 +76,32 @@ export const MenuItem = ({ data, index }) => {
         </td>
 
         <td className="text-center">
-          <i
+          {/* <i
             className="fa-solid fa-pen-to-square mr-3 cusor"
             style={{ fontSize: 22 }}
             onClick={() => {
               // setCategoryModal(data);
               // setOpenModal(true);
             }}
+          ></i> */}
+          <i
+            className="fa-regular fa-trash-can mr-3 cusor"
+            style={{ fontSize: 22, color: "red" }}
+            id={"Delete-" + index}
+            onClick={() => {
+              setDeleteModal({ data });
+              setOpenRemoveProductFromMenuModal(true);
+            }}
           ></i>
-          {/* <i className="fa-regular fa-trash-can mr-3 cusor" style={{ fontSize: 22 }}></i> */}
+          <Tooltip
+            placement="bottom"
+            isOpen={tooltipOpenDelete}
+            autohide={false}
+            target={"Delete-" + index}
+            toggle={toggleDelete}
+          >
+            Xóa
+          </Tooltip>
         </td>
       </tr>
     </>
