@@ -227,7 +227,7 @@ export const NewStore = () => {
   };
   return (
     <>
-      <SimpleHeader name="Thêm Mới Cửa Hàng" parentName="Quản Lý" />
+      <SimpleHeader name="Thêm Cửa Hàng Mới" parentName="Quản Lý" />
       <Container className="mt--6" fluid>
         <Row>
           {/* <div className="col-lg-4">
