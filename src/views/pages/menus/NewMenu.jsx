@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { useHistory } from 'react-router'
-import Select from 'react-select'
+import React, { useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router";
+import Select from "react-select";
 import {
   Button,
   Card,
@@ -10,143 +10,143 @@ import {
   Input,
   Row,
   Spinner,
-} from 'reactstrap'
-import { postMenu } from '../../../apis/menuApiService'
-import SimpleHeader from '../../../components/Headers/SimpleHeader'
-import { notify } from '../../../components/Toast/ToastCustom'
-import { AppContext } from '../../../context/AppProvider'
+} from "reactstrap";
+import { postMenu } from "../../../apis/menuApiService";
+import SimpleHeader from "../../../components/Headers/SimpleHeader";
+import { notify } from "../../../components/Toast/ToastCustom";
+import { AppContext } from "../../../context/AppProvider";
 
 export const NewMenu = () => {
-  const { categoryList, areaList } = useContext(AppContext)
-  const [menuName, setmenuName] = useState('')
-  const [menuNameState, setmenuNameState] = useState('')
-  const [Mode, setMode] = useState('')
-  const [ModeState, setModeState] = useState('')
-  const [openTime, setopenTime] = useState('')
-  const [openTimeState, setOpenTimeState] = useState('')
-  const [closeTime, setcloseTime] = useState('')
-  const [closeTimeState, setCloseTimeState] = useState('')
-  const [Category, setCategory] = useState('')
-  const [CategoryState, setCategoryState] = useState('')
-  const [isLoadingCircle, setIsLoadingCircle] = useState(false)
-  const [storeCategoryState, setStoreCategoryState] = useState('')
-  const [priorityState, setPriorityState] = useState('')
-  const [priority, setPriority] = useState('')
-  const [images, setImages] = React.useState([])
-  const [imageState, setImageState] = React.useState('')
+  const { categoryList, areaList } = useContext(AppContext);
+  const [menuName, setmenuName] = useState("");
+  const [menuNameState, setmenuNameState] = useState("");
+  const [Mode, setMode] = useState("");
+  const [ModeState, setModeState] = useState("");
+  const [openTime, setopenTime] = useState("");
+  const [openTimeState, setOpenTimeState] = useState("");
+  const [closeTime, setcloseTime] = useState("");
+  const [closeTimeState, setCloseTimeState] = useState("");
+  const [Category, setCategory] = useState("");
+  const [CategoryState, setCategoryState] = useState("");
+  const [isLoadingCircle, setIsLoadingCircle] = useState(false);
+  const [storeCategoryState, setStoreCategoryState] = useState("");
+  const [priorityState, setPriorityState] = useState("");
+  const [priority, setPriority] = useState("");
+  const [images, setImages] = React.useState([]);
+  const [imageState, setImageState] = React.useState("");
 
-  const [shipCost, setShipCost] = useState('')
-  const [shipCostState, setShipCostState] = useState('')
-  const [area, setArea] = useState('')
-  const [areaState, setAreaState] = useState('')
+  const [shipCost, setShipCost] = useState("");
+  const [shipCostState, setShipCostState] = useState("");
+  const [area, setArea] = useState("");
+  const [areaState, setAreaState] = useState("");
 
-  const maxNumber = 69
-  let history = useHistory()
+  const maxNumber = 69;
+  let history = useHistory();
 
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
-    console.log(imageList, addUpdateIndex)
-    setImages(imageList)
-  }
+    console.log(imageList, addUpdateIndex);
+    setImages(imageList);
+  };
 
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
-      background: '#fff',
-      borderColor: '#dee2e6',
-      minHeight: '30px',
-      height: '46px',
+      background: "#fff",
+      borderColor: "#dee2e6",
+      minHeight: "30px",
+      height: "46px",
       // width: "200px",
       boxShadow: state.isFocused ? null : null,
-      borderRadius: '0.5rem',
+      borderRadius: "0.5rem",
     }),
 
     input: (provided, state) => ({
       ...provided,
-      margin: '5px',
+      margin: "5px",
     }),
-  }
+  };
 
   const customStylesCategory = {
     control: (provided, state) => ({
       ...provided,
-      background: '#fff',
-      borderColor: '#dee2e6',
-      minHeight: '30px',
-      height: CategoryState === 'valid' ? null : '46px',
+      background: "#fff",
+      borderColor: "#dee2e6",
+      minHeight: "30px",
+      height: CategoryState === "valid" ? null : "46px",
       // width: "200px",
       boxShadow: state.isFocused ? null : null,
-      borderRadius: '0.5rem',
+      borderRadius: "0.5rem",
     }),
 
     input: (provided, state) => ({
       ...provided,
-      margin: '5px',
+      margin: "5px",
     }),
-  }
+  };
 
   const optionsCategory = categoryList.map((item) => {
     return {
       label: item.name,
       value: item.id,
-    }
-  })
+    };
+  });
 
   const optionsArea = areaList.map((item) => {
     return {
       label: item.name,
       value: item.id,
-    }
-  })
+    };
+  });
 
   const getModeName = (mode) => {
     switch (mode) {
-      case '1':
-        return 'Gọi Món'
-      case '2':
-        return 'Giao Hàng'
-      case '3':
-        return 'Đặt Hàng'
+      case "1":
+        return "Gọi Món";
+      case "2":
+        return "Giao Hàng";
+      case "3":
+        return "Đặt Hàng";
       default:
-        return 'Gọi Món'
+        return "Gọi Món";
     }
-  }
+  };
 
-  const optionsMode = ['1', '2', '3'].map((item) => {
+  const optionsMode = ["1", "2", "3"].map((item) => {
     return {
       label: getModeName(item),
       value: item,
-    }
-  })
+    };
+  });
 
   const validateCustomStylesForm = () => {
-    let valid = true
-    if (menuName === '') {
-      valid = false
-      setmenuNameState('invalid')
+    let valid = true;
+    if (menuName === "") {
+      valid = false;
+      setmenuNameState("invalid");
     } else {
       // valid = true;
-      setmenuNameState('valid')
+      setmenuNameState("valid");
     }
-    if (shipCost === '') {
-      valid = false
-      setShipCostState('invalid')
+    if (shipCost === "") {
+      valid = false;
+      setShipCostState("invalid");
     } else {
-      setShipCostState('valid')
+      setShipCostState("valid");
     }
-    if (openTime === '') {
-      valid = false
-      setOpenTimeState('invalid')
-    } else {
-      // valid = true;
-      setOpenTimeState('valid')
-    }
-    if (closeTime === '') {
-      valid = false
-      setCloseTimeState('invalid')
+    if (openTime === "") {
+      valid = false;
+      setOpenTimeState("invalid");
     } else {
       // valid = true;
-      setCloseTimeState('valid')
+      setOpenTimeState("valid");
+    }
+    if (closeTime === "") {
+      valid = false;
+      setCloseTimeState("invalid");
+    } else {
+      // valid = true;
+      setCloseTimeState("valid");
     }
     // if (images.length === 0) {
     //     valid = false;
@@ -155,78 +155,79 @@ export const NewMenu = () => {
     //     // valid = true;
     //     setImageState("valid");
     // }
-    if (Category === '') {
-      valid = false
-      setCategoryState('invalid')
+    if (Category === "") {
+      valid = false;
+      setCategoryState("invalid");
     } else {
       // valid = true;
-      setCategoryState('valid')
+      setCategoryState("valid");
     }
 
-    if (area === '') {
-      valid = false
-      setAreaState('invalid')
+    if (area === "") {
+      valid = false;
+      setAreaState("invalid");
     } else {
       // valid = true;
-      setAreaState('valid')
+      setAreaState("valid");
     }
 
-    if (Mode === '') {
-      valid = false
-      setModeState('invalid')
+    if (Mode === "") {
+      valid = false;
+      setModeState("invalid");
     } else {
       // valid = true;
-      setModeState('valid')
+      setModeState("valid");
     }
-    if (priority === '') {
-      valid = false
-      setPriorityState('invalid')
+    if (priority === "") {
+      valid = false;
+      setPriorityState("invalid");
     } else {
       // valid = true;
-      setPriorityState('valid')
+      setPriorityState("valid");
     }
 
-    return valid
-  }
+    return valid;
+  };
 
   const handleSubmit = () => {
     if (validateCustomStylesForm()) {
-      setIsLoadingCircle(true)
+      setIsLoadingCircle(true);
 
       let categories = Category.map((item) => {
-        return item.value
-      })
+        return item.value;
+      });
 
       let areas = area.map((item) => {
-        return item.value
-      })
+        return item.value;
+      });
 
       let menu = {
         name: menuName,
-        image: '',
+        image: "",
         startHour: parseFloat(openTime),
         endHour: parseFloat(closeTime),
         modeId: Mode.value,
         priority: priority,
+        shipCost: parseFloat(shipCost),
         listCategory: categories,
         listAreaId: areas,
-      }
+      };
 
       postMenu(menu)
         .then((res) => {
           if (res.data) {
-            setIsLoadingCircle(false)
-            notify('Thêm mới thành công', 'Success')
-            history.push('/admin/menus')
+            setIsLoadingCircle(false);
+            notify("Thêm mới thành công", "Success");
+            history.push("/admin/menus");
           }
         })
         .catch((error) => {
-          console.log(error)
-          setIsLoadingCircle(false)
-          notify('Đã xảy ra lỗi gì đó!!', 'Error')
-        })
+          console.log(error);
+          setIsLoadingCircle(false);
+          notify("Đã xảy ra lỗi gì đó!!", "Error");
+        });
     }
-  }
+  };
 
   return (
     <>
@@ -299,14 +300,14 @@ export const NewMenu = () => {
               {/* TITLE */}
               <div
                 style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                  padding: '10px 0px',
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  padding: "10px 0px",
                 }}
                 className="align-items-center"
               >
-                <CardHeader className="border-0" style={{ padding: '15px' }}>
+                <CardHeader className="border-0" style={{ padding: "15px" }}>
                   <h2 className="mb-0">Thông tin thực đơn </h2>
                 </CardHeader>
               </div>
@@ -319,17 +320,17 @@ export const NewMenu = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Tên thực đơn <span style={{ color: 'red' }}>*</span>
+                          Tên thực đơn <span style={{ color: "red" }}>*</span>
                         </label>
                         <Input
-                          valid={menuNameState === 'valid'}
-                          invalid={menuNameState === 'invalid'}
+                          valid={menuNameState === "valid"}
+                          invalid={menuNameState === "invalid"}
                           className="form-control"
                           type="search"
                           id="example-search-input"
                           value={`${menuName}`}
                           onChange={(e) => {
-                            setmenuName(e.target.value)
+                            setmenuName(e.target.value);
                           }}
                         />
                         <div className="invalid-feedback">
@@ -342,11 +343,11 @@ export const NewMenu = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Loại thực đơn <span style={{ color: 'red' }}>*</span>
+                          Loại thực đơn <span style={{ color: "red" }}>*</span>
                         </label>
                         <div
                           className={`${
-                            ModeState === 'invalid' && 'error-select'
+                            ModeState === "invalid" && "error-select"
                           }`}
                         >
                           <Select
@@ -355,17 +356,17 @@ export const NewMenu = () => {
                             styles={customStyles}
                             value={Mode}
                             onChange={(e) => {
-                              setMode(e)
+                              setMode(e);
                             }}
                           />
                         </div>
-                        {ModeState === 'invalid' && (
+                        {ModeState === "invalid" && (
                           <div
                             className="invalid"
                             style={{
-                              fontSize: '80%',
-                              color: '#fb6340',
-                              marginTop: '0.25rem',
+                              fontSize: "80%",
+                              color: "#fb6340",
+                              marginTop: "0.25rem",
                             }}
                           >
                             Loại thực đơn không được để trống
@@ -378,17 +379,17 @@ export const NewMenu = () => {
                     <div className="col-md-4">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Giờ bắt đầu <span style={{ color: 'red' }}>*</span>
+                          Giờ bắt đầu <span style={{ color: "red" }}>*</span>
                         </label>
                         <Input
-                          valid={openTimeState === 'valid'}
-                          invalid={openTimeState === 'invalid'}
+                          valid={openTimeState === "valid"}
+                          invalid={openTimeState === "invalid"}
                           className="form-control"
                           type="number"
                           id="example-search-input"
                           value={`${openTime}`}
                           onChange={(e) => {
-                            setopenTime(e.target.value)
+                            setopenTime(e.target.value);
                           }}
                         />
                         <div className="invalid-feedback">
@@ -401,17 +402,17 @@ export const NewMenu = () => {
                     <div className="col-md-4">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Giờ kết thúc <span style={{ color: 'red' }}>*</span>
+                          Giờ kết thúc <span style={{ color: "red" }}>*</span>
                         </label>
                         <Input
-                          valid={closeTimeState === 'valid'}
-                          invalid={closeTimeState === 'invalid'}
+                          valid={closeTimeState === "valid"}
+                          invalid={closeTimeState === "invalid"}
                           className="form-control"
                           type="number"
                           id="example-search-input"
                           value={`${closeTime}`}
                           onChange={(e) => {
-                            setcloseTime(e.target.value)
+                            setcloseTime(e.target.value);
                           }}
                         />
                         <div className="invalid-feedback">
@@ -424,17 +425,17 @@ export const NewMenu = () => {
                     <div className="col-md-4">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Độ ưu tiên <span style={{ color: 'red' }}>*</span>
+                          Độ ưu tiên <span style={{ color: "red" }}>*</span>
                         </label>
                         <Input
-                          valid={priorityState === 'valid'}
-                          invalid={priorityState === 'invalid'}
+                          valid={priorityState === "valid"}
+                          invalid={priorityState === "invalid"}
                           className="form-control"
                           type="number"
                           id="example-search-input"
                           value={`${priority}`}
                           onChange={(e) => {
-                            setPriority(e.target.value)
+                            setPriority(e.target.value);
                           }}
                         />
                         <div className="invalid-feedback">
@@ -447,19 +448,19 @@ export const NewMenu = () => {
                     <div className="col-md-4">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Phí ship <span style={{ color: 'red' }}>*</span>
+                          Phí ship <span style={{ color: "red" }}>*</span>
                         </label>
                         <Input
                           min={0}
                           max={100000}
-                          valid={shipCostState === 'valid'}
-                          invalid={shipCostState === 'invalid'}
+                          valid={shipCostState === "valid"}
+                          invalid={shipCostState === "invalid"}
                           className="form-control"
                           type="number"
                           id="example-search-input"
                           value={`${shipCost}`}
                           onChange={(e) => {
-                            setShipCost(e.target.value)
+                            setShipCost(e.target.value);
                           }}
                         />
                         <div className="invalid-feedback">
@@ -472,11 +473,11 @@ export const NewMenu = () => {
                     <div className="col-md-12">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Danh mục <span style={{ color: 'red' }}>*</span>
+                          Danh mục <span style={{ color: "red" }}>*</span>
                         </label>
                         <div
                           className={`${
-                            CategoryState === 'invalid' && 'error-select'
+                            CategoryState === "invalid" && "error-select"
                           }`}
                         >
                           <Select
@@ -487,17 +488,17 @@ export const NewMenu = () => {
                             value={Category}
                             closeMenuOnSelect={false}
                             onChange={(e) => {
-                              setCategory(e)
+                              setCategory(e);
                             }}
                           />
                         </div>
-                        {CategoryState === 'invalid' && (
+                        {CategoryState === "invalid" && (
                           <div
                             className="invalid"
                             style={{
-                              fontSize: '80%',
-                              color: '#fb6340',
-                              marginTop: '0.25rem',
+                              fontSize: "80%",
+                              color: "#fb6340",
+                              marginTop: "0.25rem",
                             }}
                           >
                             Danh mục không được để trống
@@ -510,11 +511,11 @@ export const NewMenu = () => {
                     <div className="col-md-12">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Khu vực <span style={{ color: 'red' }}>*</span>
+                          Khu vực <span style={{ color: "red" }}>*</span>
                         </label>
                         <div
                           className={`${
-                            areaState === 'invalid' && 'error-select'
+                            areaState === "invalid" && "error-select"
                           }`}
                         >
                           <Select
@@ -525,17 +526,17 @@ export const NewMenu = () => {
                             value={area}
                             closeMenuOnSelect={false}
                             onChange={(e) => {
-                              setArea(e)
+                              setArea(e);
                             }}
                           />
                         </div>
-                        {areaState === 'invalid' && (
+                        {areaState === "invalid" && (
                           <div
                             className="invalid"
                             style={{
-                              fontSize: '80%',
-                              color: '#fb6340',
-                              marginTop: '0.25rem',
+                              fontSize: "80%",
+                              color: "#fb6340",
+                              marginTop: "0.25rem",
                             }}
                           >
                             Khu vực không được để trống
@@ -550,19 +551,19 @@ export const NewMenu = () => {
                     {/* BACK BUTTON */}
                     <Button
                       onClick={() => {
-                        history.push('/admin/menus')
+                        history.push("/admin/menus");
                       }}
                       // className="btn-neutral"
                       color="default"
                       size="lg"
                       style={{
-                        background: '#fff',
-                        color: '#000',
-                        padding: '0.875rem 2rem',
-                        border: 'none',
+                        background: "#fff",
+                        color: "#000",
+                        padding: "0.875rem 2rem",
+                        border: "none",
                       }}
                     >
-                      <div className="flex" style={{ alignItems: 'center' }}>
+                      <div className="flex" style={{ alignItems: "center" }}>
                         <i
                           className="fa-solid fa-backward"
                           style={{ fontSize: 18 }}
@@ -574,32 +575,32 @@ export const NewMenu = () => {
                     {/* CREATE BUTTON */}
                     <Button
                       onClick={() => {
-                        handleSubmit()
+                        handleSubmit();
                       }}
                       className="btn-neutral"
                       color="default"
                       size="lg"
                       disabled={isLoadingCircle}
                       style={{
-                        background: 'var(--primary)',
-                        color: '#000',
-                        padding: '0.875rem 2rem',
+                        background: "var(--primary)",
+                        color: "#000",
+                        padding: "0.875rem 2rem",
                       }}
                     >
                       <div
                         className="flex"
                         style={{
-                          alignItems: 'center',
+                          alignItems: "center",
                           width: 99,
-                          justifyContent: 'center',
+                          justifyContent: "center",
                         }}
                       >
                         {isLoadingCircle ? (
                           <Spinner
                             style={{
-                              color: '#fff',
-                              width: '1.31rem',
-                              height: '1.31rem',
+                              color: "#fff",
+                              width: "1.31rem",
+                              height: "1.31rem",
                             }}
                           >
                             Loading...
@@ -608,9 +609,9 @@ export const NewMenu = () => {
                           <>
                             <i
                               className="fa-solid fa-square-plus"
-                              style={{ fontSize: 18, color: '#fff' }}
+                              style={{ fontSize: 18, color: "#fff" }}
                             ></i>
-                            <span style={{ color: '#fff' }}>Thêm mới</span>
+                            <span style={{ color: "#fff" }}>Thêm mới</span>
                           </>
                         )}
                       </div>
@@ -623,5 +624,5 @@ export const NewMenu = () => {
         </Row>
       </Container>
     </>
-  )
-}
+  );
+};
