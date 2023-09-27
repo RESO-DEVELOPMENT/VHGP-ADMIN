@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { useHistory } from 'react-router'
-import Select from 'react-select'
+import React, { useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router";
+import Select from "react-select";
 import {
   Button,
   Card,
@@ -20,150 +20,150 @@ import {
   Table,
   TabPane,
   UncontrolledDropdown,
-} from 'reactstrap'
+} from "reactstrap";
 import {
   getListMenuByMenuId,
   getListMenuByMode,
-} from '../../../apis/menuApiService'
-import SimpleHeader from '../../../components/Headers/SimpleHeader'
-import { MenuUpdateModal } from '../../../components/Modals/menuUpdateModal'
-import { notify } from '../../../components/Toast/ToastCustom'
-import { AppContext } from '../../../context/AppProvider'
-import { MenuItem } from './MenuItem'
-import Lottie from 'react-lottie'
-import animationData from '../../../assets/loading.json'
+} from "../../../apis/menuApiService";
+import SimpleHeader from "../../../components/Headers/SimpleHeader";
+import { MenuUpdateModal } from "../../../components/Modals/menuUpdateModal";
+import { notify } from "../../../components/Toast/ToastCustom";
+import { AppContext } from "../../../context/AppProvider";
+import { MenuItem } from "./MenuItem";
+import Lottie from "react-lottie";
+import animationData from "../../../assets/loading.json";
 // import Empty from "../../../../public/icons/empty.svg";
 export const Menus = () => {
-  const [hTabsIcons, setHTabsIcons] = React.useState('')
-  const { mode, setMode, menu, setMenu, setOpenModal } = useContext(AppContext)
-  const [isLoading, setIsLoading] = useState(true)
+  const [hTabsIcons, setHTabsIcons] = React.useState("");
+  const { mode, setMode, menu, setMenu, setOpenModal } = useContext(AppContext);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [menuList, setMenuList] = useState([])
-  const [menuActive, setMenuActive] = useState('')
-  const [productMenuList, setProductMenuList] = useState([])
-  let history = useHistory()
+  const [menuList, setMenuList] = useState([]);
+  const [menuActive, setMenuActive] = useState("");
+  const [productMenuList, setProductMenuList] = useState([]);
+  let history = useHistory();
 
   const optionsCategory = menuList.map((item) => {
     return {
       label: item.name,
       value: item.id,
-    }
-  })
+    };
+  });
 
   const defaultOptions = {
     loop: true,
     autoplay: true,
     animationData: animationData,
     rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
+      preserveAspectRatio: "xMidYMid slice",
     },
-  }
+  };
 
   useEffect(() => {
     getListMenuByMode(mode)
       .then((res) => {
-        const menus = res.data
-        setMenuList(menus)
+        const menus = res.data;
+        setMenuList(menus);
         if (menus && menus.length > 0) {
-          setHTabsIcons(menu.toString())
-          handleChangeMenu(menu.toString())
-          setMenu(menu.toString())
+          setHTabsIcons(menu.toString());
+          handleChangeMenu(menu.toString());
+          setMenu(menu.toString());
         } else {
-          setIsLoading(false)
-          setMenuList([])
+          setIsLoading(false);
+          setMenuList([]);
         }
       })
       .catch((error) => {
-        console.log(error)
-        setIsLoading(false)
-        setMenuList([])
-        notify('Đã xảy ra lỗi gì đó!!', 'Error')
-      })
-    return () => {}
-  }, [])
+        console.log(error);
+        setIsLoading(false);
+        setMenuList([]);
+        notify("Đã xảy ra lỗi gì đó!!", "Error");
+      });
+    return () => {};
+  }, []);
 
   const customStylesPayment = {
     control: (provided, state) => ({
       ...provided,
-      background: '#fff',
-      borderColor: '#dee2e6',
-      minHeight: '30px',
-      height: '46px',
-      width: '300px',
+      background: "#fff",
+      borderColor: "#dee2e6",
+      minHeight: "30px",
+      height: "46px",
+      width: "300px",
       boxShadow: state.isFocused ? null : null,
-      borderRadius: '0.5rem',
+      borderRadius: "0.5rem",
     }),
 
     input: (provided, state) => ({
       ...provided,
-      margin: '5px',
+      margin: "5px",
     }),
-  }
+  };
 
   const handleChangeMode = (mode) => {
-    setMenuList([])
-    setMode(mode)
+    setMenuList([]);
+    setMode(mode);
     // setIsLoading(true);
     getListMenuByMode(mode)
       .then((res) => {
-        const menus = res.data
+        const menus = res.data;
         setMenuActive({
           label: menus[0].name,
           value: menus[0].id,
-        })
-        setMenuList(menus)
+        });
+        setMenuList(menus);
         if (menus && menus.length > 0) {
-          setHTabsIcons(menus[0].id)
-          handleChangeMenu(menus[0].id)
+          setHTabsIcons(menus[0].id);
+          handleChangeMenu(menus[0].id);
         } else {
-          setIsLoading(false)
-          setMenuList([])
+          setIsLoading(false);
+          setMenuList([]);
         }
       })
       .catch((error) => {
-        console.log(error)
-        setIsLoading(false)
-        notify('Đã xảy ra lỗi gì đó!!', 'Error')
-        setMenuList([])
-      })
+        console.log(error);
+        setIsLoading(false);
+        notify("Đã xảy ra lỗi gì đó!!", "Error");
+        setMenuList([]);
+      });
     setTimeout(() => {
-      setIsLoading(false)
-    }, 1)
-  }
+      setIsLoading(false);
+    }, 1);
+  };
 
   const handleChangeMenu = (menu) => {
-    setMenu(menu)
-    setProductMenuList([])
-    setIsLoading(true)
-    setHTabsIcons(menu)
+    setMenu(menu);
+    setProductMenuList([]);
+    setIsLoading(true);
+    setHTabsIcons(menu);
     getListMenuByMenuId(menu, 1, 100)
       .then((res) => {
         setTimeout(() => {
-          let productMenus = res.data
+          let productMenus = res.data;
 
-          setProductMenuList(productMenus)
-          setIsLoading(false)
-        }, 300)
+          setProductMenuList(productMenus);
+          setIsLoading(false);
+        }, 300);
       })
       .catch((error) => {
-        console.log(error)
-        setIsLoading(false)
-        notify('Đã xảy ra lỗi gì đó!!', 'Error')
-        setProductMenuList([])
-      })
-  }
+        console.log(error);
+        setIsLoading(false);
+        notify("Đã xảy ra lỗi gì đó!!", "Error");
+        setProductMenuList([]);
+      });
+  };
 
   const handleReload = () => {
-    handleChangeMenu(menu)
+    handleChangeMenu(menu);
     getListMenuByMode(mode).then((res) => {
-      const menus = res.data
-      setMenuList(menus)
-    })
-  }
+      const menus = res.data;
+      setMenuList(menus);
+    });
+  };
 
   const convertTime = (time) => {
-    return time.toFixed(2).toString().replace('.', ':')
-  }
+    return time.toFixed(2).toString().replace(".", ":");
+  };
 
   return (
     <>
@@ -175,7 +175,7 @@ export const Menus = () => {
           {/* MODE 1 */}
           <Col md="6" xl="4">
             <Card
-              className={`card-stats menu ${mode === 1 ? 'menu-active' : ''}`}
+              className={`card-stats menu ${mode === 1 ? "menu-active" : ""}`}
               onClick={() => handleChangeMode(1)}
             >
               <CardBody>
@@ -187,7 +187,7 @@ export const Menus = () => {
                     >
                       15 - 30 phút
                     </CardTitle>
-                    <span className="h2 font-weight-bold mb-0">Đặt Món</span>
+                    <span className="h2 font-weight-bold mb-0">Gọi Món</span>
                   </div>
                   <Col className="col-auto">
                     <div
@@ -195,7 +195,7 @@ export const Menus = () => {
                       style={{
                         width: 70,
                         height: 70,
-                        border: '5px solid #fff',
+                        border: "5px solid #fff",
                       }}
                     >
                       <img
@@ -207,7 +207,7 @@ export const Menus = () => {
                   </Col>
                 </Row>
                 <p className="mt-1 mb-0 text-sm">
-                  <span className="text-nowrap" style={{ fontSize: '1rem' }}>
+                  <span className="text-nowrap" style={{ fontSize: "1rem" }}>
                     Sản phẩm giao ngay
                   </span>
                 </p>
@@ -218,7 +218,7 @@ export const Menus = () => {
           {/* MODE 2 */}
           <Col md="6" xl="4">
             <Card
-              className={`card-stats menu ${mode === 2 ? 'menu-active' : ''}`}
+              className={`card-stats menu ${mode === 2 ? "menu-active" : ""}`}
               onClick={() => handleChangeMode(2)}
             >
               <CardBody>
@@ -230,7 +230,7 @@ export const Menus = () => {
                     >
                       Giao hàng trong ngày
                     </CardTitle>
-                    <span className="h2 font-weight-bold mb-0">Đi Chợ</span>
+                    <span className="h2 font-weight-bold mb-0">Giao hàng</span>
                   </div>
                   <Col className="col-auto">
                     <div
@@ -238,7 +238,7 @@ export const Menus = () => {
                       style={{
                         width: 70,
                         height: 70,
-                        border: '5px solid #fff',
+                        border: "5px solid #fff",
                       }}
                     >
                       <img
@@ -250,7 +250,7 @@ export const Menus = () => {
                   </Col>
                 </Row>
                 <p className="mt-1 mb-0 text-sm">
-                  <span className="text-nowrap" style={{ fontSize: '1rem' }}>
+                  <span className="text-nowrap" style={{ fontSize: "1rem" }}>
                     Sản phẩm có sẵn trong ngày
                   </span>
                 </p>
@@ -312,9 +312,9 @@ export const Menus = () => {
                 <div
                   className="nav-wrapper"
                   style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
                 >
                   {mode !== 3 ? (
@@ -329,46 +329,47 @@ export const Menus = () => {
                           return (
                             <NavItem
                               style={{
-                                flex: 'none',
+                                flex: "none",
                                 padding: 0,
+                                zIndex: "10",
                               }}
                               key={item.id}
                             >
                               <NavLink
                                 className={
-                                  'mb-sm-3 mb-md-0 ' +
-                                  (hTabsIcons === item.id ? 'active' : '')
+                                  "mb-sm-3 mb-md-0 " +
+                                  (hTabsIcons === item.id ? "active" : "")
                                 }
                                 href="#pablo"
                                 onClick={(e) => {
-                                  e.preventDefault()
+                                  e.preventDefault();
                                   if (hTabsIcons !== item.id) {
-                                    handleChangeMenu(item.id)
-                                    convertTime(item.endTime)
+                                    handleChangeMenu(item.id);
+                                    convertTime(item.endTime);
                                   }
                                 }}
                                 style={{
-                                  padding: '0px',
-                                  color: 'white',
-                                  display: 'flex',
-                                  alignItems: 'center',
+                                  padding: "0px",
+                                  color: "white",
+                                  display: "flex",
+                                  alignItems: "center",
                                   gap: 10,
                                   background:
-                                    item.status === 'Inactive' && '#E9E9E9',
-                                  opacity: item.status === 'Inactive' && '0.7',
+                                    item.status === "Inactive" && "#E9E9E9",
+                                  opacity: item.status === "Inactive" && "0.7",
                                 }}
                               >
                                 <div
                                   style={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    position: 'relative',
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    position: "relative",
                                   }}
                                 >
                                   <span
                                     style={{
                                       color:
-                                        item.status === 'Inactive' && '#979797',
+                                        item.status === "Inactive" && "#979797",
                                     }}
                                   >
                                     {item.name}
@@ -378,14 +379,14 @@ export const Menus = () => {
                                       fontSize: 14,
                                       fontWeight: 500,
                                       color:
-                                        item.status === 'Inactive' && '#979797',
+                                        item.status === "Inactive" && "#979797",
                                     }}
                                   >
-                                    {'(' +
+                                    {"(" +
                                       convertTime(item.startTime) +
-                                      ' - ' +
+                                      " - " +
                                       convertTime(item.endTime) +
-                                      ')'}
+                                      ")"}
                                   </span>
                                 </div>
                                 {hTabsIcons === item.id && (
@@ -394,10 +395,10 @@ export const Menus = () => {
                                       size="sm"
                                       className="mr-0"
                                       style={{
-                                        background: 'var(--primary)',
-                                        border: 'none',
-                                        boxShadow: 'none',
-                                        color: '#fff',
+                                        background: "var(--primary)",
+                                        border: "none",
+                                        boxShadow: "none",
+                                        color: "#fff",
                                       }}
                                     >
                                       <i
@@ -409,29 +410,27 @@ export const Menus = () => {
                                       <DropdownItem
                                         href="#pablo"
                                         onClick={(e) => {
-                                          e.preventDefault()
-                                          // setAreaModal(areaSelected);
-                                          // console.log(areaSelected);
-                                          // setStoreCategoryModal(item);
+                                          e.preventDefault();
+                                          setOpenModal(true);
                                         }}
                                       >
                                         Chỉnh sửa
                                       </DropdownItem>
-                                      <DropdownItem
+                                      {/* <DropdownItem
                                         href="#pablo"
                                         onClick={(e) => {
-                                          e.preventDefault()
+                                          e.preventDefault();
                                           // setStoreCategoryModal(item);
                                         }}
                                       >
                                         Xóa
-                                      </DropdownItem>
+                                      </DropdownItem> */}
                                     </DropdownMenu>
                                   </UncontrolledDropdown>
                                 )}
                               </NavLink>
                             </NavItem>
-                          )
+                          );
                         })}
                     </Nav>
                   ) : (
@@ -441,29 +440,29 @@ export const Menus = () => {
                       styles={customStylesPayment}
                       value={menuActive}
                       onChange={(e) => {
-                        setMenuActive(e)
-                        handleChangeMenu(e.value)
+                        setMenuActive(e);
+                        handleChangeMenu(e.value);
                       }}
                     />
                   )}
 
                   {/* WRITER SECTION */}
                   <div>
-                    <Button
+                    {/* <Button
                       onClick={() => {
                         // setOpenModal(true);
                         // setModeModal(mode);
-                        setOpenModal(true)
+                        setOpenModal(true);
                       }}
                       className=""
                       color=""
                       size="lg"
                       style={{
-                        border: '1px solid var(--primary)',
+                        border: "1px solid var(--primary)",
                         marginRight: 10,
-                        borderRadius: '0.5rem',
-                        background: '#fff',
-                        color: 'var(--primary)',
+                        borderRadius: "0.5rem",
+                        background: "#fff",
+                        color: "var(--primary)",
                         fontWeight: 700,
                         width: 200,
                         fontSize: 16,
@@ -471,19 +470,19 @@ export const Menus = () => {
                       }}
                     >
                       <i class="fa-solid fa-pen-to-square"></i> Chỉnh sửa
-                    </Button>
+                    </Button> */}
                     <Button
                       onClick={() => {
                         // setOpenModal(true);
                         // setModeModal(mode);
-                        history.push('/admin/menu')
+                        history.push("/admin/menu");
                       }}
                       className="btn-neutral"
                       color="default"
                       size="lg"
                       style={{
-                        background: 'var(--primary)',
-                        color: '#fff',
+                        background: "var(--primary)",
+                        color: "#fff",
                         fontWeight: 700,
                         width: 200,
                         fontSize: 16,
@@ -568,11 +567,11 @@ export const Menus = () => {
                         className="align-items-center table-flush"
                         responsive
                         hover={true}
-                        style={{ position: 'relative' }}
+                        style={{ position: "relative" }}
                       >
                         <div
                           className={`loading-spin ${
-                            !isLoading && 'loading-spin-done'
+                            !isLoading && "loading-spin-done"
                           }`}
                         ></div>
                         <thead className="thead-light">
@@ -593,7 +592,7 @@ export const Menus = () => {
                                                         </th> */}
 
                             <th className="sort table-title" scope="col">
-                              Tên của hàng
+                              Tên cửa hàng
                             </th>
                             <th className="sort table-title" scope="col">
                               Danh mục
@@ -618,7 +617,7 @@ export const Menus = () => {
                                   key={index}
                                   index={index}
                                 />
-                              )
+                              );
                             })}
                           </tbody>
                         )}
@@ -632,27 +631,27 @@ export const Menus = () => {
                         >
                           <div
                             className="center_flex"
-                            style={{ padding: '40px 0 0 0' }}
+                            style={{ padding: "40px 0 0 0" }}
                           >
                             <img
                               src="/icons/empty.png"
                               alt=""
-                              style={{ textAlign: 'center', width: 230 }}
+                              style={{ textAlign: "center", width: 230 }}
                             />
                           </div>
                           <h1
                             className="description"
                             style={{
                               fontSize: 20,
-                              textAlign: 'center',
-                              padding: '20px 0 0 0',
+                              textAlign: "center",
+                              padding: "20px 0 0 0",
                             }}
                           >
                             Không có sản phẩm nào
                           </h1>
                         </TabPane>
                       ) : (
-                        ''
+                        ""
                       )}
                       {isLoading && (
                         <CardBody className="loading-wrapper center_flex">
@@ -705,5 +704,5 @@ export const Menus = () => {
         </Row>
       </Container>
     </>
-  )
-}
+  );
+};
