@@ -15,10 +15,10 @@
 
 */
 // reactstrap components
-import ImageUploading from "react-images-uploading";
-import { debounce } from "lodash";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router";
+import ImageUploading from 'react-images-uploading'
+import { debounce } from 'lodash'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { useHistory } from 'react-router'
 import {
   Button,
   Card,
@@ -36,22 +36,22 @@ import {
   Row,
   Spinner,
   Table,
-} from "reactstrap";
+} from 'reactstrap'
 import {
   deleteCategory,
   getListCategorys,
   getListStoreCategorysByKey,
   postCategory,
-} from "../../../apis/categoryApiService";
-import { getListStoreByKey } from "../../../apis/storeApiService";
-import Lottie from "react-lottie";
-import animationData from "../../../assets/loading.json";
-import SimpleHeader from "../../../components/Headers/SimpleHeader";
-import { CategoryModal } from "../../../components/Modals/categoryModal";
-import { notify } from "../../../components/Toast/ToastCustom";
-import { AppContext } from "../../../context/AppProvider";
-import { CategoryItem } from "./CategoryItem";
-import { getBase64Image } from "../../../constants";
+} from '../../../apis/categoryApiService'
+import { getListStoreByKey } from '../../../apis/storeApiService'
+import Lottie from 'react-lottie'
+import animationData from '../../../assets/loading.json'
+import SimpleHeader from '../../../components/Headers/SimpleHeader'
+import { CategoryModal } from '../../../components/Modals/categoryModal'
+import { notify } from '../../../components/Toast/ToastCustom'
+import { AppContext } from '../../../context/AppProvider'
+import { CategoryItem } from './CategoryItem'
+import { getBase64Image } from '../../../constants'
 // core components
 function CategoryManage() {
   const {
@@ -60,158 +60,158 @@ function CategoryManage() {
     setOpenDeleteModal,
     openCategoryModal,
     setOpenCategoryModal,
-  } = useContext(AppContext);
-  let history = useHistory();
+  } = useContext(AppContext)
+  let history = useHistory()
   const defaultOptions = {
     loop: true,
     autoplay: true,
     animationData: animationData,
     rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
+      preserveAspectRatio: 'xMidYMid slice',
     },
-  };
-  const [categoryList, setCategoryList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingCircle, setIsLoadingCircle] = useState(false);
-  const [categoryName, setcategoryName] = useState("");
-  const [categoryNameState, setcategoryNameState] = useState("");
-  const [priority, setPriority] = useState("");
-  const [priorityState, setPriorityState] = useState("");
-  const [imageState, setimageState] = useState("");
-  const [keyword, setKeyword] = useState("");
-  const [images, setImages] = useState([]);
-  const maxNumber = 69;
+  }
+  const [categoryList, setCategoryList] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingCircle, setIsLoadingCircle] = useState(false)
+  const [categoryName, setCategoryName] = useState('')
+  const [categoryNameState, setCategoryNameState] = useState('')
+  const [priority, setPriority] = useState('')
+  const [priorityState, setPriorityState] = useState('')
+  const [imageState, setImageState] = useState('')
+  const [keyword, setKeyword] = useState('')
+  const [images, setImages] = useState([])
+  const maxNumber = 69
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
     if (imageList.length > 0) {
-      setimageState("valid");
+      setImageState('valid')
     } else {
-      setimageState("invalid");
+      setImageState('invalid')
     }
-    console.log(imageList.length);
-    setImages(imageList);
-  };
+    console.log(imageList.length)
+    setImages(imageList)
+  }
   const validateCustomStylesForm = () => {
-    let valid = true;
-    if (categoryName === "") {
-      valid = false;
-      setcategoryNameState("invalid");
+    let valid = true
+    if (categoryName === '') {
+      valid = false
+      setCategoryNameState('invalid')
     } else {
       // valid = true;
-      setcategoryNameState("valid");
+      setCategoryNameState('valid')
     }
-    if (priority === "") {
-      valid = false;
-      setPriorityState("invalid");
+    if (priority === '') {
+      valid = false
+      setPriorityState('invalid')
     } else {
       // valid = true;
-      setPriorityState("valid");
+      setPriorityState('valid')
     }
     if (images.length === 0) {
-      valid = false;
-      setimageState("invalid");
+      valid = false
+      setImageState('invalid')
     } else {
       // valid = true;
-      setimageState("valid");
+      setImageState('valid')
     }
 
-    return valid;
-  };
+    return valid
+  }
   const hanldeSubmit = () => {
     if (validateCustomStylesForm()) {
-      setIsLoadingCircle(true);
+      setIsLoadingCircle(true)
       let cate = {
         name: categoryName,
-        image: getBase64Image(images[0].data_url || "", images[0]?.file?.type),
+        image: getBase64Image(images[0].data_url || '', images[0]?.file?.type),
         priority: priority,
-      };
+      }
       postCategory(cate)
         .then((res) => {
           if (res.data) {
-            console.log(res.data);
-            setIsLoadingCircle(false);
-            handleReload();
-            setCategoryList([...categoryList, cate]);
-            notify("Thêm danh mục thành công", "Success");
-            setOpenCategoryModal(false);
-            setImages([]);
-            setcategoryName("");
+            console.log(res.data)
+            setIsLoadingCircle(false)
+            handleReload()
+            setCategoryList([...categoryList, cate])
+            notify('Thêm danh mục thành công', 'Success')
+            setOpenCategoryModal(false)
+            setImages([])
+            setCategoryName('')
             // history.push("/admin/categories");
           }
         })
         .catch((error) => {
-          console.log(error);
-          setIsLoadingCircle(false);
-          notify("Đã xảy ra lỗi gì đó!!", "Error");
-        });
+          console.log(error)
+          setIsLoadingCircle(false)
+          notify('Đã xảy ra lỗi gì đó!!', 'Error')
+        })
     }
-  };
+  }
   function fetchDropdownOptions(key) {
-    setIsLoading(true);
-    setCategoryList([]);
-    console.log(key);
-    if (key !== "") {
+    setIsLoading(true)
+    setCategoryList([])
+    console.log(key)
+    if (key !== '') {
       getListStoreCategorysByKey(key, 1, 100)
         .then((res) => {
-          const cate = res.data;
-          console.log(cate);
+          const cate = res.data
+          console.log(cate)
           setTimeout(() => {
-            setCategoryList(cate);
-            setIsLoading(false);
-          }, 1);
+            setCategoryList(cate)
+            setIsLoading(false)
+          }, 1)
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
     } else {
-      hanldeGetListCategorys();
+      hanldeGetListCategorys()
     }
   }
   const debounceDropDown = useCallback(
     debounce((nextValue) => fetchDropdownOptions(nextValue), 1000),
     []
-  );
+  )
   function handleInputOnchange(e) {
-    const { value } = e.target;
-    setKeyword(value);
-    debounceDropDown(value);
+    const { value } = e.target
+    setKeyword(value)
+    debounceDropDown(value)
   }
   const hanldeGetListCategorys = () => {
     getListCategorys(1, 100).then((res) => {
-      const categorys = res.data;
-      setCategoryList(categorys);
-      setIsLoading(false);
-    });
-  };
+      const categorys = res.data
+      setCategoryList(categorys)
+      setIsLoading(false)
+    })
+  }
   useEffect(() => {
-    setIsLoading(true);
+    setIsLoading(true)
     setTimeout(() => {
-      hanldeGetListCategorys();
-    }, 100);
-  }, []);
+      hanldeGetListCategorys()
+    }, 100)
+  }, [])
   const hanldeDeleteCategory = (id) => {
-    setIsLoadingCircle(true);
+    setIsLoadingCircle(true)
     deleteCategory(id)
       .then((res) => {
         if (res.data) {
-          setIsLoading(false);
-          notify("Xóa danh mục thành công", "Success");
+          setIsLoading(false)
+          notify('Xóa danh mục thành công', 'Success')
           // let NewStoreCategory = storeCategoryList.filter((item) => item.name !== name);
           // setStoreCategoryList([...NewStoreCategory]);
-          handleReload();
-          setOpenDeleteModal(false);
-          setIsLoadingCircle(false);
+          handleReload()
+          setOpenDeleteModal(false)
+          setIsLoadingCircle(false)
         }
       })
       .catch((error) => {
-        console.log(error);
-        setIsLoadingCircle(false);
-        setIsLoading(false);
-        notify("Đã xảy ra lỗi gì đó!!", "Error");
-      });
-  };
+        console.log(error)
+        setIsLoadingCircle(false)
+        setIsLoading(false)
+        notify('Đã xảy ra lỗi gì đó!!', 'Error')
+      })
+  }
   const handleReload = () => {
-    setIsLoading(true);
-    hanldeGetListCategorys();
-  };
+    setIsLoading(true)
+    hanldeGetListCategorys()
+  }
 
   return (
     <>
@@ -225,25 +225,25 @@ function CategoryManage() {
             size="md"
             isOpen={openCategoryModal}
             toggle={() => {
-              setOpenCategoryModal(false);
-              setImages([]);
-              setcategoryName("");
+              setOpenCategoryModal(false)
+              setImages([])
+              setCategoryName('')
             }}
           >
             <div className="modal-body p-0">
               <Card>
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    padding: "10px 0px",
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                    padding: '10px 0px',
                   }}
                   className="align-items-center"
                 >
-                  <CardHeader className="border-0" style={{ padding: "1rem" }}>
+                  <CardHeader className="border-0" style={{ padding: '1rem' }}>
                     <h2 className="mb-0">
-                      Hình ảnh <span style={{ color: "red" }}>*</span>
+                      Hình ảnh <span style={{ color: 'red' }}>*</span>
                     </h2>
                   </CardHeader>
                 </div>
@@ -253,15 +253,15 @@ function CategoryManage() {
                       <div
                         className=""
                         id="dropzone-single"
-                        style={{ width: "100%", padding: "0 30px 30px 30px" }}
+                        style={{ width: '100%', padding: '0 30px 30px 30px' }}
                       >
-                        <div className="" style={{ height: "100%" }}>
+                        <div className="" style={{ height: '100%' }}>
                           <ImageUploading
                             value={images}
                             onChange={onChange}
                             maxNumber={maxNumber}
                             dataURLKey="data_url"
-                            acceptType={["jpg", "png", "jpeg"]}
+                            acceptType={['jpg', 'png', 'jpeg']}
                           >
                             {({
                               imageList,
@@ -279,7 +279,7 @@ function CategoryManage() {
                               >
                                 {images.length <= 0 && (
                                   <span
-                                    style={isDragging ? { color: "red" } : null}
+                                    style={isDragging ? { color: 'red' } : null}
                                     {...dragProps}
                                   >
                                     Tải ảnh
@@ -297,13 +297,13 @@ function CategoryManage() {
                               </div>
                             )}
                           </ImageUploading>
-                          {imageState === "invalid" && (
+                          {imageState === 'invalid' && (
                             <div
                               className="invalid"
                               style={{
-                                fontSize: "80%",
-                                color: "#fb6340",
-                                marginTop: "0.25rem",
+                                fontSize: '80%',
+                                color: '#fb6340',
+                                marginTop: '0.25rem',
                               }}
                             >
                               Hình ảnh không được để trống
@@ -321,21 +321,22 @@ function CategoryManage() {
                       <div className="col-md-12">
                         <div className="form-group">
                           <label className="form-control-label">
-                            Tên danh mục <span style={{ color: "red" }}>*</span>
+                            Tên danh mục <span style={{ color: 'red' }}>*</span>
                           </label>
                           <Input
-                            valid={categoryNameState === "valid"}
-                            invalid={categoryNameState === "invalid"}
+                            valid={categoryNameState === 'valid'}
+                            invalid={categoryNameState === 'invalid'}
+                            placeholder="Ăn vặt"
                             className="form-control"
                             type="search"
                             id="example-search-input"
                             value={`${categoryName}`}
                             onChange={(e) => {
-                              setcategoryName(e.target.value);
-                              if (e.target.value === "") {
-                                setcategoryNameState("invalid");
+                              setCategoryName(e.target.value)
+                              if (e.target.value === '') {
+                                setCategoryNameState('invalid')
                               } else {
-                                setcategoryNameState("valid");
+                                setCategoryNameState('valid')
                               }
                             }}
                           />
@@ -345,23 +346,26 @@ function CategoryManage() {
                         </div>
                         <div className="form-group">
                           <label className="form-control-label">
-                            Thứ tự ưu tiên{" "}
-                            <span style={{ color: "red" }}>*</span>
+                            Thứ tự ưu tiên{' '}
+                            <span style={{ color: 'red' }}>*</span>
                           </label>
                           <Input
-                            valid={priorityState === "valid"}
-                            invalid={priorityState === "invalid"}
+                            min={0}
+                            valid={priorityState === 'valid'}
+                            invalid={priorityState === 'invalid'}
                             className="form-control"
                             type="number"
                             placeholder="Nhập thứ tự (số)"
                             id="example-search-input"
                             value={`${priority}`}
                             onChange={(e) => {
-                              setPriority(e.target.value);
-                              if (e.target.value === "") {
-                                setPriorityState("invalid");
+                              setPriority(e.target.value)
+                              if (e.target.value === '') {
+                                setPriorityState('invalid')
+                              } else if (e.target.value < 0) {
+                                setPriority(0)
                               } else {
-                                setPriorityState("valid");
+                                setPriorityState('valid')
                               }
                             }}
                           />
@@ -375,19 +379,19 @@ function CategoryManage() {
                     <Col className="mt-3  text-md-right mb-4" lg="12" xs="5">
                       <Button
                         onClick={() => {
-                          setOpenCategoryModal(false);
+                          setOpenCategoryModal(false)
                         }}
                         // className="btn-neutral"
                         color="default"
                         size="lg"
                         style={{
-                          background: "#fff",
-                          color: "#000",
-                          padding: "0.875rem 2rem",
-                          border: "none",
+                          background: '#fff',
+                          color: '#000',
+                          padding: '0.875rem 2rem',
+                          border: 'none',
                         }}
                       >
-                        <div className="flex" style={{ alignItems: "center" }}>
+                        <div className="flex" style={{ alignItems: 'center' }}>
                           <i
                             className="fa-solid fa-backward"
                             style={{ fontSize: 18 }}
@@ -397,32 +401,32 @@ function CategoryManage() {
                       </Button>
                       <Button
                         onClick={() => {
-                          hanldeSubmit();
+                          hanldeSubmit()
                         }}
                         className="btn-neutral"
                         color="default"
                         size="lg"
                         disabled={isLoadingCircle}
                         style={{
-                          background: "var(--primary)",
-                          color: "#000",
-                          padding: "0.875rem 2rem",
+                          background: 'var(--primary)',
+                          color: '#000',
+                          padding: '0.875rem 2rem',
                         }}
                       >
                         <div
                           className="flex"
                           style={{
-                            alignItems: "center",
+                            alignItems: 'center',
                             width: 99,
-                            justifyContent: "center",
+                            justifyContent: 'center',
                           }}
                         >
                           {isLoadingCircle ? (
                             <Spinner
                               style={{
-                                color: "#fff",
-                                width: "1.31rem",
-                                height: "1.31rem",
+                                color: '#fff',
+                                width: '1.31rem',
+                                height: '1.31rem',
                               }}
                             >
                               Loading...
@@ -431,9 +435,9 @@ function CategoryManage() {
                             <>
                               <i
                                 className="fa-solid fa-square-plus"
-                                style={{ fontSize: 18, color: "#fff" }}
+                                style={{ fontSize: 18, color: '#fff' }}
                               ></i>
-                              <span style={{ color: "#fff" }}>Thêm mới</span>
+                              <span style={{ color: '#fff' }}>Thêm mới</span>
                             </>
                           )}
                         </div>
@@ -451,7 +455,7 @@ function CategoryManage() {
         size="sm"
         isOpen={openDeleteModal}
         toggle={() => {
-          setOpenDeleteModal(false);
+          setOpenDeleteModal(false)
         }}
       >
         <div className="modal-body p-0">
@@ -460,57 +464,57 @@ function CategoryManage() {
               <Container
                 className=""
                 fluid
-                style={{ padding: "1.5rem 1.5rem 1rem 1.5rem " }}
+                style={{ padding: '1.5rem 1.5rem 1rem 1.5rem ' }}
               >
                 <Row>
                   <div className="col-lg-12 ">
                     <h3>Bạn có chắc</h3>
                     <div
                       style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: "100%",
-                        padding: "0px 0px 30px 0px",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: '100%',
+                        padding: '0px 0px 30px 0px',
                       }}
                       className=""
                     >
                       <span className="mb-0">
-                        Danh mục:{" "}
+                        Danh mục:{' '}
                         <span style={{ fontWeight: 700 }}>
                           {storeCategoryModal.name}
-                        </span>{" "}
-                        sẽ bị xóa!!!{" "}
+                        </span>{' '}
+                        sẽ bị xóa!!!{' '}
                       </span>
                       <span className="mb-0">
-                        Bạn sẽ không thể hoàn nguyên hành động này{" "}
+                        Bạn sẽ không thể hoàn nguyên hành động này{' '}
                       </span>
                     </div>
                     <div className="col-md-12"></div>
                   </div>
                 </Row>
                 <Col className="text-md-right mb-3" lg="12" xs="5">
-                  <Row style={{ justifyContent: "flex-end" }}>
-                    {" "}
+                  <Row style={{ justifyContent: 'flex-end' }}>
+                    {' '}
                     <Button
                       onClick={() => {
-                        setOpenDeleteModal(false);
+                        setOpenDeleteModal(false)
                       }}
                       // className="btn-neutral"
                       color="default"
                       size="lg"
                       style={{
-                        background: "#fff",
-                        color: "#000",
-                        padding: "0.875rem 1rem",
-                        border: "none",
+                        background: '#fff',
+                        color: '#000',
+                        padding: '0.875rem 1rem',
+                        border: 'none',
                       }}
                     >
                       <div
                         className="flex"
                         style={{
-                          alignItems: "center",
+                          alignItems: 'center',
                           width: 80,
-                          justifyContent: "center",
+                          justifyContent: 'center',
                         }}
                       >
                         <span>Đóng</span>
@@ -518,8 +522,8 @@ function CategoryManage() {
                     </Button>
                     <Button
                       onClick={() => {
-                        setIsLoadingCircle(true);
-                        hanldeDeleteCategory(storeCategoryModal.id);
+                        setIsLoadingCircle(true)
+                        hanldeDeleteCategory(storeCategoryModal.id)
                         // hanldeDeleteStoreCate(storeCategoryModal.id, storeCategoryModal.name);
                       }}
                       className="btn-neutral"
@@ -527,25 +531,25 @@ function CategoryManage() {
                       color="default"
                       size="lg"
                       style={{
-                        background: "var(--primary)",
-                        color: "#fff",
-                        padding: "0.875rem 1rem",
+                        background: 'var(--primary)',
+                        color: '#fff',
+                        padding: '0.875rem 1rem',
                       }}
                     >
                       <div
                         className="flex"
                         style={{
-                          alignItems: "center",
+                          alignItems: 'center',
                           width: 80,
-                          justifyContent: "center",
+                          justifyContent: 'center',
                         }}
                       >
                         {isLoadingCircle ? (
                           <Spinner
                             style={{
-                              color: "rgb(250,250,250)",
-                              width: "1.31rem",
-                              height: "1.31rem",
+                              color: 'rgb(250,250,250)',
+                              width: '1.31rem',
+                              height: '1.31rem',
                             }}
                           >
                             Loading...
@@ -570,25 +574,25 @@ function CategoryManage() {
             <Card>
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  padding: "20px 0px",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  padding: '20px 0px',
                 }}
                 className="align-items-center"
               >
-                <CardHeader className="" style={{ padding: "0 0 0 20px" }}>
+                <CardHeader className="" style={{ padding: '0 0 0 20px' }}>
                   <div
                     className="flex"
-                    style={{ alignItems: "center", gap: 20 }}
+                    style={{ alignItems: 'center', gap: 20 }}
                   >
                     <div className="mb-0">
                       <InputGroup
                         className="input-group-lg input-group-flush"
-                        style={{ border: "1px solid #9e9e9e" }}
+                        style={{ border: '1px solid #9e9e9e' }}
                       >
                         <InputGroupAddon addonType="prepend">
-                          <InputGroupText style={{ padding: "0 15px" }}>
+                          <InputGroupText style={{ padding: '0 15px' }}>
                             <span className="fas fa-search" />
                           </InputGroupText>
                         </InputGroupAddon>
@@ -608,16 +612,16 @@ function CategoryManage() {
                   <Button
                     onClick={() => {
                       // history.push("/admin/category");
-                      setOpenCategoryModal(true);
+                      setOpenCategoryModal(true)
                     }}
                     className="btn-neutral"
                     color="default"
                     size="lg"
                     style={{
-                      background: "var(--primary)",
-                      color: "#fff",
+                      background: 'var(--primary)',
+                      color: '#fff',
                       fontWeight: 700,
-                      border: "1px solid var(--primary)",
+                      border: '1px solid var(--primary)',
                     }}
                   >
                     + Thêm Danh Mục Mới
@@ -630,11 +634,11 @@ function CategoryManage() {
                   className="align-items-center table-flush"
                   responsive
                   hover={true}
-                  style={{ position: "relative" }}
+                  style={{ position: 'relative' }}
                 >
                   <div
                     className={`loading-spin ${
-                      !isLoading && "loading-spin-done"
+                      !isLoading && 'loading-spin-done'
                     }`}
                   ></div>
                   <thead className="thead-light">
@@ -668,7 +672,7 @@ function CategoryManage() {
                     {categoryList.map((item, index) => {
                       return (
                         <CategoryItem data={item} key={index} index={index} />
-                      );
+                      )
                     })}
                   </tbody>
                 </Table>
@@ -677,20 +681,20 @@ function CategoryManage() {
                 <>
                   <div
                     className="center_flex"
-                    style={{ padding: "50px 0 0 0" }}
+                    style={{ padding: '50px 0 0 0' }}
                   >
                     <img
                       src="/icons/empty.png"
                       alt=""
-                      style={{ textAlign: "center", width: 300 }}
+                      style={{ textAlign: 'center', width: 300 }}
                     />
                   </div>
                   <h1
                     className="description"
                     style={{
                       fontSize: 18,
-                      textAlign: "center",
-                      padding: "20px 0 50px 0",
+                      textAlign: 'center',
+                      padding: '20px 0 50px 0',
                     }}
                   >
                     Không có danh mục nào!!!
@@ -742,7 +746,7 @@ function CategoryManage() {
         </Row>
       </Container>
     </>
-  );
+  )
 }
 
-export default CategoryManage;
+export default CategoryManage
