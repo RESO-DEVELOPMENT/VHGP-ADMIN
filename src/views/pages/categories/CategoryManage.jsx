@@ -81,6 +81,7 @@ function CategoryManage() {
   const [keyword, setKeyword] = useState('')
   const [images, setImages] = useState([])
   const maxNumber = 69
+
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
     if (imageList.length > 0) {
@@ -117,7 +118,8 @@ function CategoryManage() {
 
     return valid
   }
-  const hanldeSubmit = () => {
+
+  const handleSubmit = () => {
     if (validateCustomStylesForm()) {
       setIsLoadingCircle(true)
       let cate = {
@@ -146,10 +148,10 @@ function CategoryManage() {
         })
     }
   }
+
   function fetchDropdownOptions(key) {
     setIsLoading(true)
     setCategoryList([])
-    console.log(key)
     if (key !== '') {
       getListStoreCategorysByKey(key, 1, 100)
         .then((res) => {
@@ -165,15 +167,18 @@ function CategoryManage() {
       hanldeGetListCategorys()
     }
   }
+
   const debounceDropDown = useCallback(
     debounce((nextValue) => fetchDropdownOptions(nextValue), 1000),
     []
   )
+
   function handleInputOnchange(e) {
     const { value } = e.target
     setKeyword(value)
     debounceDropDown(value)
   }
+
   const hanldeGetListCategorys = () => {
     getListCategorys(1, 100).then((res) => {
       const categorys = res.data
@@ -181,13 +186,15 @@ function CategoryManage() {
       setIsLoading(false)
     })
   }
+
   useEffect(() => {
     setIsLoading(true)
     setTimeout(() => {
       hanldeGetListCategorys()
     }, 100)
   }, [])
-  const hanldeDeleteCategory = (id) => {
+
+  const handleDeleteCategory = (id) => {
     setIsLoadingCircle(true)
     deleteCategory(id)
       .then((res) => {
@@ -208,6 +215,7 @@ function CategoryManage() {
         notify('Đã xảy ra lỗi gì đó!!', 'Error')
       })
   }
+
   const handleReload = () => {
     setIsLoading(true)
     hanldeGetListCategorys()
@@ -228,6 +236,7 @@ function CategoryManage() {
               setOpenCategoryModal(false)
               setImages([])
               setCategoryName('')
+              setPriority('')
             }}
           >
             <div className="modal-body p-0">
@@ -319,6 +328,7 @@ function CategoryManage() {
                   <form>
                     <div className="row">
                       <div className="col-md-12">
+                        {/* Category */}
                         <div className="form-group">
                           <label className="form-control-label">
                             Tên danh mục <span style={{ color: 'red' }}>*</span>
@@ -344,6 +354,8 @@ function CategoryManage() {
                             Tên danh mục không được để trống
                           </div>
                         </div>
+
+                        {/* PRIORITY */}
                         <div className="form-group">
                           <label className="form-control-label">
                             Thứ tự ưu tiên{' '}
@@ -401,7 +413,7 @@ function CategoryManage() {
                       </Button>
                       <Button
                         onClick={() => {
-                          hanldeSubmit()
+                          handleSubmit()
                         }}
                         className="btn-neutral"
                         color="default"
@@ -450,7 +462,8 @@ function CategoryManage() {
           </Modal>
         </Col>
       </Row>
-      <Modal
+      {/* Delete modal */}
+      {/* <Modal
         className="modal-dialog-centered"
         size="sm"
         isOpen={openDeleteModal}
@@ -523,7 +536,7 @@ function CategoryManage() {
                     <Button
                       onClick={() => {
                         setIsLoadingCircle(true)
-                        hanldeDeleteCategory(storeCategoryModal.id)
+                        handleDeleteCategory(storeCategoryModal.id)
                         // hanldeDeleteStoreCate(storeCategoryModal.id, storeCategoryModal.name);
                       }}
                       className="btn-neutral"
@@ -567,7 +580,7 @@ function CategoryManage() {
             </div>
           </Card>
         </div>
-      </Modal>
+      </Modal> */}
       <Container className="mt--6" fluid>
         <Row>
           <div className="col">

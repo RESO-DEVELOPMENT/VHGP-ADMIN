@@ -63,7 +63,7 @@ export const CategoryModal = ({ handleReload }) => {
     setStatus(
       categoryModal.status === 'Active' ? optionsStatus[0] : optionsStatus[1]
     )
-  }, [categoryModal])
+  }, [categoryModal, openModal])
 
   const validateCustomStylesForm = () => {
     let valid = true
