@@ -153,7 +153,7 @@ export const NewStore = () => {
     } else if (password.length < 6) {
       valid = false
       setPasswordState('invalid')
-      setPasswordMessage('Mật khẩu tối thiểu 6 kí tự')
+      setPasswordMessage('Mật khẩu phải tối thiểu 6 kí tự')
     } else {
       // valid = true;
       setPasswordState('valid')
