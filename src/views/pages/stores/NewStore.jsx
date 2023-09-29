@@ -42,6 +42,7 @@ export const NewStore = () => {
   const [userNameState, setUserNameState] = useState('')
   const [password, setPassword] = useState('')
   const [passwordState, setPasswordState] = useState('')
+  const [passwordMessage, setPasswordMessage] = useState('')
   const [status, setStatus] = useState(0)
   const [brand, setBrand] = useState('')
   const [description, setDescription] = useState('')
