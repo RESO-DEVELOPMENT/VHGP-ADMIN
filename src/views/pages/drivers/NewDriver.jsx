@@ -1,8 +1,8 @@
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-import React, { useContext, useState } from "react";
-import ImageUploading from "react-images-uploading";
-import { useHistory } from "react-router";
-import Select from "react-select";
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
+import React, { useContext, useState } from 'react'
+import ImageUploading from 'react-images-uploading'
+import { useHistory } from 'react-router'
+import Select from 'react-select'
 import {
   Button,
   Card,
@@ -12,169 +12,188 @@ import {
   Input,
   Row,
   Spinner,
-} from "reactstrap";
-import { postShipper } from "../../../apis/shiperApiService";
-import SimpleHeader from "../../../components/Headers/SimpleHeader";
-import { notify } from "../../../components/Toast/ToastCustom";
-import { getBase64Image } from "../../../constants";
-import { AppContext } from "../../../context/AppProvider";
+} from 'reactstrap'
+import { postShipper } from '../../../apis/shiperApiService'
+import SimpleHeader from '../../../components/Headers/SimpleHeader'
+import { notify } from '../../../components/Toast/ToastCustom'
+import { getBase64Image } from '../../../constants'
+import { AppContext } from '../../../context/AppProvider'
 
 export const NewDriver = () => {
-  const { storeCategoryList } = useContext(AppContext);
-  const [driverName, setDriverName] = useState("");
-  const [driverNameState, setDriverNameState] = useState("");
-  const [phone, setPhone] = useState("");
-  const [phoneState, setPhoneState] = useState("");
-  const [vehicleType, setVehicleType] = useState("");
-  const [vehicleTypeState, setVehicleTypeState] = useState("");
-  const [vehicleColor, setVehicleColor] = useState("");
-  const [vehicleColorState, setVehicleColorState] = useState("");
-  const [deliveryTeam, setdeliveryTeam] = useState("");
-  const [deliveryTeamState, setDeliveryTeamState] = useState("");
-  const [userName, setUserName] = useState("");
-  const [userNameMess, setUserNameMess] = useState("");
-  const [userNameState, setUserNameState] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordState, setPasswordState] = useState("");
-  const [numberVehicle, setNumberVehicle] = useState("");
-  const [numberVehicleState, setNumberVehicleState] = useState("");
-  const [isLoadingCircle, setIsLoadingCircle] = useState(false);
-  const [images, setImages] = React.useState([]);
-  const [imageState, setImageState] = React.useState("");
-  const maxNumber = 69;
-  let history = useHistory();
+  const { storeCategoryList } = useContext(AppContext)
+  const [driverName, setDriverName] = useState('')
+  const [driverNameState, setDriverNameState] = useState('')
+  const [phone, setPhone] = useState('')
+  const [phoneState, setPhoneState] = useState('')
+  const [phoneMessage, setPhoneMessage] = useState('')
+  const [vehicleType, setVehicleType] = useState('')
+  const [vehicleTypeState, setVehicleTypeState] = useState('')
+  const [vehicleColor, setVehicleColor] = useState('')
+  const [vehicleColorState, setVehicleColorState] = useState('')
+  const [deliveryTeam, setdeliveryTeam] = useState('')
+  const [deliveryTeamState, setDeliveryTeamState] = useState('')
+  const [userName, setUserName] = useState('')
+  const [userNameMess, setUserNameMess] = useState('')
+  const [userNameState, setUserNameState] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordState, setPasswordState] = useState('')
+  const [passwordMessage, setPasswordMessage] = useState('')
+  const [numberVehicle, setNumberVehicle] = useState('')
+  const [numberVehicleState, setNumberVehicleState] = useState('')
+  const [isLoadingCircle, setIsLoadingCircle] = useState(false)
+  const [images, setImages] = React.useState([])
+  const [imageState, setImageState] = React.useState('')
+  const maxNumber = 69
+  let history = useHistory()
   const onChange = (imageList, addUpdateIndex) => {
-    setImages(imageList);
-  };
+    setImages(imageList)
+  }
   const customStylesPayment = {
     control: (provided, state) => ({
       ...provided,
-      background: "#fff",
-      borderColor: "#dee2e6",
-      minHeight: "30px",
-      height: "46px",
+      background: '#fff',
+      borderColor: '#dee2e6',
+      minHeight: '30px',
+      height: '46px',
       // width: "200px",
       boxShadow: state.isFocused ? null : null,
-      borderRadius: "0.5rem",
+      borderRadius: '0.5rem',
     }),
 
     input: (provided, state) => ({
       ...provided,
-      margin: "5px",
+      margin: '5px',
     }),
-  };
+  }
 
   const optionsCategoryStore = storeCategoryList.map((item) => {
     return {
       label: item.name,
       value: item.id,
-    };
-  });
+    }
+  })
   const optionsDeliveryTeam = [
     {
-      label: "Unico",
+      label: 'Unico',
       value: 1,
     },
-  ];
+  ]
   const optionsVehicleType = [
     {
-      label: "Xe máy",
+      label: 'Xe máy',
       value: 1,
     },
     {
-      label: "Ô tô",
+      label: 'Ô tô',
       value: 2,
     },
     {
-      label: "Xe tải",
+      label: 'Xe tải',
       value: 3,
     },
-  ];
+  ]
 
   const checkEmailValid = () => {
     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(userName)) {
-      return true;
+      return true
     }
-    return false;
-  };
+    return false
+  }
+
+  const checkPhoneValid = () => {
+    if (phone.match(/^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$/im)) {
+      return true
+    }
+    return false
+  }
 
   const validateCustomStylesForm = () => {
-    let valid = true;
-    if (driverName === "") {
-      valid = false;
-      setDriverNameState("invalid");
+    let valid = true
+    if (driverName === '') {
+      valid = false
+      setDriverNameState('invalid')
     } else {
       // valid = true;
-      setDriverNameState("valid");
+      setDriverNameState('valid')
     }
-    if (phone === "") {
-      valid = false;
-      setPhoneState("invalid");
+    if (phone === '') {
+      valid = false
+      setPhoneState('invalid')
+      setPhoneMessage('Số điện thoại không được để trống')
+    } else if (!checkPhoneValid()) {
+      valid = false
+      setPhoneState('invalid')
+      setPhoneMessage('Số điện thoại không hợp lệ')
     } else {
       // valid = true;
-      setPhoneState("valid");
+      setPhoneState('valid')
     }
-    if (userName === "") {
-      valid = false;
-      setUserNameState("invalid");
-      setUserNameMess("Tên đăng nhập không được để trống");
+    if (userName === '') {
+      valid = false
+      setUserNameState('invalid')
+      setUserNameMess('Tên đăng nhập không được để trống')
     } else if (!checkEmailValid()) {
-      valid = false;
-      setUserNameState("invalid");
-      setUserNameMess("Tên đăng nhập không hợp lệ");
+      valid = false
+      setUserNameState('invalid')
+      setUserNameMess('Tên đăng nhập không hợp lệ')
     } else {
       // valid = true;
-      setUserNameState("valid");
+      setUserNameState('valid')
     }
-    if (password === "") {
-      valid = false;
-      setPasswordState("invalid");
+    if (password === '') {
+      valid = false
+      setPasswordState('invalid')
+      setPasswordMessage('Mật khẩu không được để trống')
+    } else if (password.length < 6) {
+      valid = false
+      setPasswordState('invalid')
+      setPasswordMessage('Mật khẩu phải tối thiểu 6 kí tự')
     } else {
       // valid = true;
-      setPasswordState("valid");
+      setPasswordState('valid')
     }
     if (images.length === 0) {
-      valid = false;
-      setImageState("invalid");
+      valid = false
+      setImageState('invalid')
     } else {
       // valid = true;
-      setImageState("valid");
+      setImageState('valid')
     }
 
-    if (vehicleType === "") {
-      valid = false;
-      setVehicleTypeState("invalid");
+    if (vehicleType === '') {
+      valid = false
+      setVehicleTypeState('invalid')
     } else {
       // valid = true;
-      setVehicleTypeState("valid");
+      setVehicleTypeState('valid')
     }
-    if (numberVehicle === "") {
-      valid = false;
-      setNumberVehicleState("invalid");
+    if (numberVehicle === '') {
+      valid = false
+      setNumberVehicleState('invalid')
     } else {
       // valid = true;
-      setNumberVehicleState("valid");
+      setNumberVehicleState('valid')
     }
-    if (vehicleColor === "") {
-      valid = false;
-      setVehicleColorState("invalid");
+    if (vehicleColor === '') {
+      valid = false
+      setVehicleColorState('invalid')
     } else {
       // valid = true;
-      setVehicleColorState("valid");
+      setVehicleColorState('valid')
     }
-    if (deliveryTeam === "") {
-      valid = false;
-      setDeliveryTeamState("invalid");
+    if (deliveryTeam === '') {
+      valid = false
+      setDeliveryTeamState('invalid')
     } else {
       // valid = true;
-      setDeliveryTeamState("valid");
+      setDeliveryTeamState('valid')
     }
 
-    return valid;
-  };
+    return valid
+  }
   const handleSubmit = () => {
     if (validateCustomStylesForm()) {
-      setIsLoadingCircle(true);
+      setIsLoadingCircle(true)
       // const authentication = getAuth();
       let shipper = {
         id: userName,
@@ -183,56 +202,56 @@ export const NewDriver = () => {
         email: userName,
         vehicleType: vehicleType.label,
         image: images[0]
-          ? getBase64Image(images[0].data_url || "", images[0]?.file?.type) ||
-            ""
-          : "",
+          ? getBase64Image(images[0].data_url || '', images[0]?.file?.type) ||
+            ''
+          : '',
         deliveryTeam: deliveryTeam.label,
         password: password,
         licensePlates: numberVehicle,
         colour: vehicleColor,
-      };
-      console.log({ shipper });
+      }
+      console.log({ shipper })
 
-      const authentication = getAuth();
+      const authentication = getAuth()
       createUserWithEmailAndPassword(authentication, userName, password)
         .then((response) => {
           if (response) {
             postShipper(shipper)
               .then((res) => {
                 if (res.data) {
-                  setIsLoadingCircle(false);
-                  notify("Thêm mới thành công", "Success");
-                  history.push("/admin/drivers");
+                  setIsLoadingCircle(false)
+                  notify('Thêm mới thành công', 'Success')
+                  history.push('/admin/drivers')
                 }
               })
               .catch((error) => {
-                const authentication = getAuth().currentUser;
+                const authentication = getAuth().currentUser
                 authentication
                   .delete()
                   .then(function () {
-                    console.log(error);
-                    setIsLoadingCircle(false);
-                    notify("Đã xảy ra lỗi gì đó!!", "Error");
+                    console.log(error)
+                    setIsLoadingCircle(false)
+                    notify('Đã xảy ra lỗi gì đó!!', 'Error')
                   })
                   .catch(function (error) {
                     // An error happened.
-                    console.log(error);
-                    setIsLoadingCircle(false);
-                    notify("Đã xảy ra lỗi gì đó!!", "Error");
-                  });
-              });
+                    console.log(error)
+                    setIsLoadingCircle(false)
+                    notify('Đã xảy ra lỗi gì đó!!', 'Error')
+                  })
+              })
           } else {
-            notify("Tên đăng nhập đã được sử dụng", "Error");
-            setIsLoadingCircle(false);
+            notify('Tên đăng nhập đã được sử dụng', 'Error')
+            setIsLoadingCircle(false)
           }
         })
         .catch((error) => {
-          notify("Tên đăng nhập đã được sử dụng", "Error");
-          console.log(error);
-          setIsLoadingCircle(false);
-        });
+          notify('Tên đăng nhập đã được sử dụng', 'Error')
+          console.log(error)
+          setIsLoadingCircle(false)
+        })
     }
-  };
+  }
   return (
     <>
       <SimpleHeader name="Thêm Mới Tài Xế" parentName="Quản Lý" />
@@ -260,16 +279,16 @@ export const NewDriver = () => {
             <Card>
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  padding: "10px 0px",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  padding: '10px 0px',
                 }}
                 className="align-items-center"
               >
-                <CardHeader className="border-0" style={{ padding: "1rem" }}>
+                <CardHeader className="border-0" style={{ padding: '1rem' }}>
                   <h2 className="mb-0">
-                    Hình ảnh <span style={{ color: "red" }}>*</span>
+                    Hình ảnh <span style={{ color: 'red' }}>*</span>
                   </h2>
                 </CardHeader>
               </div>
@@ -279,15 +298,15 @@ export const NewDriver = () => {
                     <div
                       className=""
                       id="dropzone-single"
-                      style={{ width: "100%", padding: "0 30px 30px 30px" }}
+                      style={{ width: '100%', padding: '0 30px 30px 30px' }}
                     >
-                      <div className="" style={{ height: "100%" }}>
+                      <div className="" style={{ height: '100%' }}>
                         <ImageUploading
                           value={images}
                           onChange={onChange}
                           maxNumber={maxNumber}
                           dataURLKey="data_url"
-                          acceptType={["jpg", "png", "jpeg"]}
+                          acceptType={['jpg', 'png', 'jpeg']}
                         >
                           {({
                             imageList,
@@ -302,7 +321,7 @@ export const NewDriver = () => {
                             <div className="upload-img" onClick={onImageUpload}>
                               {images.length <= 0 && (
                                 <span
-                                  style={isDragging ? { color: "red" } : null}
+                                  style={isDragging ? { color: 'red' } : null}
                                   {...dragProps}
                                 >
                                   Tải ảnh
@@ -320,14 +339,14 @@ export const NewDriver = () => {
                             </div>
                           )}
                         </ImageUploading>
-                        {imageState === "invalid" && (
+                        {imageState === 'invalid' && (
                           <div
                             className="invalid"
                             style={{
-                              textAlign: "center",
-                              fontSize: "80%",
-                              color: "#fb6340",
-                              marginTop: "0.25rem",
+                              textAlign: 'center',
+                              fontSize: '80%',
+                              color: '#fb6340',
+                              marginTop: '0.25rem',
                             }}
                           >
                             Hình ảnh không được để trống
@@ -346,16 +365,16 @@ export const NewDriver = () => {
                 <form>
                   <div
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "100%",
-                      padding: "10px 0px",
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      padding: '10px 0px',
                     }}
                     className="align-items-center"
                   >
                     <CardHeader
                       className="border-0"
-                      style={{ padding: "15px 15px 15px 0" }}
+                      style={{ padding: '15px 15px 15px 0' }}
                     >
                       <h2 className="mb-0">Thông tin tài xế </h2>
                     </CardHeader>
@@ -364,17 +383,17 @@ export const NewDriver = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Tên tài xé <span style={{ color: "red" }}>*</span>
+                          Tên tài xế <span style={{ color: 'red' }}>*</span>
                         </label>
                         <Input
-                          valid={driverNameState === "valid"}
-                          invalid={driverNameState === "invalid"}
+                          valid={driverNameState === 'valid'}
+                          invalid={driverNameState === 'invalid'}
                           className="form-control"
                           type="search"
                           id="example-search-input"
                           value={`${driverName}`}
                           onChange={(e) => {
-                            setDriverName(e.target.value);
+                            setDriverName(e.target.value)
                           }}
                         />
                         <div className="invalid-feedback">
@@ -385,39 +404,37 @@ export const NewDriver = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Số điện thoại <span style={{ color: "red" }}>*</span>
+                          Số điện thoại <span style={{ color: 'red' }}>*</span>
                         </label>
                         <Input
-                          valid={phoneState === "valid"}
-                          invalid={phoneState === "invalid"}
+                          valid={phoneState === 'valid'}
+                          invalid={phoneState === 'invalid'}
                           className="form-control"
-                          type="number"
+                          type="search"
                           id="example-search-input"
                           value={`${phone}`}
                           onChange={(e) => {
-                            setPhone(e.target.value);
+                            setPhone(e.target.value)
                           }}
                         />
-                        <div className="invalid-feedback">
-                          Số điện thoại không được để trống
-                        </div>
+                        <div className="invalid-feedback">{phoneMessage}</div>
                       </div>
                     </div>
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Email đăng nhập{" "}
-                          <span style={{ color: "red" }}>*</span>
+                          Email đăng nhập{' '}
+                          <span style={{ color: 'red' }}>*</span>
                         </label>
                         <Input
-                          valid={userNameState === "valid"}
-                          invalid={userNameState === "invalid"}
+                          valid={userNameState === 'valid'}
+                          invalid={userNameState === 'invalid'}
                           className="form-control"
                           type="email"
                           id="example-search-input"
                           value={`${userName}`}
                           onChange={(e) => {
-                            setUserName(e.target.value);
+                            setUserName(e.target.value)
                           }}
                         />
                         <div className="invalid-feedback">{userNameMess}</div>
@@ -426,21 +443,21 @@ export const NewDriver = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Mật khẩu <span style={{ color: "red" }}>*</span>
+                          Mật khẩu <span style={{ color: 'red' }}>*</span>
                         </label>
                         <Input
-                          valid={passwordState === "valid"}
-                          invalid={passwordState === "invalid"}
+                          valid={passwordState === 'valid'}
+                          invalid={passwordState === 'invalid'}
                           className="form-control"
                           type="search"
                           id="example-search-input"
                           value={`${password}`}
                           onChange={(e) => {
-                            setPassword(e.target.value);
+                            setPassword(e.target.value)
                           }}
                         />
                         <div className="invalid-feedback">
-                          Mật khẩu không được để trống
+                          {passwordMessage}
                         </div>
                       </div>
                     </div>
@@ -448,11 +465,11 @@ export const NewDriver = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Đội giao hàng <span style={{ color: "red" }}>*</span>
+                          Đội giao hàng <span style={{ color: 'red' }}>*</span>
                         </label>
                         <div
                           className={`${
-                            deliveryTeamState === "invalid" && "error-select"
+                            deliveryTeamState === 'invalid' && 'error-select'
                           }`}
                         >
                           <Select
@@ -461,17 +478,17 @@ export const NewDriver = () => {
                             styles={customStylesPayment}
                             value={deliveryTeam}
                             onChange={(e) => {
-                              setdeliveryTeam(e);
+                              setdeliveryTeam(e)
                             }}
                           />
                         </div>
-                        {deliveryTeamState === "invalid" && (
+                        {deliveryTeamState === 'invalid' && (
                           <div
                             className="invalid"
                             style={{
-                              fontSize: "80%",
-                              color: "#fb6340",
-                              marginTop: "0.25rem",
+                              fontSize: '80%',
+                              color: '#fb6340',
+                              marginTop: '0.25rem',
                             }}
                           >
                             Đội giao hàng không được để trống
@@ -482,16 +499,16 @@ export const NewDriver = () => {
                   </div>
                   <div
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "100%",
-                      padding: "10px 0px",
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      padding: '10px 0px',
                     }}
                     className="align-items-center"
                   >
                     <CardHeader
                       className="border-0"
-                      style={{ padding: "15px 15px 15px 0" }}
+                      style={{ padding: '15px 15px 15px 0' }}
                     >
                       <h2 className="mb-0">Thông tin phương tiện </h2>
                     </CardHeader>
@@ -500,12 +517,12 @@ export const NewDriver = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Loại phương tiện{" "}
-                          <span style={{ color: "red" }}>*</span>
+                          Loại phương tiện{' '}
+                          <span style={{ color: 'red' }}>*</span>
                         </label>
                         <div
                           className={`${
-                            vehicleTypeState === "invalid" && "error-select"
+                            vehicleTypeState === 'invalid' && 'error-select'
                           }`}
                         >
                           <Select
@@ -514,17 +531,17 @@ export const NewDriver = () => {
                             styles={customStylesPayment}
                             value={vehicleType}
                             onChange={(e) => {
-                              setVehicleType(e);
+                              setVehicleType(e)
                             }}
                           />
                         </div>
-                        {vehicleTypeState === "invalid" && (
+                        {vehicleTypeState === 'invalid' && (
                           <div
                             className="invalid"
                             style={{
-                              fontSize: "80%",
-                              color: "#fb6340",
-                              marginTop: "0.25rem",
+                              fontSize: '80%',
+                              color: '#fb6340',
+                              marginTop: '0.25rem',
                             }}
                           >
                             Loại phương tiện không được để trống
@@ -535,17 +552,17 @@ export const NewDriver = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Biển số <span style={{ color: "red" }}>*</span>
+                          Biển số <span style={{ color: 'red' }}>*</span>
                         </label>
                         <Input
-                          valid={numberVehicleState === "valid"}
-                          invalid={numberVehicleState === "invalid"}
+                          valid={numberVehicleState === 'valid'}
+                          invalid={numberVehicleState === 'invalid'}
                           className="form-control"
                           type="search"
                           id="example-search-input"
                           value={`${numberVehicle}`}
                           onChange={(e) => {
-                            setNumberVehicle(e.target.value);
+                            setNumberVehicle(e.target.value)
                           }}
                         />
                         <div className="invalid-feedback">
@@ -556,17 +573,17 @@ export const NewDriver = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Màu sắc <span style={{ color: "red" }}>*</span>
+                          Màu sắc <span style={{ color: 'red' }}>*</span>
                         </label>
                         <Input
-                          valid={vehicleColorState === "valid"}
-                          invalid={vehicleColorState === "invalid"}
+                          valid={vehicleColorState === 'valid'}
+                          invalid={vehicleColorState === 'invalid'}
                           className="form-control"
                           type="search"
                           id="example-search-input"
                           value={vehicleColor}
                           onChange={(e) => {
-                            setVehicleColor(e.target.value);
+                            setVehicleColor(e.target.value)
                           }}
                         />
                         <div className="invalid-feedback">
@@ -578,19 +595,19 @@ export const NewDriver = () => {
                   <Col className="mt-3  text-md-right mb-4" lg="12" xs="5">
                     <Button
                       onClick={() => {
-                        history.push("/admin/drivers");
+                        history.push('/admin/drivers')
                       }}
                       // className="btn-neutral"
                       color="default"
                       size="lg"
                       style={{
-                        background: "#fff",
-                        color: "#000",
-                        padding: "0.875rem 2rem",
-                        border: "none",
+                        background: '#fff',
+                        color: '#000',
+                        padding: '0.875rem 2rem',
+                        border: 'none',
                       }}
                     >
-                      <div className="flex" style={{ alignItems: "center" }}>
+                      <div className="flex" style={{ alignItems: 'center' }}>
                         <i
                           className="fa-solid fa-backward"
                           style={{ fontSize: 18 }}
@@ -600,32 +617,32 @@ export const NewDriver = () => {
                     </Button>
                     <Button
                       onClick={() => {
-                        handleSubmit();
+                        handleSubmit()
                       }}
                       className="btn-neutral"
                       color="default"
                       size="lg"
                       disabled={isLoadingCircle}
                       style={{
-                        background: "var(--primary)",
-                        color: "#000",
-                        padding: "0.875rem 2rem",
+                        background: 'var(--primary)',
+                        color: '#000',
+                        padding: '0.875rem 2rem',
                       }}
                     >
                       <div
                         className="flex"
                         style={{
-                          alignItems: "center",
+                          alignItems: 'center',
                           width: 99,
-                          justifyContent: "center",
+                          justifyContent: 'center',
                         }}
                       >
                         {isLoadingCircle ? (
                           <Spinner
                             style={{
-                              color: "#fff",
-                              width: "1.31rem",
-                              height: "1.31rem",
+                              color: '#fff',
+                              width: '1.31rem',
+                              height: '1.31rem',
                             }}
                           >
                             Loading...
@@ -634,9 +651,9 @@ export const NewDriver = () => {
                           <>
                             <i
                               className="fa-solid fa-square-plus"
-                              style={{ fontSize: 18, color: "#fff" }}
+                              style={{ fontSize: 18, color: '#fff' }}
                             ></i>
-                            <span style={{ color: "#fff" }}>Thêm mới</span>
+                            <span style={{ color: '#fff' }}>Thêm mới</span>
                           </>
                         )}
                       </div>
@@ -649,5 +666,5 @@ export const NewDriver = () => {
         </Row>
       </Container>
     </>
-  );
-};
+  )
+}

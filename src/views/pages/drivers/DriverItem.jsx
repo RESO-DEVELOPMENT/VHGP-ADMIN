@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { AppContext } from "../../../context/AppProvider";
+import React, { useContext } from 'react'
+import { AppContext } from '../../../context/AppProvider'
 
 export const DriverItem = ({ data, index }) => {
   const {
@@ -7,7 +7,7 @@ export const DriverItem = ({ data, index }) => {
     setOpenModal,
     setStoreCategoryModal,
     setOpenDeleteModal,
-  } = useContext(AppContext);
+  } = useContext(AppContext)
   return (
     <>
       <tr>
@@ -24,17 +24,17 @@ export const DriverItem = ({ data, index }) => {
         </span>
     </td> */}
         <td>
-          {data.status === "Active" ? (
+          {data.status === 'Active' ? (
             <span
               className={`badge  status-success`}
-              style={{ padding: "0.8em 1em", fontSize: 11 }}
+              style={{ padding: '0.8em 1em', fontSize: 11 }}
             >
               Hoạt Động
             </span>
           ) : (
             <span
               className={`badge  status-cancel`}
-              style={{ padding: "0.8em 1em", fontSize: 11 }}
+              style={{ padding: '0.8em 1em', fontSize: 11 }}
             >
               Ngưng Hoạt Động
             </span>
@@ -46,21 +46,21 @@ export const DriverItem = ({ data, index }) => {
             className="fa-solid fa-pen-to-square mr-3 cusor"
             style={{ fontSize: 22 }}
             onClick={() => {
-              setShipperModal(data);
-              setOpenModal(true);
+              setShipperModal(data)
+              setOpenModal(true)
             }}
           ></i>
-          {/* <i
-                        className="fa-regular fa-trash-can mr-3 cusor"
-                        onClick={() => {
-                            setStoreCategoryModal(data);
-                            console.log(data);
-                            setOpenDeleteModal(true);
-                        }}
-                        style={{ fontSize: 22, color: "red" }}
-                    ></i> */}
+          <i
+            className="fa-regular fa-trash-can mr-3 cusor"
+            onClick={() => {
+              setStoreCategoryModal(data)
+              console.log(data)
+              setOpenDeleteModal(true)
+            }}
+            style={{ fontSize: 22, color: 'red' }}
+          ></i>
         </td>
       </tr>
     </>
-  );
-};
+  )
+}
