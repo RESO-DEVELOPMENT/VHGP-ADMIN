@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import Select from "react-select";
+import React, { useContext, useEffect, useState } from 'react'
+import Select from 'react-select'
 import {
   Button,
   Card,
@@ -11,21 +11,21 @@ import {
   Modal,
   Row,
   Spinner,
-} from "reactstrap";
+} from 'reactstrap'
 import {
   getListBrands,
   getStoreDetail,
   putStore,
-} from "../../apis/storeApiService";
-import { AppContext } from "../../context/AppProvider";
-import ImageUploading from "react-images-uploading";
+} from '../../apis/storeApiService'
+import { AppContext } from '../../context/AppProvider'
+import ImageUploading from 'react-images-uploading'
 import {
   getBase64Ima,
   getBase64Image,
   getBase64ImageNotType,
-} from "../../constants";
-import { notify } from "../Toast/ToastCustom";
-import axios from "axios";
+} from '../../constants'
+import { notify } from '../Toast/ToastCustom'
+import axios from 'axios'
 
 export const StoreModal = ({ handleReload }) => {
   const {
@@ -36,144 +36,144 @@ export const StoreModal = ({ handleReload }) => {
     storeCategoryList,
     buildingList,
     setStoreModal,
-  } = useContext(AppContext);
-  const [storeName, setStoreName] = useState("");
-  const [storeNameState, setStoreNameState] = useState("");
-  const [phone, setPhone] = useState("");
-  const [building, setBuilding] = useState("");
-  const [buildingState, setBuildingState] = useState("");
-  const [account, setAccount] = useState("");
-  const [status, setStatus] = useState(0);
-  const [brand, setBrand] = useState("");
-  const [openTime, setOpenTime] = useState("");
-  const [closeTime, setCloseTime] = useState("");
-  const [slogan, setSlogan] = useState("");
-  const [imageState, setimageState] = useState("");
-  const [images, setImages] = React.useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingCircle, setIsLoadingCircle] = useState(false);
-  const [imgUpdate, setImgUpdate] = useState(false);
-  const [description, setDescription] = useState("");
-  const [brandState, setBrandState] = useState("");
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
-  const [storeCategoryState, setStoreCategoryState] = useState("");
+  } = useContext(AppContext)
+  const [storeName, setStoreName] = useState('')
+  const [storeNameState, setStoreNameState] = useState('')
+  const [phone, setPhone] = useState('')
+  const [building, setBuilding] = useState('')
+  const [buildingState, setBuildingState] = useState('')
+  const [account, setAccount] = useState('')
+  const [status, setStatus] = useState(0)
+  const [brand, setBrand] = useState('')
+  const [openTime, setOpenTime] = useState('')
+  const [closeTime, setCloseTime] = useState('')
+  const [slogan, setSlogan] = useState('')
+  const [imageState, setimageState] = useState('')
+  const [images, setImages] = React.useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingCircle, setIsLoadingCircle] = useState(false)
+  const [imgUpdate, setImgUpdate] = useState(false)
+  const [description, setDescription] = useState('')
+  const [brandState, setBrandState] = useState('')
+  const [userName, setUserName] = useState('')
+  const [password, setPassword] = useState('')
+  const [storeCategoryState, setStoreCategoryState] = useState('')
   // const [brand, setBrand] = useState("");
-  const maxNumber = 69;
+  const maxNumber = 69
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
     if (imageList.length > 0) {
-      setimageState("valid");
-      setImgUpdate(true);
+      setimageState('valid')
+      setImgUpdate(true)
     } else {
-      setimageState("invalid");
+      setimageState('invalid')
     }
-    setImages(imageList);
-  };
+    setImages(imageList)
+  }
   const validateCustomStylesForm = () => {
-    let valid = true;
-    if (storeName === "") {
-      valid = false;
-      setStoreNameState("invalid");
+    let valid = true
+    if (storeName === '') {
+      valid = false
+      setStoreNameState('invalid')
     } else {
       // valid = true;
-      setStoreNameState("valid");
+      setStoreNameState('valid')
     }
 
     if (images.length === 0) {
-      valid = false;
-      setimageState("invalid");
+      valid = false
+      setimageState('invalid')
     } else {
       // valid = true;
-      setimageState("valid");
+      setimageState('valid')
     }
-    if (brand === "") {
-      valid = false;
-      setBrandState("invalid");
+    if (brand === '') {
+      valid = false
+      setBrandState('invalid')
     } else {
       // valid = true;
-      setBrandState("valid");
+      setBrandState('valid')
     }
-    if (storeCategory === "") {
-      valid = false;
-      setStoreCategoryState("invalid");
+    if (storeCategory === '') {
+      valid = false
+      setStoreCategoryState('invalid')
     } else {
       // valid = true;
-      setStoreCategoryState("valid");
+      setStoreCategoryState('valid')
     }
-    if (building === "") {
-      valid = false;
-      setBuildingState("invalid");
+    if (building === '') {
+      valid = false
+      setBuildingState('invalid')
     } else {
       // valid = true;
-      setBuildingState("valid");
+      setBuildingState('valid')
     }
 
-    return valid;
-  };
-  const [storeCategory, setStoreCategory] = useState("");
+    return valid
+  }
+  const [storeCategory, setStoreCategory] = useState('')
   useEffect(() => {
     if (storeModal.id) {
-      setIsLoading(true);
-      setStoreName(storeModal.name);
-      setPhone(storeModal.phone || "");
+      setIsLoading(true)
+      setStoreName(storeModal.name)
+      setPhone(storeModal.phone || '')
       setBuilding({
         label: storeModal.buildingStore,
         value: storeModal.buildingId,
-      });
+      })
       setBrand({
         label: storeModal.brandStoreName,
         value: storeModal.brandStoreId,
-      });
+      })
       setStoreCategory({
         label: storeModal.storeCateName,
         value: storeModal.storeCateId,
-      });
-      setAccount(storeModal.creditAccount);
+      })
+      setAccount(storeModal.creditAccount)
       getStoreDetail(storeModal.id)
         .then((res) => {
           if (res.data) {
-            console.log(res.data);
-            const store = res.data;
-            setOpenTime(store.openTime);
-            setCloseTime(store.closeTime);
-            setSlogan(store.slogan);
-            setPassword(store.account.password);
-            setImages(store.image);
-            setDescription(store.description !== null ? store.description : "");
+            console.log(res.data)
+            const store = res.data
+            setOpenTime(store.openTime)
+            setCloseTime(store.closeTime)
+            setSlogan(store.slogan)
+            setPassword(store.account.password)
+            setImages(store.image)
+            setDescription(store.description !== null ? store.description : '')
             setStatus({
-              label: store.status ? "Hoạt động" : "Ngừng hoạt động",
+              label: store.status ? 'Hoạt động' : 'Ngừng hoạt động',
               value: store.status ? true : false,
-            });
-            setIsLoading(false);
+            })
+            setIsLoading(false)
             if (store.image) {
-              setImages([{ data_url: store.image }]);
+              setImages([{ data_url: store.image }])
             } else {
-              setImages([]);
+              setImages([])
             }
           }
         })
         .catch((error) => {
-          console.log(error);
-          setIsLoading(false);
-          setIsLoadingCircle(false);
-        });
+          console.log(error)
+          setIsLoading(false)
+          setIsLoadingCircle(false)
+        })
     }
-  }, [storeModal]);
+  }, [storeModal])
   const hanldeUpdate = () => {
     if (validateCustomStylesForm()) {
-      setIsLoadingCircle(true);
+      setIsLoadingCircle(true)
 
       let store = {
         id: storeModal.id,
         name: storeName,
         buildingId: building.value,
         brandId: brand.value,
-        rate: "",
+        rate: '',
         closeTime: closeTime,
         openTime: openTime,
         image:
-          getBase64Image(images[0].data_url || "", images[0]?.file?.type) || "",
+          getBase64Image(images[0].data_url || '', images[0]?.file?.type) || '',
         storeCategoryId: storeCategory.value,
         slogan: slogan,
         phone: phone,
@@ -181,75 +181,75 @@ export const StoreModal = ({ handleReload }) => {
         description: description,
         creditAccount: account,
         password: password,
-      };
-      console.log({ store, imgUpdate });
+      }
+      console.log({ store, imgUpdate })
       putStore(store, storeModal.id, imgUpdate)
         .then((res) => {
           if (res.data) {
             if (
               res.data.statusCode != undefined &&
-              res.data.statusCode == "Fail"
+              res.data.statusCode == 'Fail'
             ) {
-              notify(res.data.message, "Error");
+              notify(res.data.message, 'Error')
             } else {
-              notify("Cập nhật thành công", "Success");
-              handleReload();
-              setOpenModal(false);
-              setStoreModal({});
-              setImages([]);
-              setImgUpdate(false);
+              notify('Cập nhật thành công', 'Success')
+              handleReload()
+              setOpenModal(false)
+              setStoreModal({})
+              setImages([])
+              setImgUpdate(false)
             }
-            setIsLoadingCircle(false);
+            setIsLoadingCircle(false)
           }
         })
         .catch((error) => {
-          console.log(error);
-          setIsLoadingCircle(false);
-          notify("Đã xảy ra lỗi gì đó!!", "Error");
-        });
+          console.log(error)
+          setIsLoadingCircle(false)
+          notify('Đã xảy ra lỗi gì đó!!', 'Error')
+        })
     }
-  };
+  }
   const customStylesPayment = {
     control: (provided, state) => ({
       ...provided,
-      background: "#fff",
-      borderColor: "#dee2e6",
-      minHeight: "30px",
-      height: "46px",
+      background: '#fff',
+      borderColor: '#dee2e6',
+      minHeight: '30px',
+      height: '46px',
       // width: "200px",
       boxShadow: state.isFocused ? null : null,
-      borderRadius: "0.5rem",
+      borderRadius: '0.5rem',
     }),
 
     input: (provided, state) => ({
       ...provided,
-      margin: "5px",
+      margin: '5px',
     }),
-  };
+  }
   const optionsBuilding = buildingList.map((item) => {
     return {
       label: item.name,
       value: item.id,
-    };
-  });
+    }
+  })
   const optionsBrand = brandList.map((item) => {
     return {
       label: item.name,
       value: item.id,
-    };
-  });
+    }
+  })
   const optionsCategoryStore = storeCategoryList.map((item) => {
     // console.log(item);
     return {
       label: item.name,
       value: item.id,
-    };
-  });
+    }
+  })
 
   const optionsStatus = [
-    { label: "Hoạt động", value: true },
-    { label: "Ngưng hoạt động", value: false },
-  ];
+    { label: 'Hoạt động', value: true },
+    { label: 'Ngưng hoạt động', value: false },
+  ]
   return (
     <>
       <Row>
@@ -259,31 +259,31 @@ export const StoreModal = ({ handleReload }) => {
             size="xl"
             isOpen={openModal}
             toggle={() => {
-              setStoreModal({});
-              setImages([]);
-              setOpenModal(false);
-              setImgUpdate(false);
+              setStoreModal({})
+              setImages([])
+              setOpenModal(false)
+              setImgUpdate(false)
             }}
           >
             <div className="modal-body p-0">
               <Card className="bg-secondary border-0 mb-0">
                 <CardHeader
                   className="bg-transparent "
-                  style={{ border: "none" }}
+                  style={{ border: 'none' }}
                 >
                   <h3>Chi tiết</h3>
                 </CardHeader>
                 <CardBody className="" style={{ paddingTop: 0 }}>
-                  <Container className="" fluid style={{ padding: "0 0px" }}>
+                  <Container className="" fluid style={{ padding: '0 0px' }}>
                     <Row>
                       <div className="col-lg-4 modal-product">
                         <Card>
                           <div
                             style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              width: "100%",
-                              padding: "10px 0px",
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              width: '100%',
+                              padding: '10px 0px',
                             }}
                             className="align-items-center"
                           >
@@ -298,11 +298,11 @@ export const StoreModal = ({ handleReload }) => {
                                   className=""
                                   id="dropzone-single"
                                   style={{
-                                    width: "100%",
-                                    padding: "0 30px 30px 30px",
+                                    width: '100%',
+                                    padding: '0 30px 30px 30px',
                                   }}
                                 >
-                                  <div className="" style={{ height: "100%" }}>
+                                  <div className="" style={{ height: '100%' }}>
                                     {/* <div className="view-img" onClick={() => {}}>
                                                                             <div className="view-img">
                                                                                 <img
@@ -320,7 +320,7 @@ export const StoreModal = ({ handleReload }) => {
                                       onChange={onChange}
                                       maxNumber={maxNumber}
                                       dataURLKey="data_url"
-                                      acceptType={["jpg", "png", "jpeg"]}
+                                      acceptType={['jpg', 'png', 'jpeg']}
                                     >
                                       {({
                                         imageList,
@@ -340,7 +340,7 @@ export const StoreModal = ({ handleReload }) => {
                                             <span
                                               style={
                                                 isDragging
-                                                  ? { color: "red" }
+                                                  ? { color: 'red' }
                                                   : null
                                               }
                                               {...dragProps}
@@ -375,16 +375,16 @@ export const StoreModal = ({ handleReload }) => {
                         <Card>
                           <div
                             style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              width: "100%",
-                              padding: "10px 0px",
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              width: '100%',
+                              padding: '10px 0px',
                             }}
                             className="align-items-center"
                           >
                             <CardHeader
                               className="border-0"
-                              style={{ padding: "15px" }}
+                              style={{ padding: '15px' }}
                             >
                               <h2 className="mb-0">Thông tin cửa hàng </h2>
                             </CardHeader>
@@ -419,7 +419,7 @@ export const StoreModal = ({ handleReload }) => {
                                       value={password}
                                       readOnly
                                       onChange={(e) => {
-                                        setPassword(e.target.value);
+                                        setPassword(e.target.value)
                                       }}
                                     />
                                   </div>
@@ -427,17 +427,17 @@ export const StoreModal = ({ handleReload }) => {
                                 <div className="col-md-6">
                                   <div className="form-group">
                                     <label className="form-control-label">
-                                      Tên cửa hàng{" "}
+                                      Tên cửa hàng{' '}
                                     </label>
                                     <Input
-                                      valid={storeNameState === "valid"}
-                                      invalid={storeNameState === "invalid"}
+                                      valid={storeNameState === 'valid'}
+                                      invalid={storeNameState === 'invalid'}
                                       className="form-control"
                                       type="search"
                                       id="example-search-input"
                                       value={`${storeName}`}
                                       onChange={(e) => {
-                                        setStoreName(e.target.value);
+                                        setStoreName(e.target.value)
                                       }}
                                     />
                                     <div className="invalid-feedback">
@@ -448,7 +448,7 @@ export const StoreModal = ({ handleReload }) => {
                                 <div className="col-md-6">
                                   <div className="form-group">
                                     <label className="form-control-label">
-                                      Số điện thoại{" "}
+                                      Số điện thoại{' '}
                                     </label>
                                     <Input
                                       className="form-control"
@@ -456,7 +456,7 @@ export const StoreModal = ({ handleReload }) => {
                                       id="example-search-input"
                                       value={`${phone}`}
                                       onChange={(e) => {
-                                        setPhone(e.target.value);
+                                        setPhone(e.target.value)
                                       }}
                                     />
                                   </div>
@@ -472,17 +472,17 @@ export const StoreModal = ({ handleReload }) => {
                                       styles={customStylesPayment}
                                       value={building}
                                       onChange={(e) => {
-                                        setBuilding(e);
+                                        setBuilding(e)
                                       }}
                                     />
                                   </div>
-                                  {buildingState === "invalid" && (
+                                  {buildingState === 'invalid' && (
                                     <div
                                       className="invalid"
                                       style={{
-                                        fontSize: "80%",
-                                        color: "#fb6340",
-                                        marginTop: "0.25rem",
+                                        fontSize: '80%',
+                                        color: '#fb6340',
+                                        marginTop: '0.25rem',
                                       }}
                                     >
                                       Địa chỉ không được để trống
@@ -500,17 +500,17 @@ export const StoreModal = ({ handleReload }) => {
                                       styles={customStylesPayment}
                                       value={brand}
                                       onChange={(e) => {
-                                        setBrand(e);
+                                        setBrand(e)
                                       }}
                                     />
                                   </div>
-                                  {brandState === "invalid" && (
+                                  {brandState === 'invalid' && (
                                     <div
                                       className="invalid"
                                       style={{
-                                        fontSize: "80%",
-                                        color: "#fb6340",
-                                        marginTop: "0.25rem",
+                                        fontSize: '80%',
+                                        color: '#fb6340',
+                                        marginTop: '0.25rem',
                                       }}
                                     >
                                       Thương hiệu không được để trống
@@ -528,17 +528,17 @@ export const StoreModal = ({ handleReload }) => {
                                       styles={customStylesPayment}
                                       value={storeCategory}
                                       onChange={(e) => {
-                                        setStoreCategory(e);
+                                        setStoreCategory(e)
                                       }}
                                     />
                                   </div>
-                                  {storeCategoryState === "invalid" && (
+                                  {storeCategoryState === 'invalid' && (
                                     <div
                                       className="invalid"
                                       style={{
-                                        fontSize: "80%",
-                                        color: "#fb6340",
-                                        marginTop: "0.25rem",
+                                        fontSize: '80%',
+                                        color: '#fb6340',
+                                        marginTop: '0.25rem',
                                       }}
                                     >
                                       Loại cửa hàng không được để trống
@@ -549,23 +549,23 @@ export const StoreModal = ({ handleReload }) => {
                                 <div className="col-md-6">
                                   <div className="form-group">
                                     <label className="form-control-label">
-                                      Số tài khoản{" "}
+                                      Số tài khoản{' '}
                                     </label>
                                     <Input
                                       className="form-control"
                                       type="search"
                                       id="example-search-input"
-                                      value={`${account || ""}`}
+                                      value={`${account || ''}`}
                                       onChange={(e) => {
-                                        setAccount(e.target.value);
+                                        setAccount(e.target.value)
                                       }}
                                     />
                                   </div>
                                 </div>
                                 <div className="col-md-4">
-                                  {" "}
+                                  {' '}
                                   <label className="form-control-label">
-                                    Giờ mở cửa{" "}
+                                    Giờ mở cửa{' '}
                                   </label>
                                   <Input
                                     className="form-control"
@@ -573,7 +573,7 @@ export const StoreModal = ({ handleReload }) => {
                                     id="example-search-input"
                                     value={`${openTime}`}
                                     onChange={(e) => {
-                                      setOpenTime(e.target.value);
+                                      setOpenTime(e.target.value)
                                     }}
                                   />
                                 </div>
@@ -581,7 +581,7 @@ export const StoreModal = ({ handleReload }) => {
                                   <div className="form-group">
                                     <div className="form-group">
                                       <label className="form-control-label">
-                                        Giờ đóng cửa{" "}
+                                        Giờ đóng cửa{' '}
                                       </label>
                                       <Input
                                         className="form-control"
@@ -589,7 +589,7 @@ export const StoreModal = ({ handleReload }) => {
                                         id="example-search-input"
                                         value={`${closeTime}`}
                                         onChange={(e) => {
-                                          setCloseTime(e.target.value);
+                                          setCloseTime(e.target.value)
                                         }}
                                       />
                                     </div>
@@ -607,8 +607,8 @@ export const StoreModal = ({ handleReload }) => {
                                       value={status}
                                       defaultValue={status}
                                       onChange={(e) => {
-                                        console.log(e);
-                                        setStatus(e);
+                                        console.log(e)
+                                        setStatus(e)
                                       }}
                                     />
                                   </div>
@@ -625,7 +625,7 @@ export const StoreModal = ({ handleReload }) => {
                                         id="example-search-input"
                                         value={`${description}`}
                                         onChange={(e) => {
-                                          setDescription(e.target.value);
+                                          setDescription(e.target.value)
                                         }}
                                       />
                                     </div>
@@ -654,19 +654,19 @@ export const StoreModal = ({ handleReload }) => {
                     <Col className="text-md-right mb-3" lg="12" xs="5">
                       <Button
                         onClick={() => {
-                          setOpenModal(false);
+                          setOpenModal(false)
                         }}
                         // className="btn-neutral"
                         color="default"
                         size="lg"
                         style={{
-                          background: "#fff",
-                          color: "#000",
-                          padding: "0.875rem 2rem",
-                          border: "none",
+                          background: '#fff',
+                          color: '#000',
+                          padding: '0.875rem 2rem',
+                          border: 'none',
                         }}
                       >
-                        <div className="flex" style={{ alignItems: "center" }}>
+                        <div className="flex" style={{ alignItems: 'center' }}>
                           <i
                             className="fa-solid fa-backward"
                             style={{ fontSize: 18 }}
@@ -676,32 +676,32 @@ export const StoreModal = ({ handleReload }) => {
                       </Button>
                       <Button
                         onClick={() => {
-                          hanldeUpdate();
+                          hanldeUpdate()
                         }}
                         className="btn-neutral"
                         disabled={isLoadingCircle}
                         color="default"
                         size="lg"
                         style={{
-                          background: "var(--primary)",
-                          color: "#000",
-                          padding: "0.875rem 2rem",
+                          background: 'var(--primary)',
+                          color: '#000',
+                          padding: '0.875rem 2rem',
                         }}
                       >
                         <div
                           className="flex"
                           style={{
-                            alignItems: "center",
+                            alignItems: 'center',
                             width: 99,
-                            justifyContent: "center",
+                            justifyContent: 'center',
                           }}
                         >
                           {isLoadingCircle ? (
                             <Spinner
                               style={{
-                                color: "#fff",
-                                width: "1.31rem",
-                                height: "1.31rem",
+                                color: '#fff',
+                                width: '1.31rem',
+                                height: '1.31rem',
                               }}
                             >
                               Loading...
@@ -710,9 +710,9 @@ export const StoreModal = ({ handleReload }) => {
                             <>
                               <i
                                 className="fa-solid fa-square-plus"
-                                style={{ fontSize: 18, color: "#fff" }}
+                                style={{ fontSize: 18, color: '#fff' }}
                               ></i>
-                              <span style={{ color: "#fff" }}>Chỉnh Sửa</span>
+                              <span style={{ color: '#fff' }}>Chỉnh Sửa</span>
                             </>
                           )}
                         </div>
@@ -726,5 +726,5 @@ export const StoreModal = ({ handleReload }) => {
         </Col>
       </Row>
     </>
-  );
-};
+  )
+}
