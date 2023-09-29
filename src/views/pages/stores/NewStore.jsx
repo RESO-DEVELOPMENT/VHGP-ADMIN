@@ -402,15 +402,20 @@ export const NewStore = () => {
                         <label className="form-control-label">
                           Số điện thoại{' '}
                         </label>
-                        <input
+                        <Input
+                          valid={phoneState === 'valid'}
+                          invalid={phoneState === 'invalid'}
                           className="form-control"
-                          type="number"
+                          type="search"
                           id="example-search-input"
                           value={`${phone}`}
                           onChange={(e) => {
                             setPhone(e.target.value)
                           }}
                         />
+                        <div className="invalid-feedback">
+                          Số điện thoại không hợp lệ
+                        </div>
                       </div>
                     </div>
                     <div className="col-md-6">
@@ -450,7 +455,7 @@ export const NewStore = () => {
                           }}
                         />
                         <div className="invalid-feedback">
-                          Mật khẩu không được để trống
+                          {passwordMessage}
                         </div>
                       </div>
                     </div>
