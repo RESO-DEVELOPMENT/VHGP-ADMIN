@@ -145,6 +145,11 @@ export const NewStore = () => {
     if (password === '') {
       valid = false
       setPasswordState('invalid')
+      setPasswordMessage('Mật khẩu không được để trống')
+    } else if (password.length < 6) {
+      valid = false
+      setPasswordState('invalid')
+      setPasswordMessage('Mật khẩu phải tối thiểu 6 kí tự')
     } else {
       // valid = true;
       setPasswordState('valid')
