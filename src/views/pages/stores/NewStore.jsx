@@ -1,7 +1,7 @@
-import React, { useContext, useState } from "react";
-import ImageUploading from "react-images-uploading";
-import { useHistory } from "react-router";
-import Select from "react-select";
+import React, { useContext, useState } from 'react'
+import ImageUploading from 'react-images-uploading'
+import { useHistory } from 'react-router'
+import Select from 'react-select'
 import {
   Button,
   Card,
@@ -11,180 +11,218 @@ import {
   Input,
   Row,
   Spinner,
-} from "reactstrap";
-import SimpleHeader from "../../../components/Headers/SimpleHeader";
-import { getBase64Image } from "../../../constants";
-import { AppContext } from "../../../context/AppProvider";
-import { app } from "../../../firebase-config.js";
+} from 'reactstrap'
+import SimpleHeader from '../../../components/Headers/SimpleHeader'
+import { getBase64Image } from '../../../constants'
+import { AppContext } from '../../../context/AppProvider'
+import { app } from '../../../firebase-config.js'
 import {
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-} from "firebase/auth";
-import { postStore } from "../../../apis/storeApiService";
-import { notify } from "../../../components/Toast/ToastCustom";
-const unitData = ["Gam", "Kg", "Chai", "Hủ", "Hộp", "Cái"];
+} from 'firebase/auth'
+import { postStore } from '../../../apis/storeApiService'
+import { notify } from '../../../components/Toast/ToastCustom'
+const unitData = ['Gam', 'Kg', 'Chai', 'Hủ', 'Hộp', 'Cái']
 
 export const NewStore = () => {
-  const { brandList, storeCategoryList, buildingList } = useContext(AppContext);
-  const [storeName, setStoreName] = useState("");
-  const [storeNameState, setStoreNameState] = useState("");
-  const [phone, setPhone] = useState("");
-  const [building, setBuilding] = useState("");
-  const [buildingState, setBuildingState] = useState("");
-  const [account, setAccount] = useState("");
-  const [openTime, setOpenTime] = useState("");
-  const [slogan, setSlogan] = useState("");
-  const [closeTime, setCloseTime] = useState("");
-  const [userName, setUserName] = useState("");
-  const [userNameMess, setUserNameMess] = useState("");
-  const [userNameState, setUserNameState] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordState, setPasswordState] = useState("");
-  const [status, setStatus] = useState(0);
-  const [brand, setBrand] = useState("");
-  const [description, setDescription] = useState("");
-  const [brandState, setBrandState] = useState("");
-  const [isLoadingCircle, setIsLoadingCircle] = useState(false);
-  const [storeCategory, setStoreCategory] = useState("");
-  const [storeCategoryState, setStoreCategoryState] = useState("");
-  const [images, setImages] = React.useState([]);
-  const [imageState, setImageState] = React.useState("");
-  const maxNumber = 69;
-  let history = useHistory();
+  const { brandList, storeCategoryList, buildingList } = useContext(AppContext)
+  const [storeName, setStoreName] = useState('')
+  const [storeNameState, setStoreNameState] = useState('')
+  const [phone, setPhone] = useState('')
+  const [phoneState, setPhoneState] = useState('')
+  const [building, setBuilding] = useState('')
+  const [buildingState, setBuildingState] = useState('')
+  const [account, setAccount] = useState('')
+  const [openTime, setOpenTime] = useState('')
+  const [slogan, setSlogan] = useState('')
+  const [closeTime, setCloseTime] = useState('')
+  const [userName, setUserName] = useState('')
+  const [userNameMess, setUserNameMess] = useState('')
+  const [userNameState, setUserNameState] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordState, setPasswordState] = useState('')
+  const [passwordMessage, setPasswordMessage] = useState('')
+  const [status, setStatus] = useState(0)
+  const [brand, setBrand] = useState('')
+  const [description, setDescription] = useState('')
+  const [brandState, setBrandState] = useState('')
+  const [isLoadingCircle, setIsLoadingCircle] = useState(false)
+  const [storeCategory, setStoreCategory] = useState('')
+  const [storeCategoryState, setStoreCategoryState] = useState('')
+  const [images, setImages] = React.useState([])
+  const [imageState, setImageState] = React.useState('')
+  const maxNumber = 69
+  let history = useHistory()
+
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
-    console.log(imageList, addUpdateIndex);
-    setImages(imageList);
-  };
+    console.log(imageList, addUpdateIndex)
+    setImages(imageList)
+  }
+
   const customStylesPayment = {
     control: (provided, state) => ({
       ...provided,
-      background: "#fff",
-      borderColor: "#dee2e6",
-      minHeight: "30px",
-      height: "46px",
+      background: '#fff',
+      borderColor: '#dee2e6',
+      minHeight: '30px',
+      height: '46px',
       // width: "200px",
       boxShadow: state.isFocused ? null : null,
-      borderRadius: "0.5rem",
+      borderRadius: '0.5rem',
     }),
 
     input: (provided, state) => ({
       ...provided,
-      margin: "5px",
+      margin: '5px',
     }),
-  };
+  }
+
   const optionsBrand = brandList.map((item) => {
     return {
       label: item.name,
       value: item.id,
-    };
-  });
+    }
+  })
+
   const optionsCategoryStore = storeCategoryList.map((item) => {
     return {
       label: item.name,
       value: item.id,
-    };
-  });
+    }
+  })
+
   const optionsBuilding = buildingList.map((item) => {
     return {
       label: item.name,
       value: item.id,
-    };
-  });
+    }
+  })
 
   const checkEmailValid = () => {
     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(userName)) {
-      return true;
+      return true
     }
-    return false;
-  };
+    return false
+  }
 
   const validateCustomStylesForm = () => {
-    let valid = true;
-    if (storeName === "") {
-      valid = false;
-      setStoreNameState("invalid");
+    let valid = true
+    // store name
+    if (storeName === '') {
+      valid = false
+      setStoreNameState('invalid')
     } else {
       // valid = true;
-      setStoreNameState("valid");
+      setStoreNameState('valid')
     }
-    if (userName === "") {
-      valid = false;
-      setUserNameState("invalid");
-      setUserNameMess("Tên đăng nhập không được để trống");
+
+    // phone number
+    const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$/im
+    if (phone !== '') {
+      if (!phone.match(phoneRegex)) {
+        console.log(phone)
+        valid = false
+        setPhoneState('invalid')
+      } else {
+        console.log('ok')
+        setPhoneState('valid')
+      }
+    }
+
+    // username
+    if (userName === '') {
+      valid = false
+      setUserNameState('invalid')
+      setUserNameMess('Tên đăng nhập không được để trống')
     } else if (!checkEmailValid()) {
-      valid = false;
-      setUserNameState("invalid");
-      setUserNameMess("Tên đăng nhập không hợp lệ");
-    } else {
-      // valid = true;f
-      setUserNameState("valid");
-    }
-
-    if (password === "") {
-      valid = false;
-      setPasswordState("invalid");
+      valid = false
+      setUserNameState('invalid')
+      setUserNameMess('Tên đăng nhập không hợp lệ')
     } else {
       // valid = true;
-      setPasswordState("valid");
+      setUserNameState('valid')
     }
+
+    // password
+    if (password === '') {
+      valid = false
+      setPasswordState('invalid')
+      setPasswordMessage('Mật khẩu không được để trống')
+    } else if (password.length < 6) {
+      valid = false
+      setPasswordState('invalid')
+      setPasswordMessage('Mật khẩu tối thiểu 6 kí tự')
+    } else {
+      // valid = true;
+      setPasswordState('valid')
+    }
+
+    // image
     if (images.length === 0) {
-      valid = false;
-      setImageState("invalid");
+      valid = false
+      setImageState('invalid')
     } else {
       // valid = true;
-      setImageState("valid");
-    }
-    if (brand === "") {
-      valid = false;
-      setBrandState("invalid");
-    } else {
-      // valid = true;
-      setBrandState("valid");
-    }
-    if (storeCategory === "") {
-      valid = false;
-      setStoreCategoryState("invalid");
-    } else {
-      // valid = true;
-      setStoreCategoryState("valid");
-    }
-    if (building === "") {
-      valid = false;
-      setBuildingState("invalid");
-    } else {
-      // valid = true;
-      setBuildingState("valid");
+      setImageState('valid')
     }
 
-    return valid;
-  };
+    // brand
+    if (brand === '') {
+      valid = false
+      setBrandState('invalid')
+    } else {
+      // valid = true;
+      setBrandState('valid')
+    }
+
+    // category
+    if (storeCategory === '') {
+      valid = false
+      setStoreCategoryState('invalid')
+    } else {
+      // valid = true;
+      setStoreCategoryState('valid')
+    }
+
+    //building
+    if (building === '') {
+      valid = false
+      setBuildingState('invalid')
+    } else {
+      // valid = true;
+      setBuildingState('valid')
+    }
+
+    return valid
+  }
+
   const handleSubmit = () => {
     if (validateCustomStylesForm()) {
-      setIsLoadingCircle(true);
-      const authentication = getAuth();
+      setIsLoadingCircle(true)
+      const authentication = getAuth()
 
       let store = {
         id: userName,
-        password: password,
         name: storeName,
         buildingId: building.value,
         brandId: brand.value,
-        rate: "",
+        rate: '',
         closeTime: closeTime,
         openTime: openTime,
         image: images[0]
-          ? getBase64Image(images[0].data_url || "", images[0]?.file?.type) ||
-            ""
-          : "",
+          ? getBase64Image(images[0].data_url || '', images[0]?.file?.type) ||
+            ''
+          : '',
         storeCategoryId: storeCategory.value,
         slogan: slogan,
         description: description,
         phone: phone,
         status: true,
-      };
-      console.log({ store });
+        password: password,
+      }
+      console.log({ store })
 
       createUserWithEmailAndPassword(authentication, userName, password)
         .then((response) => {
@@ -192,39 +230,40 @@ export const NewStore = () => {
             postStore(store)
               .then((res) => {
                 if (res.data) {
-                  setIsLoadingCircle(false);
-                  notify("Cập nhật thành công", "Success");
-                  history.push("/admin/stores");
+                  setIsLoadingCircle(false)
+                  notify('Cập nhật thành công', 'Success')
+                  history.push('/admin/stores')
                 }
               })
               .catch((error) => {
-                const authentication = getAuth().currentUser;
+                const authentication = getAuth().currentUser
                 authentication
                   .delete()
                   .then(function () {
-                    console.log(error);
-                    setIsLoadingCircle(false);
-                    notify("Đã xảy ra lỗi gì đó!!", "Error");
+                    console.log(error)
+                    setIsLoadingCircle(false)
+                    notify('Đã xảy ra lỗi gì đó!!', 'Error')
                   })
                   .catch(function (error) {
                     // An error happened.
-                    console.log(error);
-                    setIsLoadingCircle(false);
-                    notify("Đã xảy ra lỗi gì đó!!", "Error");
-                  });
-              });
+                    console.log(error)
+                    setIsLoadingCircle(false)
+                    notify('Đã xảy ra lỗi gì đó!!', 'Error')
+                  })
+              })
           } else {
-            notify("Tên đăng nhập đã được sử dụng", "Error");
-            setIsLoadingCircle(false);
+            notify('Tên đăng nhập đã được sử dụng', 'Error')
+            setIsLoadingCircle(false)
           }
         })
         .catch((error) => {
-          notify("Tên đăng nhập đã được sử dụng", "Error");
-          console.log(error);
-          setIsLoadingCircle(false);
-        });
+          notify('Tên đăng nhập đã được sử dụng', 'Error')
+          console.log(error)
+          setIsLoadingCircle(false)
+        })
     }
-  };
+  }
+
   return (
     <>
       <SimpleHeader name="Thêm Cửa Hàng Mới" parentName="Quản Lý" />
@@ -248,38 +287,42 @@ export const NewStore = () => {
                             </CardBody>
                         </Card>
                     </div> */}
+          {/* LEFT */}
           <div className="col-lg-4">
             <Card>
+              {/* LABEL */}
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  padding: "10px 0px",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  padding: '10px 0px',
                 }}
                 className="align-items-center"
               >
-                <CardHeader className="border-0" style={{ padding: "1rem" }}>
+                <CardHeader className="border-0" style={{ padding: '1rem' }}>
                   <h2 className="mb-0">
-                    Hình ảnh <span style={{ color: "red" }}>*</span>
+                    Hình ảnh <span style={{ color: 'red' }}>*</span>
                   </h2>
                 </CardHeader>
               </div>
+
+              {/* INPUT */}
               <div className="col-md-12">
                 <form>
                   <div className="row">
                     <div
                       className=""
                       id="dropzone-single"
-                      style={{ width: "100%", padding: "0 30px 30px 30px" }}
+                      style={{ width: '100%', padding: '0 30px 30px 30px' }}
                     >
-                      <div className="" style={{ height: "100%" }}>
+                      <div className="" style={{ height: '100%' }}>
                         <ImageUploading
                           value={images}
                           onChange={onChange}
                           maxNumber={maxNumber}
                           dataURLKey="data_url"
-                          acceptType={["jpg", "png", "jpeg"]}
+                          acceptType={['jpg', 'png', 'jpeg']}
                         >
                           {({
                             imageList,
@@ -294,7 +337,7 @@ export const NewStore = () => {
                             <div className="upload-img" onClick={onImageUpload}>
                               {images.length <= 0 && (
                                 <span
-                                  style={isDragging ? { color: "red" } : null}
+                                  style={isDragging ? { color: 'red' } : null}
                                   {...dragProps}
                                 >
                                   Tải ảnh
@@ -312,14 +355,14 @@ export const NewStore = () => {
                             </div>
                           )}
                         </ImageUploading>
-                        {imageState === "invalid" && (
+                        {imageState === 'invalid' && (
                           <div
                             className="invalid"
                             style={{
-                              textAlign: "center",
-                              fontSize: "80%",
-                              color: "#fb6340",
-                              marginTop: "0.25rem",
+                              textAlign: 'center',
+                              fontSize: '80%',
+                              color: '#fb6340',
+                              marginTop: '0.25rem',
                             }}
                           >
                             Hình ảnh không được để trống
@@ -332,38 +375,43 @@ export const NewStore = () => {
               </div>
             </Card>
           </div>
+
+          {/* RIGHT */}
           <div className="col-lg-8">
             <Card>
+              {/* TITLE */}
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  padding: "10px 0px",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  padding: '10px 0px',
                 }}
                 className="align-items-center"
               >
-                <CardHeader className="border-0" style={{ padding: "15px" }}>
+                <CardHeader className="border-0" style={{ padding: '15px' }}>
                   <h2 className="mb-0">Thông tin cửa hàng </h2>
                 </CardHeader>
               </div>
               <div className="col-md-12">
                 <form>
+                  {/* DETAIL */}
                   <div className="row">
+                    {/* STORE NAME */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Tên cửa hàng <span style={{ color: "red" }}>*</span>
+                          Tên cửa hàng <span style={{ color: 'red' }}>*</span>
                         </label>
                         <Input
-                          valid={storeNameState === "valid"}
-                          invalid={storeNameState === "invalid"}
+                          valid={storeNameState === 'valid'}
+                          invalid={storeNameState === 'invalid'}
                           className="form-control"
                           type="search"
                           id="example-search-input"
                           value={`${storeName}`}
                           onChange={(e) => {
-                            setStoreName(e.target.value);
+                            setStoreName(e.target.value)
                           }}
                         />
                         <div className="invalid-feedback">
@@ -371,67 +419,80 @@ export const NewStore = () => {
                         </div>
                       </div>
                     </div>
+
+                    {/* PHONE NUMBER */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Số điện thoại{" "}
+                          Số điện thoại{' '}
                         </label>
-                        <input
+                        <Input
+                          valid={phoneState === 'valid'}
+                          invalid={phoneState === 'invalid'}
                           className="form-control"
-                          type="number"
+                          type="search"
                           id="example-search-input"
                           value={`${phone}`}
                           onChange={(e) => {
-                            setPhone(e.target.value);
+                            setPhone(e.target.value)
                           }}
                         />
+                        <div className="invalid-feedback">
+                          Số điện thoại không hợp lệ
+                        </div>
                       </div>
                     </div>
+
+                    {/* EMAIL */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Email đăng nhập{" "}
-                          <span style={{ color: "red" }}>*</span>
+                          Email đăng nhập{' '}
+                          <span style={{ color: 'red' }}>*</span>
                         </label>
                         <Input
-                          valid={userNameState === "valid"}
-                          invalid={userNameState === "invalid"}
+                          valid={userNameState === 'valid'}
+                          invalid={userNameState === 'invalid'}
                           className="form-control"
                           type="email"
                           id="example-search-input"
                           value={`${userName}`}
                           onChange={(e) => {
-                            setUserName(e.target.value);
+                            setUserName(e.target.value)
                           }}
                         />
                         <div className="invalid-feedback">{userNameMess}</div>
                       </div>
                     </div>
+
+                    {/* PASSWORD */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Mật khẩu <span style={{ color: "red" }}>*</span>
+                          Mật khẩu <span style={{ color: 'red' }}>*</span>
                         </label>
                         <Input
-                          valid={passwordState === "valid"}
-                          invalid={passwordState === "invalid"}
+                          valid={passwordState === 'valid'}
+                          invalid={passwordState === 'invalid'}
                           className="form-control"
                           type="search"
                           id="example-search-input"
                           value={`${password}`}
                           onChange={(e) => {
-                            setPassword(e.target.value);
+                            setPassword(e.target.value)
                           }}
                         />
                         <div className="invalid-feedback">
-                          Mật khẩu không được để trống
+                          {passwordMessage}
                         </div>
                       </div>
                     </div>
+
+                    {/* START TIME */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Giờ mở cửa{" "}
+                          Giờ mở cửa{' '}
                         </label>
                         <input
                           className="form-control"
@@ -439,15 +500,17 @@ export const NewStore = () => {
                           id="example-search-input"
                           value={`${openTime}`}
                           onChange={(e) => {
-                            setOpenTime(e.target.value);
+                            setOpenTime(e.target.value)
                           }}
                         />
                       </div>
                     </div>
+
+                    {/* END TIME */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Giờ đóng cửa{" "}
+                          Giờ đóng cửa{' '}
                         </label>
                         <input
                           className="form-control"
@@ -455,19 +518,21 @@ export const NewStore = () => {
                           id="example-search-input"
                           value={`${closeTime}`}
                           onChange={(e) => {
-                            setCloseTime(e.target.value);
+                            setCloseTime(e.target.value)
                           }}
                         />
                       </div>
                     </div>
+
+                    {/* BUILDING */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Building <span style={{ color: "red" }}>*</span>
+                          Building <span style={{ color: 'red' }}>*</span>
                         </label>
                         <div
                           className={`${
-                            buildingState === "invalid" && "error-select"
+                            buildingState === 'invalid' && 'error-select'
                           }`}
                         >
                           <Select
@@ -476,17 +541,17 @@ export const NewStore = () => {
                             styles={customStylesPayment}
                             value={building}
                             onChange={(e) => {
-                              setBuilding(e);
+                              setBuilding(e)
                             }}
                           />
                         </div>
-                        {buildingState === "invalid" && (
+                        {buildingState === 'invalid' && (
                           <div
                             className="invalid"
                             style={{
-                              fontSize: "80%",
-                              color: "#fb6340",
-                              marginTop: "0.25rem",
+                              fontSize: '80%',
+                              color: '#fb6340',
+                              marginTop: '0.25rem',
                             }}
                           >
                             Địa chỉ không được để trống
@@ -494,10 +559,12 @@ export const NewStore = () => {
                         )}
                       </div>
                     </div>
+
+                    {/* ACCOUNT NUMBER */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Số tài khoản{" "}
+                          Số tài khoản{' '}
                         </label>
                         <input
                           className="form-control"
@@ -505,19 +572,21 @@ export const NewStore = () => {
                           id="example-search-input"
                           value={`${account}`}
                           onChange={(e) => {
-                            setAccount(e.target.value);
+                            setAccount(e.target.value)
                           }}
                         />
                       </div>
                     </div>
+
+                    {/* BRAND */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Thương hiệu <span style={{ color: "red" }}>*</span>
+                          Thương hiệu <span style={{ color: 'red' }}>*</span>
                         </label>
                         <div
                           className={`${
-                            brandState === "invalid" && "error-select"
+                            brandState === 'invalid' && 'error-select'
                           }`}
                         >
                           <Select
@@ -526,17 +595,17 @@ export const NewStore = () => {
                             styles={customStylesPayment}
                             value={brand}
                             onChange={(e) => {
-                              setBrand(e);
+                              setBrand(e)
                             }}
                           />
                         </div>
-                        {brandState === "invalid" && (
+                        {brandState === 'invalid' && (
                           <div
                             className="invalid"
                             style={{
-                              fontSize: "80%",
-                              color: "#fb6340",
-                              marginTop: "0.25rem",
+                              fontSize: '80%',
+                              color: '#fb6340',
+                              marginTop: '0.25rem',
                             }}
                           >
                             Thương hiệu không được để trống
@@ -544,14 +613,16 @@ export const NewStore = () => {
                         )}
                       </div>
                     </div>
+
+                    {/* CATEGORY */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Loại cửa hàng <span style={{ color: "red" }}>*</span>
+                          Loại cửa hàng <span style={{ color: 'red' }}>*</span>
                         </label>
                         <div
                           className={`${
-                            storeCategoryState === "invalid" && "error-select"
+                            storeCategoryState === 'invalid' && 'error-select'
                           }`}
                         >
                           <Select
@@ -560,17 +631,17 @@ export const NewStore = () => {
                             styles={customStylesPayment}
                             value={storeCategory}
                             onChange={(e) => {
-                              setStoreCategory(e);
+                              setStoreCategory(e)
                             }}
                           />
                         </div>
-                        {storeCategoryState === "invalid" && (
+                        {storeCategoryState === 'invalid' && (
                           <div
                             className="invalid"
                             style={{
-                              fontSize: "80%",
-                              color: "#fb6340",
-                              marginTop: "0.25rem",
+                              fontSize: '80%',
+                              color: '#fb6340',
+                              marginTop: '0.25rem',
                             }}
                           >
                             Loại cửa hàng không được để trống
@@ -578,6 +649,8 @@ export const NewStore = () => {
                         )}
                       </div>
                     </div>
+
+                    {/* DESCRIPTION */}
                     <div className="col-md-12">
                       <div className="form-group">
                         <label className="form-control-label">
@@ -590,29 +663,32 @@ export const NewStore = () => {
                             id="example-search-input"
                             value={`${description}`}
                             onChange={(e) => {
-                              setDescription(e.target.value);
+                              setDescription(e.target.value)
                             }}
                           />
                         </div>
                       </div>
                     </div>
                   </div>
+
+                  {/* ACTION BUTTONS */}
                   <Col className="mt-3  text-md-right mb-4" lg="12" xs="5">
+                    {/* BACK BUTTON */}
                     <Button
                       onClick={() => {
-                        history.push("/admin/stores");
+                        history.push('/admin/stores')
                       }}
                       // className="btn-neutral"
                       color="default"
                       size="lg"
                       style={{
-                        background: "#fff",
-                        color: "#000",
-                        padding: "0.875rem 2rem",
-                        border: "none",
+                        background: '#fff',
+                        color: '#000',
+                        padding: '0.875rem 2rem',
+                        border: 'none',
                       }}
                     >
-                      <div className="flex" style={{ alignItems: "center" }}>
+                      <div className="flex" style={{ alignItems: 'center' }}>
                         <i
                           className="fa-solid fa-backward"
                           style={{ fontSize: 18 }}
@@ -620,34 +696,36 @@ export const NewStore = () => {
                         <span>Trở Về</span>
                       </div>
                     </Button>
+
+                    {/* SUBMIT BUTTON */}
                     <Button
                       onClick={() => {
-                        handleSubmit();
+                        handleSubmit()
                       }}
                       className="btn-neutral"
                       color="default"
                       size="lg"
                       disabled={isLoadingCircle}
                       style={{
-                        background: "var(--primary)",
-                        color: "#000",
-                        padding: "0.875rem 2rem",
+                        background: 'var(--primary)',
+                        color: '#000',
+                        padding: '0.875rem 2rem',
                       }}
                     >
                       <div
                         className="flex"
                         style={{
-                          alignItems: "center",
+                          alignItems: 'center',
                           width: 99,
-                          justifyContent: "center",
+                          justifyContent: 'center',
                         }}
                       >
                         {isLoadingCircle ? (
                           <Spinner
                             style={{
-                              color: "#fff",
-                              width: "1.31rem",
-                              height: "1.31rem",
+                              color: '#fff',
+                              width: '1.31rem',
+                              height: '1.31rem',
                             }}
                           >
                             Loading...
@@ -656,9 +734,9 @@ export const NewStore = () => {
                           <>
                             <i
                               className="fa-solid fa-square-plus"
-                              style={{ fontSize: 18, color: "#fff" }}
+                              style={{ fontSize: 18, color: '#fff' }}
                             ></i>
-                            <span style={{ color: "#fff" }}>Thêm mới</span>
+                            <span style={{ color: '#fff' }}>Thêm mới</span>
                           </>
                         )}
                       </div>
@@ -671,5 +749,5 @@ export const NewStore = () => {
         </Row>
       </Container>
     </>
-  );
-};
+  )
+}
