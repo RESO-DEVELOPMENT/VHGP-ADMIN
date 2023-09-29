@@ -40,6 +40,8 @@ export const StoreModal = ({ handleReload }) => {
   const [storeName, setStoreName] = useState('')
   const [storeNameState, setStoreNameState] = useState('')
   const [phone, setPhone] = useState('')
+  const [phoneState, setPhoneState] = useState('')
+  const [phoneMessage, setPhoneMessage] = useState('')
   const [building, setBuilding] = useState('')
   const [buildingState, setBuildingState] = useState('')
   const [account, setAccount] = useState('')
@@ -48,7 +50,7 @@ export const StoreModal = ({ handleReload }) => {
   const [openTime, setOpenTime] = useState('')
   const [closeTime, setCloseTime] = useState('')
   const [slogan, setSlogan] = useState('')
-  const [imageState, setimageState] = useState('')
+  const [imageState, setImageState] = useState('')
   const [images, setImages] = React.useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingCircle, setIsLoadingCircle] = useState(false)
@@ -60,16 +62,25 @@ export const StoreModal = ({ handleReload }) => {
   const [storeCategoryState, setStoreCategoryState] = useState('')
   // const [brand, setBrand] = useState("");
   const maxNumber = 69
+
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
     if (imageList.length > 0) {
-      setimageState('valid')
+      setImageState('valid')
       setImgUpdate(true)
     } else {
-      setimageState('invalid')
+      setImageState('invalid')
     }
     setImages(imageList)
   }
+
+  const checkPhoneValid = () => {
+    if (phone.match(/^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$/im)) {
+      return true
+    }
+    return false
+  }
+
   const validateCustomStylesForm = () => {
     let valid = true
     if (storeName === '') {
@@ -78,14 +89,24 @@ export const StoreModal = ({ handleReload }) => {
     } else {
       // valid = true;
       setStoreNameState('valid')
+      setPhoneMessage('Số điện thoại không hợp lệ')
+    }
+
+    if (phone !== '') {
+      if (!checkPhoneValid()) {
+        valid = false
+        setPhoneState('invalid')
+      } else {
+        setPhoneState('valid')
+      }
     }
 
     if (images.length === 0) {
       valid = false
-      setimageState('invalid')
+      setImageState('invalid')
     } else {
       // valid = true;
-      setimageState('valid')
+      setImageState('valid')
     }
     if (brand === '') {
       valid = false
@@ -451,14 +472,19 @@ export const StoreModal = ({ handleReload }) => {
                                       Số điện thoại{' '}
                                     </label>
                                     <Input
+                                      valid={phoneState === 'valid'}
+                                      invalid={phoneState === 'invalid'}
                                       className="form-control"
-                                      type="number"
+                                      type="search"
                                       id="example-search-input"
                                       value={`${phone}`}
                                       onChange={(e) => {
                                         setPhone(e.target.value)
                                       }}
                                     />
+                                    <div className="invalid-feedback">
+                                      {phoneMessage}
+                                    </div>
                                   </div>
                                 </div>
                                 <div className="col-md-6">

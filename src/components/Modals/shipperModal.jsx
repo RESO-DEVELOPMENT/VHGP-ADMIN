@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import ImageUploading from "react-images-uploading";
-import Select from "react-select";
+import React, { useContext, useEffect, useState } from 'react'
+import ImageUploading from 'react-images-uploading'
+import Select from 'react-select'
 import {
   Button,
   Card,
@@ -12,93 +12,106 @@ import {
   Modal,
   Row,
   Spinner,
-} from "reactstrap";
-import { putShipper } from "../../apis/shiperApiService";
-import { getStoreDetail, putStore } from "../../apis/storeApiService";
-import { getBase64Image } from "../../constants";
-import { AppContext } from "../../context/AppProvider";
-import { notify } from "../Toast/ToastCustom";
+} from 'reactstrap'
+import { putShipper } from '../../apis/shiperApiService'
+import { getStoreDetail, putStore } from '../../apis/storeApiService'
+import { getBase64Image } from '../../constants'
+import { AppContext } from '../../context/AppProvider'
+import { notify } from '../Toast/ToastCustom'
 
 export const ShipperModal = ({ handleReload }) => {
   const { openModal, setOpenModal, shipperModal, setShipperModal } =
-    useContext(AppContext);
-  const [driverName, setDriverName] = useState("");
-  const [driverNameState, setDriverNameState] = useState("");
-  const [phone, setPhone] = useState("");
-  const [phoneState, setPhoneState] = useState("");
-  const [vehicleType, setVehicleType] = useState("");
-  const [vehicleTypeState, setVehicleTypeState] = useState("");
-  const [vehicleColor, setVehicleColor] = useState("");
-  const [vehicleColorState, setVehicleColorState] = useState("");
-  const [deliveryTeam, setdeliveryTeam] = useState("");
-  const [deliveryTeamState, setDeliveryTeamState] = useState("");
-  const [status, setStatus] = useState(0);
-  const [userName, setUserName] = useState("");
-  const [userNameState, setUserNameState] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordState, setPasswordState] = useState("");
-  const [numberVehicle, setNumberVehicle] = useState("");
-  const [numberVehicleState, setNumberVehicleState] = useState("");
-  const [isLoadingCircle, setIsLoadingCircle] = useState(false);
-  const [images, setImages] = React.useState([]);
+    useContext(AppContext)
+  const [driverName, setDriverName] = useState('')
+  const [driverNameState, setDriverNameState] = useState('')
+  const [phone, setPhone] = useState('')
+  const [phoneMessage, setPhoneMessage] = useState('')
+  const [phoneState, setPhoneState] = useState('')
+  const [vehicleType, setVehicleType] = useState('')
+  const [vehicleTypeState, setVehicleTypeState] = useState('')
+  const [vehicleColor, setVehicleColor] = useState('')
+  const [vehicleColorState, setVehicleColorState] = useState('')
+  const [deliveryTeam, setdeliveryTeam] = useState('')
+  const [deliveryTeamState, setDeliveryTeamState] = useState('')
+  const [status, setStatus] = useState(0)
+  const [userName, setUserName] = useState('')
+  const [userNameState, setUserNameState] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordState, setPasswordState] = useState('')
+  const [numberVehicle, setNumberVehicle] = useState('')
+  const [numberVehicleState, setNumberVehicleState] = useState('')
+  const [isLoadingCircle, setIsLoadingCircle] = useState(false)
+  const [images, setImages] = React.useState([])
   // const [brand, setBrand] = useState("");
-  const maxNumber = 69;
+  const maxNumber = 69
   const onChange = (imageList, addUpdateIndex) => {
-    setImages(imageList);
-  };
+    setImages(imageList)
+  }
   const customStylesPayment = {
     control: (provided, state) => ({
       ...provided,
-      background: "#fff",
-      borderColor: "#dee2e6",
-      minHeight: "30px",
-      height: "46px",
+      background: '#fff',
+      borderColor: '#dee2e6',
+      minHeight: '30px',
+      height: '46px',
       // width: "200px",
       boxShadow: state.isFocused ? null : null,
-      borderRadius: "0.5rem",
+      borderRadius: '0.5rem',
     }),
 
     input: (provided, state) => ({
       ...provided,
-      margin: "5px",
+      margin: '5px',
     }),
-  };
+  }
   const optionsDeliveryTeam = [
     {
-      label: "Unico",
+      label: 'Unico',
       value: 1,
     },
-  ];
+  ]
   const optionsVehicleType = [
     {
-      label: "Xe máy",
+      label: 'Xe máy',
       value: 1,
     },
     {
-      label: "Ô tô",
+      label: 'Ô tô',
       value: 2,
     },
     {
-      label: "Xe tải",
+      label: 'Xe tải',
       value: 3,
     },
-  ];
+  ]
+
+  const checkPhoneValid = () => {
+    if (phone.match(/^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$/im)) {
+      return true
+    }
+    return false
+  }
 
   const validateCustomStylesForm = () => {
-    let valid = true;
-    if (driverName === "") {
-      valid = false;
-      setDriverNameState("invalid");
+    let valid = true
+    if (driverName === '') {
+      valid = false
+      setDriverNameState('invalid')
     } else {
       // valid = true;
-      setDriverNameState("valid");
+      setDriverNameState('valid')
     }
-    if (phone === "") {
-      valid = false;
-      setPhoneState("invalid");
+    if (phone === '') {
+      valid = false
+      setPhoneState('invalid')
+      setPhoneMessage('Số điện thoại không được để trống')
+    } else if (!checkPhoneValid()) {
+      valid = false
+      setPhoneState('invalid')
+      setPhoneMessage('Số điện thoại không hợp lệ')
     } else {
       // valid = true;
-      setPhoneState("valid");
+      setPhoneState('valid')
     }
 
     // if (images.length === 0) {
@@ -109,65 +122,65 @@ export const ShipperModal = ({ handleReload }) => {
     //     setImageState("valid");
     // }
 
-    if (vehicleType === "") {
-      valid = false;
-      setVehicleTypeState("invalid");
+    if (vehicleType === '') {
+      valid = false
+      setVehicleTypeState('invalid')
     } else {
       // valid = true;
-      setVehicleTypeState("valid");
+      setVehicleTypeState('valid')
     }
-    if (numberVehicle === "") {
-      valid = false;
-      setNumberVehicleState("invalid");
+    if (numberVehicle === '') {
+      valid = false
+      setNumberVehicleState('invalid')
     } else {
       // valid = true;
-      setNumberVehicleState("valid");
+      setNumberVehicleState('valid')
     }
-    if (vehicleColor === "") {
-      valid = false;
-      setVehicleColorState("invalid");
+    if (vehicleColor === '') {
+      valid = false
+      setVehicleColorState('invalid')
     } else {
       // valid = true;
-      setVehicleColorState("valid");
+      setVehicleColorState('valid')
     }
-    if (deliveryTeam === "") {
-      valid = false;
-      setDeliveryTeamState("invalid");
+    if (deliveryTeam === '') {
+      valid = false
+      setDeliveryTeamState('invalid')
     } else {
       // valid = true;
-      setDeliveryTeamState("valid");
+      setDeliveryTeamState('valid')
     }
 
-    return valid;
-  };
+    return valid
+  }
   useEffect(() => {
-    setDriverName(shipperModal.fullName);
-    setPhone(shipperModal.phone);
+    setDriverName(shipperModal.fullName)
+    setPhone(shipperModal.phone)
     setdeliveryTeam({
       label: shipperModal.deliveryTeam,
       value: shipperModal.deliveryTeam,
-    });
-    setNumberVehicle(shipperModal.licensePlates);
+    })
+    setNumberVehicle(shipperModal.licensePlates)
     setVehicleType({
       label: shipperModal.vehicleType,
       value: shipperModal.vehicleType,
-    });
-    setVehicleColor(shipperModal.colour);
+    })
+    setVehicleColor(shipperModal.colour)
     setStatus(
-      shipperModal.status === "Active" ? optionsStatus[0] : optionsStatus[1]
-    );
-    if (shipperModal.image !== null && shipperModal.image !== "") {
-      setImages([{ data_url: shipperModal.image }]);
+      shipperModal.status === 'Active' ? optionsStatus[0] : optionsStatus[1]
+    )
+    if (shipperModal.image !== null && shipperModal.image !== '') {
+      setImages([{ data_url: shipperModal.image }])
     } else {
-      setImages([]);
+      setImages([])
     }
 
-    return () => {};
-  }, [shipperModal]);
+    return () => {}
+  }, [shipperModal])
 
   const handleSubmit = () => {
     if (validateCustomStylesForm()) {
-      setIsLoadingCircle(true);
+      setIsLoadingCircle(true)
       // const authentication = getAuth();
       let shipper = {
         id: shipperModal.id,
@@ -176,38 +189,38 @@ export const ShipperModal = ({ handleReload }) => {
         email: shipperModal.id,
         vehicleType: vehicleType.label,
         image: images[0]
-          ? getBase64Image(images[0].data_url || "", images[0]?.file?.type) ||
-            ""
-          : "",
+          ? getBase64Image(images[0].data_url || '', images[0]?.file?.type) ||
+            ''
+          : '',
         deliveryTeam: deliveryTeam.label,
         password: shipperModal.password,
         licensePlates: numberVehicle,
         colour: vehicleColor,
         status: status.value,
-      };
-      console.log({ shipper });
+      }
+      console.log({ shipper })
       putShipper(shipper)
         .then((res) => {
           if (res.data) {
-            setIsLoadingCircle(false);
-            handleReload();
-            notify("Cập nhật thành công", "Success");
-            setOpenModal(false);
-            setShipperModal({});
-            setImages([]);
+            setIsLoadingCircle(false)
+            handleReload()
+            notify('Cập nhật thành công', 'Success')
+            setOpenModal(false)
+            setShipperModal({})
+            setImages([])
           }
         })
         .catch((error) => {
-          console.log(error);
-          setIsLoadingCircle(false);
-          notify("Đã xảy ra lỗi gì đó!!", "Error");
-        });
+          console.log(error)
+          setIsLoadingCircle(false)
+          notify('Đã xảy ra lỗi gì đó!!', 'Error')
+        })
     }
-  };
+  }
   const optionsStatus = [
-    { label: "Hoạt động", value: "Active" },
-    { label: "Ngưng hoạt động", value: "Deactive" },
-  ];
+    { label: 'Hoạt động', value: 'Active' },
+    { label: 'Ngưng hoạt động', value: 'Deactive' },
+  ]
   return (
     <>
       <Row>
@@ -217,30 +230,30 @@ export const ShipperModal = ({ handleReload }) => {
             size="xl"
             isOpen={openModal}
             toggle={() => {
-              setShipperModal({});
-              setImages([]);
-              setOpenModal(false);
+              setShipperModal({})
+              setImages([])
+              setOpenModal(false)
             }}
           >
             <div className="modal-body p-0">
               <Card className="bg-secondary border-0 mb-0">
                 <CardHeader
                   className="bg-transparent "
-                  style={{ border: "none" }}
+                  style={{ border: 'none' }}
                 >
                   <h3>Chi tiết</h3>
                 </CardHeader>
                 <CardBody className="" style={{ paddingTop: 0 }}>
-                  <Container className="" fluid style={{ padding: "0 0px" }}>
+                  <Container className="" fluid style={{ padding: '0 0px' }}>
                     <Row>
                       <div className="col-lg-4 modal-product">
                         <Card>
                           <div
                             style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              width: "100%",
-                              padding: "10px 0px",
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              width: '100%',
+                              padding: '10px 0px',
                             }}
                             className="align-items-center"
                           >
@@ -255,17 +268,17 @@ export const ShipperModal = ({ handleReload }) => {
                                   className=""
                                   id="dropzone-single"
                                   style={{
-                                    width: "100%",
-                                    padding: "0 30px 30px 30px",
+                                    width: '100%',
+                                    padding: '0 30px 30px 30px',
                                   }}
                                 >
-                                  <div className="" style={{ height: "100%" }}>
+                                  <div className="" style={{ height: '100%' }}>
                                     <ImageUploading
                                       value={images}
                                       onChange={onChange}
                                       maxNumber={maxNumber}
                                       dataURLKey="data_url"
-                                      acceptType={["jpg", "png", "jpeg"]}
+                                      acceptType={['jpg', 'png', 'jpeg']}
                                     >
                                       {({
                                         imageList,
@@ -285,7 +298,7 @@ export const ShipperModal = ({ handleReload }) => {
                                             <span
                                               style={
                                                 isDragging
-                                                  ? { color: "red" }
+                                                  ? { color: 'red' }
                                                   : null
                                               }
                                               {...dragProps}
@@ -320,16 +333,16 @@ export const ShipperModal = ({ handleReload }) => {
                         <Card>
                           <div
                             style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              width: "100%",
-                              padding: "10px 0px",
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              width: '100%',
+                              padding: '10px 0px',
                             }}
                             className="align-items-center"
                           >
                             <CardHeader
                               className="border-0"
-                              style={{ padding: "15px" }}
+                              style={{ padding: '15px' }}
                             >
                               <h2 className="mb-0">Thông tin tài xế </h2>
                             </CardHeader>
@@ -364,7 +377,7 @@ export const ShipperModal = ({ handleReload }) => {
                                       value={shipperModal.password}
                                       readOnly
                                       onChange={(e) => {
-                                        setPassword(e.target.value);
+                                        setPassword(e.target.value)
                                       }}
                                     />
                                   </div>
@@ -372,17 +385,17 @@ export const ShipperModal = ({ handleReload }) => {
                                 <div className="col-md-6">
                                   <div className="form-group">
                                     <label className="form-control-label">
-                                      Tên tài xế{" "}
+                                      Tên tài xế{' '}
                                     </label>
                                     <Input
-                                      valid={driverNameState === "valid"}
-                                      invalid={driverNameState === "invalid"}
+                                      valid={driverNameState === 'valid'}
+                                      invalid={driverNameState === 'invalid'}
                                       className="form-control"
                                       type="search"
                                       id="example-search-input"
                                       value={`${driverName}`}
                                       onChange={(e) => {
-                                        setDriverName(e.target.value);
+                                        setDriverName(e.target.value)
                                       }}
                                     />
                                     <div className="invalid-feedback">
@@ -393,34 +406,34 @@ export const ShipperModal = ({ handleReload }) => {
                                 <div className="col-md-6">
                                   <div className="form-group">
                                     <label className="form-control-label">
-                                      Số điện thoại{" "}
+                                      Số điện thoại{' '}
                                     </label>
                                     <Input
-                                      valid={phoneState === "valid"}
-                                      invalid={phoneState === "invalid"}
+                                      valid={phoneState === 'valid'}
+                                      invalid={phoneState === 'invalid'}
                                       className="form-control"
-                                      type="number"
+                                      type="search"
                                       id="example-search-input"
                                       value={`${phone}`}
                                       onChange={(e) => {
-                                        setPhone(e.target.value);
+                                        setPhone(e.target.value)
                                       }}
                                     />
                                     <div className="invalid-feedback">
-                                      Số điện thoại không được để trống
+                                      {phoneMessage}
                                     </div>
                                   </div>
                                 </div>
                                 <div className="col-md-6">
                                   <div className="form-group">
                                     <label className="form-control-label">
-                                      Đội giao hàng{" "}
-                                      <span style={{ color: "red" }}>*</span>
+                                      Đội giao hàng{' '}
+                                      <span style={{ color: 'red' }}>*</span>
                                     </label>
                                     <div
                                       className={`${
-                                        deliveryTeamState === "invalid" &&
-                                        "error-select"
+                                        deliveryTeamState === 'invalid' &&
+                                        'error-select'
                                       }`}
                                     >
                                       <Select
@@ -429,17 +442,17 @@ export const ShipperModal = ({ handleReload }) => {
                                         styles={customStylesPayment}
                                         value={deliveryTeam}
                                         onChange={(e) => {
-                                          setdeliveryTeam(e);
+                                          setdeliveryTeam(e)
                                         }}
                                       />
                                     </div>
-                                    {deliveryTeamState === "invalid" && (
+                                    {deliveryTeamState === 'invalid' && (
                                       <div
                                         className="invalid"
                                         style={{
-                                          fontSize: "80%",
-                                          color: "#fb6340",
-                                          marginTop: "0.25rem",
+                                          fontSize: '80%',
+                                          color: '#fb6340',
+                                          marginTop: '0.25rem',
                                         }}
                                       >
                                         Đội giao hàng không được để trống
@@ -450,19 +463,19 @@ export const ShipperModal = ({ handleReload }) => {
                               </div>
                               <div
                                 style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  width: "100%",
-                                  padding: "10px 0px",
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  width: '100%',
+                                  padding: '10px 0px',
                                 }}
                                 className="align-items-center"
                               >
                                 <CardHeader
                                   className="border-0"
-                                  style={{ padding: "15px 15px 15px 0" }}
+                                  style={{ padding: '15px 15px 15px 0' }}
                                 >
                                   <h2 className="mb-0">
-                                    Thông tin phương tiện{" "}
+                                    Thông tin phương tiện{' '}
                                   </h2>
                                 </CardHeader>
                               </div>
@@ -470,13 +483,13 @@ export const ShipperModal = ({ handleReload }) => {
                                 <div className="col-md-6">
                                   <div className="form-group">
                                     <label className="form-control-label">
-                                      Loại phương tiện{" "}
-                                      <span style={{ color: "red" }}>*</span>
+                                      Loại phương tiện{' '}
+                                      <span style={{ color: 'red' }}>*</span>
                                     </label>
                                     <div
                                       className={`${
-                                        vehicleTypeState === "invalid" &&
-                                        "error-select"
+                                        vehicleTypeState === 'invalid' &&
+                                        'error-select'
                                       }`}
                                     >
                                       <Select
@@ -485,17 +498,17 @@ export const ShipperModal = ({ handleReload }) => {
                                         styles={customStylesPayment}
                                         value={vehicleType}
                                         onChange={(e) => {
-                                          setVehicleType(e);
+                                          setVehicleType(e)
                                         }}
                                       />
                                     </div>
-                                    {vehicleTypeState === "invalid" && (
+                                    {vehicleTypeState === 'invalid' && (
                                       <div
                                         className="invalid"
                                         style={{
-                                          fontSize: "80%",
-                                          color: "#fb6340",
-                                          marginTop: "0.25rem",
+                                          fontSize: '80%',
+                                          color: '#fb6340',
+                                          marginTop: '0.25rem',
                                         }}
                                       >
                                         Loại phương tiện không được để trống
@@ -506,18 +519,18 @@ export const ShipperModal = ({ handleReload }) => {
                                 <div className="col-md-6">
                                   <div className="form-group">
                                     <label className="form-control-label">
-                                      Biển số{" "}
-                                      <span style={{ color: "red" }}>*</span>
+                                      Biển số{' '}
+                                      <span style={{ color: 'red' }}>*</span>
                                     </label>
                                     <Input
-                                      valid={numberVehicleState === "valid"}
-                                      invalid={numberVehicleState === "invalid"}
+                                      valid={numberVehicleState === 'valid'}
+                                      invalid={numberVehicleState === 'invalid'}
                                       className="form-control"
                                       type="search"
                                       id="example-search-input"
                                       value={`${numberVehicle}`}
                                       onChange={(e) => {
-                                        setNumberVehicle(e.target.value);
+                                        setNumberVehicle(e.target.value)
                                       }}
                                     />
                                     <div className="invalid-feedback">
@@ -528,18 +541,18 @@ export const ShipperModal = ({ handleReload }) => {
                                 <div className="col-md-6">
                                   <div className="form-group">
                                     <label className="form-control-label">
-                                      Màu sắc{" "}
-                                      <span style={{ color: "red" }}>*</span>
+                                      Màu sắc{' '}
+                                      <span style={{ color: 'red' }}>*</span>
                                     </label>
                                     <Input
-                                      valid={vehicleColorState === "valid"}
-                                      invalid={vehicleColorState === "invalid"}
+                                      valid={vehicleColorState === 'valid'}
+                                      invalid={vehicleColorState === 'invalid'}
                                       className="form-control"
                                       type="search"
                                       id="example-search-input"
                                       value={vehicleColor}
                                       onChange={(e) => {
-                                        setVehicleColor(e.target.value);
+                                        setVehicleColor(e.target.value)
                                       }}
                                     />
                                     <div className="invalid-feedback">
@@ -559,8 +572,8 @@ export const ShipperModal = ({ handleReload }) => {
                                       value={status}
                                       defaultValue={status}
                                       onChange={(e) => {
-                                        console.log(e);
-                                        setStatus(e);
+                                        console.log(e)
+                                        setStatus(e)
                                       }}
                                     />
                                   </div>
@@ -574,19 +587,19 @@ export const ShipperModal = ({ handleReload }) => {
                     <Col className="text-md-right mb-3" lg="12" xs="5">
                       <Button
                         onClick={() => {
-                          setOpenModal(false);
+                          setOpenModal(false)
                         }}
                         // className="btn-neutral"
                         color="default"
                         size="lg"
                         style={{
-                          background: "#fff",
-                          color: "#000",
-                          padding: "0.875rem 2rem",
-                          border: "none",
+                          background: '#fff',
+                          color: '#000',
+                          padding: '0.875rem 2rem',
+                          border: 'none',
                         }}
                       >
-                        <div className="flex" style={{ alignItems: "center" }}>
+                        <div className="flex" style={{ alignItems: 'center' }}>
                           <i
                             className="fa-solid fa-backward"
                             style={{ fontSize: 18 }}
@@ -596,32 +609,32 @@ export const ShipperModal = ({ handleReload }) => {
                       </Button>
                       <Button
                         onClick={() => {
-                          handleSubmit();
+                          handleSubmit()
                         }}
                         className="btn-neutral"
                         disabled={isLoadingCircle}
                         color="default"
                         size="lg"
                         style={{
-                          background: "var(--primary)",
-                          color: "#000",
-                          padding: "0.875rem 2rem",
+                          background: 'var(--primary)',
+                          color: '#000',
+                          padding: '0.875rem 2rem',
                         }}
                       >
                         <div
                           className="flex"
                           style={{
-                            alignItems: "center",
+                            alignItems: 'center',
                             width: 99,
-                            justifyContent: "center",
+                            justifyContent: 'center',
                           }}
                         >
                           {isLoadingCircle ? (
                             <Spinner
                               style={{
-                                color: "#fff",
-                                width: "1.31rem",
-                                height: "1.31rem",
+                                color: '#fff',
+                                width: '1.31rem',
+                                height: '1.31rem',
                               }}
                             >
                               Loading...
@@ -630,9 +643,9 @@ export const ShipperModal = ({ handleReload }) => {
                             <>
                               <i
                                 className="fa-solid fa-square-plus"
-                                style={{ fontSize: 18, color: "#fff" }}
+                                style={{ fontSize: 18, color: '#fff' }}
                               ></i>
-                              <span style={{ color: "#fff" }}>Chỉnh Sửa</span>
+                              <span style={{ color: '#fff' }}>Chỉnh Sửa</span>
                             </>
                           )}
                         </div>
@@ -646,5 +659,5 @@ export const ShipperModal = ({ handleReload }) => {
         </Col>
       </Row>
     </>
-  );
-};
+  )
+}

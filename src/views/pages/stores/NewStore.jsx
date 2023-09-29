@@ -42,7 +42,6 @@ export const NewStore = () => {
   const [userNameState, setUserNameState] = useState('')
   const [password, setPassword] = useState('')
   const [passwordState, setPasswordState] = useState('')
-  const [passwordMessage, setPasswordMessage] = useState('')
   const [status, setStatus] = useState(0)
   const [brand, setBrand] = useState('')
   const [description, setDescription] = useState('')
@@ -54,13 +53,11 @@ export const NewStore = () => {
   const [imageState, setImageState] = React.useState('')
   const maxNumber = 69
   let history = useHistory()
-
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
     console.log(imageList, addUpdateIndex)
     setImages(imageList)
   }
-
   const customStylesPayment = {
     control: (provided, state) => ({
       ...provided,
@@ -78,21 +75,18 @@ export const NewStore = () => {
       margin: '5px',
     }),
   }
-
   const optionsBrand = brandList.map((item) => {
     return {
       label: item.name,
       value: item.id,
     }
   })
-
   const optionsCategoryStore = storeCategoryList.map((item) => {
     return {
       label: item.name,
       value: item.id,
     }
   })
-
   const optionsBuilding = buildingList.map((item) => {
     return {
       label: item.name,
@@ -107,9 +101,15 @@ export const NewStore = () => {
     return false
   }
 
+  const checkPhoneValid = () => {
+    if (phone.match(/^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$/im)) {
+      return true
+    }
+    return false
+  }
+
   const validateCustomStylesForm = () => {
     let valid = true
-    // store name
     if (storeName === '') {
       valid = false
       setStoreNameState('invalid')
@@ -119,14 +119,11 @@ export const NewStore = () => {
     }
 
     // phone number
-    const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$/im
     if (phone !== '') {
-      if (!phone.match(phoneRegex)) {
-        console.log(phone)
+      if (!checkPhoneValid()) {
         valid = false
         setPhoneState('invalid')
       } else {
-        console.log('ok')
         setPhoneState('valid')
       }
     }
@@ -141,25 +138,17 @@ export const NewStore = () => {
       setUserNameState('invalid')
       setUserNameMess('Tên đăng nhập không hợp lệ')
     } else {
-      // valid = true;
+      // valid = true;f
       setUserNameState('valid')
     }
 
-    // password
     if (password === '') {
       valid = false
       setPasswordState('invalid')
-      setPasswordMessage('Mật khẩu không được để trống')
-    } else if (password.length < 6) {
-      valid = false
-      setPasswordState('invalid')
-      setPasswordMessage('Mật khẩu tối thiểu 6 kí tự')
     } else {
       // valid = true;
       setPasswordState('valid')
     }
-
-    // image
     if (images.length === 0) {
       valid = false
       setImageState('invalid')
@@ -167,8 +156,6 @@ export const NewStore = () => {
       // valid = true;
       setImageState('valid')
     }
-
-    // brand
     if (brand === '') {
       valid = false
       setBrandState('invalid')
@@ -176,8 +163,6 @@ export const NewStore = () => {
       // valid = true;
       setBrandState('valid')
     }
-
-    // category
     if (storeCategory === '') {
       valid = false
       setStoreCategoryState('invalid')
@@ -185,8 +170,6 @@ export const NewStore = () => {
       // valid = true;
       setStoreCategoryState('valid')
     }
-
-    //building
     if (building === '') {
       valid = false
       setBuildingState('invalid')
@@ -197,7 +180,6 @@ export const NewStore = () => {
 
     return valid
   }
-
   const handleSubmit = () => {
     if (validateCustomStylesForm()) {
       setIsLoadingCircle(true)
@@ -205,6 +187,7 @@ export const NewStore = () => {
 
       let store = {
         id: userName,
+        password: password,
         name: storeName,
         buildingId: building.value,
         brandId: brand.value,
@@ -220,7 +203,6 @@ export const NewStore = () => {
         description: description,
         phone: phone,
         status: true,
-        password: password,
       }
       console.log({ store })
 
@@ -263,7 +245,6 @@ export const NewStore = () => {
         })
     }
   }
-
   return (
     <>
       <SimpleHeader name="Thêm Cửa Hàng Mới" parentName="Quản Lý" />
@@ -287,10 +268,8 @@ export const NewStore = () => {
                             </CardBody>
                         </Card>
                     </div> */}
-          {/* LEFT */}
           <div className="col-lg-4">
             <Card>
-              {/* LABEL */}
               <div
                 style={{
                   display: 'flex',
@@ -306,8 +285,6 @@ export const NewStore = () => {
                   </h2>
                 </CardHeader>
               </div>
-
-              {/* INPUT */}
               <div className="col-md-12">
                 <form>
                   <div className="row">
@@ -375,11 +352,8 @@ export const NewStore = () => {
               </div>
             </Card>
           </div>
-
-          {/* RIGHT */}
           <div className="col-lg-8">
             <Card>
-              {/* TITLE */}
               <div
                 style={{
                   display: 'flex',
@@ -395,9 +369,7 @@ export const NewStore = () => {
               </div>
               <div className="col-md-12">
                 <form>
-                  {/* DETAIL */}
                   <div className="row">
-                    {/* STORE NAME */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
@@ -419,31 +391,22 @@ export const NewStore = () => {
                         </div>
                       </div>
                     </div>
-
-                    {/* PHONE NUMBER */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
                           Số điện thoại{' '}
                         </label>
-                        <Input
-                          valid={phoneState === 'valid'}
-                          invalid={phoneState === 'invalid'}
+                        <input
                           className="form-control"
-                          type="search"
+                          type="number"
                           id="example-search-input"
                           value={`${phone}`}
                           onChange={(e) => {
                             setPhone(e.target.value)
                           }}
                         />
-                        <div className="invalid-feedback">
-                          Số điện thoại không hợp lệ
-                        </div>
                       </div>
                     </div>
-
-                    {/* EMAIL */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
@@ -464,8 +427,6 @@ export const NewStore = () => {
                         <div className="invalid-feedback">{userNameMess}</div>
                       </div>
                     </div>
-
-                    {/* PASSWORD */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
@@ -483,12 +444,10 @@ export const NewStore = () => {
                           }}
                         />
                         <div className="invalid-feedback">
-                          {passwordMessage}
+                          Mật khẩu không được để trống
                         </div>
                       </div>
                     </div>
-
-                    {/* START TIME */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
@@ -505,8 +464,6 @@ export const NewStore = () => {
                         />
                       </div>
                     </div>
-
-                    {/* END TIME */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
@@ -523,8 +480,6 @@ export const NewStore = () => {
                         />
                       </div>
                     </div>
-
-                    {/* BUILDING */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
@@ -559,8 +514,6 @@ export const NewStore = () => {
                         )}
                       </div>
                     </div>
-
-                    {/* ACCOUNT NUMBER */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
@@ -577,8 +530,6 @@ export const NewStore = () => {
                         />
                       </div>
                     </div>
-
-                    {/* BRAND */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
@@ -613,8 +564,6 @@ export const NewStore = () => {
                         )}
                       </div>
                     </div>
-
-                    {/* CATEGORY */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
@@ -649,8 +598,6 @@ export const NewStore = () => {
                         )}
                       </div>
                     </div>
-
-                    {/* DESCRIPTION */}
                     <div className="col-md-12">
                       <div className="form-group">
                         <label className="form-control-label">
@@ -670,10 +617,7 @@ export const NewStore = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* ACTION BUTTONS */}
                   <Col className="mt-3  text-md-right mb-4" lg="12" xs="5">
-                    {/* BACK BUTTON */}
                     <Button
                       onClick={() => {
                         history.push('/admin/stores')
@@ -696,8 +640,6 @@ export const NewStore = () => {
                         <span>Trở Về</span>
                       </div>
                     </Button>
-
-                    {/* SUBMIT BUTTON */}
                     <Button
                       onClick={() => {
                         handleSubmit()
