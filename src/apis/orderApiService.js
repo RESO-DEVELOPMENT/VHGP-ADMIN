@@ -104,3 +104,18 @@ export const cancelOrder = (OrderId) => {
     }
   )
 }
+
+//https://api.vhgp.net/api/v1/suppliers/deervinhome%40deer.com/billOfLanding
+export const createOrder = (supplierId, order) => {
+  console.log(supplierId)
+  console.log(order)
+
+  return axios.post(
+    `${BASE_URL_CORAL_TEAM_VERSION}suppliers/${supplierId}/billOfLanding`,
+    order,
+    {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }
+  )
+}
