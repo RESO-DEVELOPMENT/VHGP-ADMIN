@@ -254,7 +254,9 @@ export const Order = () => {
                               dateConvert.split(',')[1]
                             console.log(date)
                             setFilter({ ...filter, date: date })
-                          } else {
+                          }
+                          // Ngày không hợp lệ thì set date là ngày tiếp theo để UI hiển thị không có đơn hàng nào
+                          else {
                             let dateConvert = moment()
                               .add(1, 'days')
                               .format('ll')
@@ -263,7 +265,9 @@ export const Order = () => {
                               dateConvert.split(',')[1]
                             console.log(date)
                           }
-                        } else {
+                        }
+                        // Nếu input empty thì hiển thị toàn bộ đơn hàng
+                        else {
                           date = ''
                         }
 

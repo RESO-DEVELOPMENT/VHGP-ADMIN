@@ -218,6 +218,7 @@ function Sidebar({ toggleSidenav, sidenavOpen, routes, logo, rtlActive }) {
       target: '_blank',
     }
   }
+
   const scrollBarInner = (
     <div className="scrollbar-inner">
       <div
@@ -305,6 +306,7 @@ function Sidebar({ toggleSidenav, sidenavOpen, routes, logo, rtlActive }) {
       </div>
     </div>
   )
+
   return (
     <Navbar
       className={
