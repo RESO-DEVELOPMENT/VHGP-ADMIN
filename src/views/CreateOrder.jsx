@@ -33,12 +33,6 @@ const CreateOrder = () => {
   const [totalState, setTotalState] = useState('')
   const [note, setNote] = useState('')
   const [isLoadingCircle, setIsLoadingCircle] = useState(false)
-  const [storeCategoryState, setStoreCategoryState] = useState('')
-  const [priorityState, setPriorityState] = useState('')
-  const [priority, setPriority] = useState('')
-
-  const [area, setArea] = useState('')
-  const [areaState, setAreaState] = useState('')
 
   const customStyles = {
     control: (provided, state) => ({
@@ -148,6 +142,12 @@ const CreateOrder = () => {
           if (res.data) {
             setIsLoadingCircle(false)
             notify('Thêm mới thành công', 'Success')
+            setStore('')
+            setBuilding('')
+            setName('')
+            setPhone('')
+            setTotal('')
+            setNote('')
           }
         })
         .catch((error) => {
