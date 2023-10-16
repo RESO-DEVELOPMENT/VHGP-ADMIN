@@ -289,7 +289,6 @@ export const Order = () => {
                       styles={customStylesPayment}
                       value={payment}
                       onChange={(e) => {
-                        console.log(e)
                         // setIsLoading(true);
                         // setOrders([]);
                         setPayment(e)

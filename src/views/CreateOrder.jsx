@@ -32,6 +32,8 @@ const CreateOrder = () => {
   const [total, setTotal] = useState('')
   const [totalState, setTotalState] = useState('')
   const [note, setNote] = useState('')
+  const [payment, setPayment] = useState('')
+  const [paymentState, setPaymentState] = useState('')
   const [isLoadingCircle, setIsLoadingCircle] = useState(false)
 
   const customStyles = {
@@ -63,6 +65,22 @@ const CreateOrder = () => {
     return {
       label: item.name,
       value: item.id,
+    }
+  })
+
+  const getPaymentName = (item) => {
+    switch (item) {
+      case 0:
+        return 'Thu hộ'
+      case 1:
+        return 'Đã thanh toán'
+    }
+  }
+
+  const optionsPayment = [0, 1].map((item) => {
+    return {
+      label: getPaymentName(item),
+      value: item,
     }
   })
 
@@ -113,6 +131,14 @@ const CreateOrder = () => {
       setPhoneMessage('Số điện thoại không được để trống')
     }
 
+    // PAYMENT
+    if (payment === '') {
+      valid = false
+      setPaymentState('invalid')
+    } else {
+      setPaymentState('valid')
+    }
+
     // TOTAL
     if (total === '') {
       valid = false
@@ -127,7 +153,6 @@ const CreateOrder = () => {
   const handleSubmit = () => {
     if (validateCustomStylesForm()) {
       setIsLoadingCircle(true)
-      console.log('ssdfdsf')
       let order = {
         phoneNumber: phone,
         total: parseFloat(total),
@@ -135,6 +160,7 @@ const CreateOrder = () => {
         note: note,
         fullName: name,
         deliveryTimeId: '1',
+        paymentType: payment.value,
       }
 
       createOrder(store.value, order)
@@ -148,6 +174,7 @@ const CreateOrder = () => {
             setPhone('')
             setTotal('')
             setNote('')
+            setPayment('')
           }
         })
         .catch((error) => {
@@ -311,8 +338,44 @@ const CreateOrder = () => {
                       </div>
                     </div>
 
+                    {/* COD */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label className="form-control-label">
+                          Trạng thái thanh toán
+                        </label>
+                        <div
+                          className={`${
+                            paymentState === 'invalid' && 'error-select'
+                          }`}
+                        >
+                          <Select
+                            options={optionsPayment}
+                            placeholder="Thu hộ"
+                            styles={customStyles}
+                            value={payment}
+                            onChange={(e) => {
+                              setPayment(e)
+                            }}
+                          />
+                        </div>
+                        {paymentState === 'invalid' && (
+                          <div
+                            className="invalid"
+                            style={{
+                              fontSize: '80%',
+                              color: '#fb6340',
+                              marginTop: '0.25rem',
+                            }}
+                          >
+                            Trạng thái thanh toán không được để trống
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
                     {/* TOTAL */}
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
                           Giá trị đơn hàng{' '}
@@ -320,7 +383,6 @@ const CreateOrder = () => {
                         </label>
                         <Input
                           min={0}
-                          max={100000}
                           valid={totalState === 'valid'}
                           invalid={totalState === 'invalid'}
                           className="form-control"
@@ -355,82 +417,6 @@ const CreateOrder = () => {
                         />
                       </div>
                     </div>
-
-                    {/* CATEGORIES */}
-                    {/* <div className="col-md-12">
-                      <div className="form-group">
-                        <label className="form-control-label">
-                          Danh mục <span style={{ color: 'red' }}>*</span>
-                        </label>
-                        <div
-                          className={`${
-                            CategoryState === 'invalid' && 'error-select'
-                          }`}
-                        >
-                          <Select
-                            options={optionsCategory}
-                            isMulti
-                            placeholder="Danh mục"
-                            styles={customStylesCategory}
-                            value={Category}
-                            closeMenuOnSelect={false}
-                            onChange={(e) => {
-                              setCategory(e)
-                            }}
-                          />
-                        </div>
-                        {CategoryState === 'invalid' && (
-                          <div
-                            className="invalid"
-                            style={{
-                              fontSize: '80%',
-                              color: '#fb6340',
-                              marginTop: '0.25rem',
-                            }}
-                          >
-                            Danh mục không được để trống
-                          </div>
-                        )}
-                      </div>
-                    </div> */}
-
-                    {/* AREAS */}
-                    {/* <div className="col-md-12">
-                      <div className="form-group">
-                        <label className="form-control-label">
-                          Khu vực <span style={{ color: 'red' }}>*</span>
-                        </label>
-                        <div
-                          className={`${
-                            areaState === 'invalid' && 'error-select'
-                          }`}
-                        >
-                          <Select
-                            options={optionsArea}
-                            isMulti
-                            placeholder="Khu vực"
-                            styles={customStylesCategory}
-                            value={area}
-                            closeMenuOnSelect={false}
-                            onChange={(e) => {
-                              setArea(e)
-                            }}
-                          />
-                        </div>
-                        {areaState === 'invalid' && (
-                          <div
-                            className="invalid"
-                            style={{
-                              fontSize: '80%',
-                              color: '#fb6340',
-                              marginTop: '0.25rem',
-                            }}
-                          >
-                            Khu vực không được để trống
-                          </div>
-                        )}
-                      </div>
-                    </div> */}
                   </div>
 
                   {/* ACTION BUTTONS */}
