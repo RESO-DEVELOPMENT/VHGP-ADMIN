@@ -19,8 +19,6 @@ export const OrderItem = ({ data, index }) => {
     return statusType[status]
   }
 
-  console.log(data)
-
   return (
     <tr>
       {/* MÃ ĐƠN */}
@@ -97,9 +95,7 @@ export const OrderItem = ({ data, index }) => {
               : null,
         }}
       >
-        {data.paymentName === 0
-          ? 'Tiền mặt'
-          : getPaymentStatusName(data.paymentStatus)}
+        {getPaymentStatusName(data.paymentName)}
       </td>
       <td
         className="budget table-text"

@@ -34,6 +34,8 @@ const CreateOrder = () => {
   const [note, setNote] = useState('')
   const [payment, setPayment] = useState('')
   const [paymentState, setPaymentState] = useState('')
+  const [shipCost, setShipCost] = useState('')
+  const [shipCostState, setShipCostState] = useState('')
   const [isLoadingCircle, setIsLoadingCircle] = useState(false)
 
   const customStyles = {
@@ -73,11 +75,13 @@ const CreateOrder = () => {
       case 0:
         return 'Thu hộ'
       case 1:
+        return 'VNPAY'
+      case 2:
         return 'Đã thanh toán'
     }
   }
 
-  const optionsPayment = [0, 1].map((item) => {
+  const optionsPayment = [0, 1, 2].map((item) => {
     return {
       label: getPaymentName(item),
       value: item,
@@ -143,8 +147,19 @@ const CreateOrder = () => {
     if (total === '') {
       valid = false
       setTotalState('invalid')
+    } else if (total < 0) {
+      setTotal(0)
+      setTotalState('invalid')
     } else {
       setTotalState('valid')
+    }
+
+    // SHIP COST
+    if (shipCost === '') {
+      valid = false
+      setShipCostState('invalid')
+    } else {
+      setShipCostState('valid')
     }
 
     return valid
@@ -161,10 +176,12 @@ const CreateOrder = () => {
         fullName: name,
         deliveryTimeId: '1',
         paymentType: payment.value,
+        shipCost: shipCost,
       }
 
       createOrder(store.value, order)
         .then((res) => {
+          console.log(res)
           if (res.data) {
             setIsLoadingCircle(false)
             notify('Thêm mới thành công', 'Success')
@@ -175,6 +192,7 @@ const CreateOrder = () => {
             setTotal('')
             setNote('')
             setPayment('')
+            setShipCost('')
           }
         })
         .catch((error) => {
@@ -338,7 +356,64 @@ const CreateOrder = () => {
                       </div>
                     </div>
 
-                    {/* COD */}
+                    {/* TOTAL */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label className="form-control-label">
+                          Giá trị đơn hàng{' '}
+                          <span style={{ color: 'red' }}>*</span>
+                        </label>
+                        <Input
+                          min={0}
+                          valid={totalState === 'valid'}
+                          invalid={totalState === 'invalid'}
+                          className="form-control"
+                          type="number"
+                          id="example-search-input"
+                          value={`${total}`}
+                          onChange={(e) => {
+                            if (parseFloat(e.target.value) < 0) {
+                              setTotal('0')
+                            } else {
+                              setTotal(e.target.value)
+                            }
+                          }}
+                        />
+                        <div className="invalid-feedback">
+                          Giá trị đơn hàng không được để trống
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* SHIP COST */}
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label className="form-control-label">
+                          Phí ship <span style={{ color: 'red' }}>*</span>
+                        </label>
+                        <Input
+                          min={0}
+                          valid={shipCostState === 'valid'}
+                          invalid={shipCostState === 'invalid'}
+                          className="form-control"
+                          type="number"
+                          id="example-search-input"
+                          value={`${shipCost}`}
+                          onChange={(e) => {
+                            if (parseFloat(e.target.value) < 0) {
+                              setShipCost('0')
+                            } else {
+                              setShipCost(e.target.value)
+                            }
+                          }}
+                        />
+                        <div className="invalid-feedback">
+                          Phí ship không được để trống
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* PAYMENT STATUS */}
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
@@ -371,31 +446,6 @@ const CreateOrder = () => {
                             Trạng thái thanh toán không được để trống
                           </div>
                         )}
-                      </div>
-                    </div>
-
-                    {/* TOTAL */}
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <label className="form-control-label">
-                          Giá trị đơn hàng{' '}
-                          <span style={{ color: 'red' }}>*</span>
-                        </label>
-                        <Input
-                          min={0}
-                          valid={totalState === 'valid'}
-                          invalid={totalState === 'invalid'}
-                          className="form-control"
-                          type="number"
-                          id="example-search-input"
-                          value={`${total}`}
-                          onChange={(e) => {
-                            setTotal(e.target.value)
-                          }}
-                        />
-                        <div className="invalid-feedback">
-                          Giá trị đơn hàng không được để trống
-                        </div>
                       </div>
                     </div>
 
