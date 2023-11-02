@@ -36,7 +36,10 @@ export const Order = () => {
   const [totalPage, setTotalPage] = useState(0)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
+  const [startOrder, setStartOrder] = useState(0)
+  const [endOrder, setEndOrder] = useState(0)
   const [listPage, setListPage] = useState([])
+
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -55,6 +58,7 @@ export const Order = () => {
   // const [dateFilter, setDateFilter] = useState("");
 
   const interviewDateRef = useRef()
+
   const options = [
     { label: 'Tất cả', value: -1 },
     { label: 'Tiền Mặt(COD)', value: 0 },
@@ -65,6 +69,12 @@ export const Order = () => {
     { label: 'Gọi Món', value: 1 },
     { label: 'Đi Chợ', value: 2 },
     //{ label: "Đặt Hàng", value: 3 },
+  ]
+
+  const sizeOptions = [
+    { label: '10', value: 10 },
+    { label: '50', value: 50 },
+    { label: '100', value: 100 },
   ]
 
   const optionsStatus = statusTypeOptions.map((item) => {
@@ -97,6 +107,8 @@ export const Order = () => {
     )
       .then((res) => {
         setTimeout(() => {
+          setStartOrder(res.data.startOrder)
+          setEndOrder(res.data.endOrder)
           const { data } = res.data
           const orders = data
           const { totalOrder } = res.data
@@ -129,6 +141,8 @@ export const Order = () => {
       .then((res) => {
         const { data } = res.data
         const orders = data
+        setStartOrder(res.data.startOrder)
+        setEndOrder(res.data.endOrder)
         const { totalOrder } = res.data
         setTotalPage(totalOrder)
         let newList = []
@@ -150,7 +164,6 @@ export const Order = () => {
     return () => {}
   }, [])
 
-  let history = useHistory()
   const customStylesPayment = {
     control: (provided, state) => ({
       ...provided,
@@ -166,6 +179,24 @@ export const Order = () => {
     input: (provided, state) => ({
       ...provided,
       margin: '5px',
+    }),
+  }
+
+  const customStylesOrder = {
+    control: (provided, state) => ({
+      ...provided,
+      background: '#fff',
+      borderColor: '#9e9e9e',
+      minHeight: '30px',
+      height: '40px',
+      width: '80px',
+      boxShadow: state.isFocused ? null : null,
+      borderRadius: '0.5rem',
+      zIndex: '1',
+    }),
+
+    input: (provided, state) => ({
+      ...provided,
     }),
   }
 
@@ -194,7 +225,7 @@ export const Order = () => {
   return (
     <>
       <SimpleHeader name="Danh Sách Đơn Hàng" parentName="Quản Lý" />
-      <Container className="mt--6" fluid>
+      <Container className="mb-7 mt--6" fluid>
         <Row>
           <div className="col">
             <Card>
@@ -410,6 +441,7 @@ export const Order = () => {
                                     </Button>
                                 </Col> */}
               </div>
+
               <Table
                 className="align-items-center table-flush"
                 responsive
@@ -476,6 +508,7 @@ export const Order = () => {
                     })}
                 </tbody>
               </Table>
+
               {orders.length === 0 && !isLoading && (
                 <>
                   <div
@@ -518,9 +551,36 @@ export const Order = () => {
                   <Lottie options={defaultOptions} height={400} width={400} />
                 </CardBody>
               )}
+
               {orders.length > 0 && (
-                <CardFooter className="py-4" style={{ zIndex: 1 }}>
-                  <nav aria-label="...">
+                <CardFooter className="py-10" style={{ zIndex: 1 }}>
+                  <nav
+                    aria-label="..."
+                    className="flex align-items-center justify-content-end"
+                  >
+                    <p className="mb-0 mr-2">Số hàng mỗi trang:</p>
+                    <Select
+                      options={sizeOptions}
+                      placeholder={pageSize}
+                      styles={customStylesOrder}
+                      value={pageSize}
+                      onChange={(e) => {
+                        setPageSize(e.value)
+                        handleGetOrder(
+                          '',
+                          filter.payment,
+                          filter.status,
+                          filter.mode,
+                          page,
+                          e.value
+                        )
+                      }}
+                    />
+
+                    <p className="ml-4 mb-0 mr-3">
+                      {startOrder}-{endOrder} trong {totalPage ? totalPage : 0}
+                    </p>
+
                     <Pagination
                       className="pagination justify-content-end mb-0"
                       listClassName="justify-content-end mb-0"
@@ -546,31 +606,6 @@ export const Order = () => {
                           <span className="sr-only">Previous</span>
                         </PaginationLink>
                       </PaginationItem>
-                      {listPage.map((item) => {
-                        return (
-                          <PaginationItem
-                            className={`${page === item && 'active'}`}
-                          >
-                            <PaginationLink
-                              href="#pablo"
-                              onClick={(e) => {
-                                e.preventDefault()
-                                setPage(item)
-                                handleGetOrder(
-                                  '',
-                                  filter.payment,
-                                  filter.status,
-                                  filter.mode,
-                                  item,
-                                  pageSize
-                                )
-                              }}
-                            >
-                              {item}
-                            </PaginationLink>
-                          </PaginationItem>
-                        )
-                      })}
 
                       <PaginationItem
                         className={`${
