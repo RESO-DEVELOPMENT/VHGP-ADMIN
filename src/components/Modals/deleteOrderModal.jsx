@@ -21,7 +21,7 @@ import {
   Spinner,
 } from "reactstrap";
 import { putStoreCategory } from "../../apis/categoryApiService";
-import { cancelOrder } from "../../apis/orderApiService";
+import { cancelOrder, updateOrder } from "../../apis/orderApiService";
 import { deleteStore } from "../../apis/storeApiService";
 import { AppContext } from "../../context/AppProvider";
 import { notify } from "../Toast/ToastCustom";
@@ -70,6 +70,34 @@ export const DeleteOrderModal = ({ handleReload }) => {
       });
   };
 
+  const handleUpdateOrder = (orderId) => {
+    let updatedOrder = {
+      ...deleteOrderDetailModal,
+      total: parseFloat(deleteOrderDetailModal.total),
+      shipCost: parseFloat(deleteOrderDetailModal.shipCost),
+      paymentType: parseInt(deleteOrderDetailModal.paymentName),
+    };
+    updatedOrder.paymentType = parseInt(deleteOrderDetailModal.paymentName);
+    updateOrder(orderId, updatedOrder)
+      .then((res) => {
+        console.log(res);
+        if (res.data.message) {
+          setIsLoadingCircle(false);
+          notify(res.data.message, "Error");
+        } else {
+          setOpenOrderDetailModel(false);
+          setIsLoadingCircle(false);
+          notify("Cập nhật đơn hàng thành công", "Success");
+          handleReload();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setIsLoadingCircle(false);
+        notify("Đã xảy ra lỗi gì đó!!", "Error");
+      });
+  };
+
   return (
     <>
       <Row>
@@ -102,14 +130,36 @@ export const DeleteOrderModal = ({ handleReload }) => {
                           }}
                           className=""
                         >
-                          <span className="mb-0">
-                            Đơn hàng:{" "}
-                            <span style={{ fontWeight: 700 }}>{orderId}</span>{" "}
-                            sẽ bị xóa!!!{" "}
-                          </span>
-                          <span className="mb-0">
-                            Bạn sẽ không thể hoàn nguyên hành động này{" "}
-                          </span>
+                          {deleteOrderDetailModal.deletedOption ? (
+                            <>
+                              <span className="mb-0">
+                                Đơn hàng:{" "}
+                                <span style={{ fontWeight: 700 }}>
+                                  {orderId}
+                                </span>{" "}
+                                sẽ bị xóa!!!{" "}
+                              </span>
+                              <span className="mb-0">
+                                Bạn sẽ không thể hoàn nguyên hành động này{" "}
+                              </span>
+                            </>
+                          ) : (
+                            <></>
+                          )}
+
+                          {deleteOrderDetailModal.updatedOption ? (
+                            <>
+                              <span className="mb-0">
+                                Đơn hàng{" "}
+                                <span style={{ fontWeight: 700 }}>
+                                  {orderId}
+                                </span>{" "}
+                                sẽ được cập nhật!!!{" "}
+                              </span>
+                            </>
+                          ) : (
+                            <></>
+                          )}
                         </div>
                         <div className="col-md-12"></div>
                       </div>
@@ -144,8 +194,11 @@ export const DeleteOrderModal = ({ handleReload }) => {
                         </Button>
                         <Button
                           onClick={() => {
-                            // setIsLoadingCircle(true);
-                            handleCancelOrder(orderId);
+                            if (deleteOrderDetailModal.deletedOption) {
+                              handleCancelOrder(orderId);
+                            } else if (deleteOrderDetailModal.updatedOption) {
+                              handleUpdateOrder(orderId);
+                            }
                           }}
                           className="btn-neutral"
                           disabled={isLoadingCircle}

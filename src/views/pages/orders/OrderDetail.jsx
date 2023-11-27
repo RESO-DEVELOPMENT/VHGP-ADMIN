@@ -12,6 +12,7 @@ import {
   Row,
   Spinner,
 } from "reactstrap";
+import Select from "react-select";
 import { getOrderDetail } from "../../../apis/orderApiService";
 import SimpleHeader from "../../../components/Headers/SimpleHeader";
 import { DeleteOrderModal } from "../../../components/Modals/deleteOrderModal";
@@ -48,22 +49,57 @@ const OrderDetail = () => {
   const [service, setService] = useState("");
   const [dateCreated, setDateCreated] = useState("");
   const [canCancel, setcanCancel] = useState(true);
+  const [currentOrder, setCurrentOrder] = useState({});
+  const [updatedOrder, setUpdatedOrder] = useState({});
   let location = useLocation();
   let history = useHistory();
 
-  /// code sontb6
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      background: `${
+        currentOrder.orderId != undefined &&
+        currentOrder != null &&
+        currentOrder.paymentName != undefined &&
+        currentOrder.paymentName.toString().trim() !=
+          paymentName.toString().trim()
+          ? "#faf4b9"
+          : ""
+      }`,
+      borderColor: "#dee2e6",
+      minHeight: "30px",
+      height: "46px",
+      // width: "200px",
+      boxShadow: state.isFocused ? null : null,
+      borderRadius: "0.5rem",
+    }),
 
-  const [currentOrder, setCurrentOrder] = useState({});
-  useEffect(() => {
+    input: (provided, state) => ({
+      ...provided,
+      margin: "5px",
+    }),
+  };
+
+  const paymentTypeList = [
+    {
+      label: "Tiền mặt",
+      value: 0,
+    },
+    {
+      label: "Đã thanh toán",
+      value: 2,
+    },
+  ];
+
+  const renderOrderDetail = () => {
     const id = location.pathname.split("/")[3];
     if (id) {
-      console.log("load");
       let listShipper = [];
       getOrderDetail(id)
         .then((res) => {
           if (res.data) {
-            console.log(res.data);
             setCurrentOrder(res.data);
+            setUpdatedOrder(res.data);
             const order = res.data;
             setOrderId(id);
             setStoreName(order.storeName);
@@ -116,7 +152,6 @@ const OrderDetail = () => {
             if (flag) {
               setStatusList(order.listStatusOrder);
             }
-            console.log(newStatus);
             // check can cancle
 
             if (order && order?.listStatusOrder) {
@@ -127,7 +162,6 @@ const OrderDetail = () => {
                   .status == 5
               ) {
                 setcanCancel(false);
-                console.log("trueeeeeeee");
               }
             }
           }
@@ -138,6 +172,11 @@ const OrderDetail = () => {
           setIsLoadingCircle(false);
         });
     }
+  };
+
+  /// code sontb6
+  useEffect(() => {
+    renderOrderDetail();
   }, []);
   const getStatusMessage = (statusId) => {
     switch (statusId) {
@@ -186,6 +225,11 @@ const OrderDetail = () => {
   };
   const handleReload = () => {
     // do something
+    console.log(deleteOrderDetailModal);
+    if (deleteOrderDetailModal.updatedOption) {
+      renderOrderDetail();
+    }
+    setDeleteOrderDetailModal({});
   };
   return (
     <div>
@@ -517,15 +561,29 @@ const OrderDetail = () => {
                     <div className="col-md-4">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Tên khách hàng{" "}
+                          Tên khách hàng
                         </label>
                         <Input
                           className="form-control"
                           type="search"
                           id="example-search-input"
-                          readOnly
+                          //readOnly
                           value={`${cusName}`}
-                          onChange={(e) => {}}
+                          onChange={(e) => {
+                            setCusName(e.target.value);
+                            setUpdatedOrder({
+                              ...updatedOrder,
+                              fullName: e.target.value,
+                            });
+                          }}
+                          style={{
+                            background: `${
+                              currentOrder.orderId != undefined &&
+                              currentOrder.fullName != cusName
+                                ? "#faf4b9"
+                                : ""
+                            }`,
+                          }}
                         />
                       </div>
                     </div>
@@ -538,9 +596,23 @@ const OrderDetail = () => {
                           className="form-control"
                           type="number"
                           id="example-search-input"
-                          readOnly
+                          //readOnly
                           value={`${phoneNumber}`}
-                          onChange={(e) => {}}
+                          onChange={(e) => {
+                            setPhoneNumber(e.target.value);
+                            setUpdatedOrder({
+                              ...updatedOrder,
+                              phoneNumber: e.target.value,
+                            });
+                          }}
+                          style={{
+                            background: `${
+                              currentOrder.orderId != undefined &&
+                              currentOrder.phoneNumber != phoneNumber
+                                ? "#faf4b9"
+                                : ""
+                            }`,
+                          }}
                         />
                       </div>
                     </div>
@@ -551,9 +623,23 @@ const OrderDetail = () => {
                           className="form-control"
                           type="text"
                           id="example-search-input"
-                          readOnly
+                          //readOnly
                           value={`${note}`}
-                          onChange={(e) => {}}
+                          onChange={(e) => {
+                            setNote(e.target.value);
+                            setUpdatedOrder({
+                              ...updatedOrder,
+                              note: e.target.value,
+                            });
+                          }}
+                          style={{
+                            background: `${
+                              currentOrder.orderId != undefined &&
+                              currentOrder.note != note
+                                ? "#faf4b9"
+                                : ""
+                            }`,
+                          }}
                         />
                       </div>
                     </div>
@@ -584,13 +670,21 @@ const OrderDetail = () => {
                         <label className="form-control-label">
                           Phương thức thanh toán
                         </label>
-                        <Input
-                          className="form-control"
-                          type="search"
+                        <Select
+                          options={paymentTypeList}
                           id="example-search-input"
-                          value={paymentName === 0 ? "Tiền mặt" : "VN Pay"}
-                          readOnly
-                          onChange={() => {}}
+                          placeholder="Chọn phương thức"
+                          styles={customStyles}
+                          value={paymentTypeList.find(
+                            (p) => p.value == paymentName
+                          )}
+                          onChange={(e) => {
+                            setPaymentName(e.value);
+                            setUpdatedOrder({
+                              ...updatedOrder,
+                              paymentName: e.value,
+                            });
+                          }}
                         />
                       </div>
                     </div>
@@ -602,11 +696,25 @@ const OrderDetail = () => {
                         </label>
                         <Input
                           className="form-control"
-                          type="search"
+                          type="number"
                           id="example-search-input"
-                          readOnly
+                          //readOnly
                           value={`${total}`}
-                          onChange={(e) => {}}
+                          onChange={(e) => {
+                            setTotal(e.target.value);
+                            setUpdatedOrder({
+                              ...updatedOrder,
+                              total: e.target.value,
+                            });
+                          }}
+                          style={{
+                            background: `${
+                              currentOrder.orderId != undefined &&
+                              currentOrder.total != total
+                                ? "#faf4b9"
+                                : ""
+                            }`,
+                          }}
                         />
                       </div>
                     </div>
@@ -618,7 +726,21 @@ const OrderDetail = () => {
                           type="number"
                           id="example-search-input"
                           value={`${shipCost}`}
-                          onChange={(e) => {}}
+                          onChange={(e) => {
+                            setShipCost(e.target.value);
+                            setUpdatedOrder({
+                              ...updatedOrder,
+                              shipCost: e.target.value,
+                            });
+                          }}
+                          style={{
+                            background: `${
+                              currentOrder.orderId != undefined &&
+                              currentOrder.shipCost != shipCost
+                                ? "#faf4b9"
+                                : ""
+                            }`,
+                          }}
                         />
                       </div>
                     </div>
@@ -628,6 +750,7 @@ const OrderDetail = () => {
                         <Input
                           className="form-control"
                           type="text"
+                          readOnly
                           id="example-search-input"
                           value={`${service}`}
                           onChange={(e) => {}}
@@ -642,6 +765,7 @@ const OrderDetail = () => {
                         <Input
                           className="form-control"
                           type="text"
+                          readOnly
                           id="example-search-input"
                           value={`${dateCreated}`}
                           onChange={(e) => {}}
@@ -675,15 +799,61 @@ const OrderDetail = () => {
                   <span>Trở Về</span>
                 </div>
               </Button>
+
               <Button
                 onClick={() => {
-                  // handleSubmit();
-                  console.log(currentOrder.status);
-                  //   setDeleteModal({ data });
-                  //   setOpenDeleteModal(true);
-
                   setOpenOrderDetailModel(true);
-                  setDeleteOrderDetailModal(currentOrder);
+                  let order = { ...updatedOrder };
+                  order.updatedOption = true;
+                  order.paymentType = parseInt(paymentName);
+                  setDeleteOrderDetailModal(order);
+                }}
+                className="btn-neutral"
+                color="default"
+                size="lg"
+                disabled={isLoadingCircle || !canCancel}
+                style={{
+                  background: "var(--primary)",
+                  color: "#000",
+                  padding: "0.875rem 0.2rem",
+                }}
+              >
+                <div
+                  className="flex"
+                  style={{
+                    alignItems: "center",
+                    width: 130,
+                    justifyContent: "center",
+                  }}
+                >
+                  {isLoadingCircle ? (
+                    <Spinner
+                      style={{
+                        color: "#fff",
+                        width: "1.31rem",
+                        height: "1.31rem",
+                      }}
+                    >
+                      Loading...
+                    </Spinner>
+                  ) : (
+                    <>
+                      <i
+                        className="fa-solid fa-square-plus"
+                        style={{ fontSize: 18, color: "#fff" }}
+                      ></i>
+                      <span style={{ color: "#fff" }}>Cập Nhật</span>
+                    </>
+                  )}
+                </div>
+              </Button>
+
+              <Button
+                onClick={() => {
+                  setOpenOrderDetailModel(true);
+                  let order = { ...currentOrder };
+                  order.deletedOption = true;
+                  setDeleteOrderDetailModal(order);
                 }}
                 className="btn-neutral"
                 color="default"
@@ -719,7 +889,7 @@ const OrderDetail = () => {
                         className="fa-regular fa-rectangle-xmark"
                         style={{ fontSize: 18, color: "#fff" }}
                       ></i>
-                      <span style={{ color: "#fff" }}>Hủy đơn hàng</span>
+                      <span style={{ color: "#fff" }}>Hủy Đơn Hàng</span>
                     </>
                   )}
                 </div>
