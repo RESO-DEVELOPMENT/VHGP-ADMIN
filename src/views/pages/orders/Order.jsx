@@ -1,8 +1,8 @@
-import moment from 'moment'
-import React, { useEffect, useRef, useState } from 'react'
-import ReactDatetime from 'react-datetime'
-import { useHistory } from 'react-router'
-import Select from 'react-select'
+import moment from "moment";
+import React, { useEffect, useRef, useState } from "react";
+import ReactDatetime from "react-datetime";
+import { useHistory } from "react-router";
+import Select from "react-select";
 import {
   Card,
   CardBody,
@@ -16,119 +16,120 @@ import {
   Row,
   Spinner,
   Table,
-} from 'reactstrap'
-import { getListOrder } from '../../../apis/orderApiService'
-import SimpleHeader from '../../../components/Headers/SimpleHeader'
-import { statusTypeOptions } from '../../../constants'
-import { OrderItem } from './OrderItem'
-import Lottie from 'react-lottie'
-import animationData from '../../../assets/loading.json'
+} from "reactstrap";
+import { getListOrder } from "../../../apis/orderApiService";
+import SimpleHeader from "../../../components/Headers/SimpleHeader";
+import { statusTypeOptions } from "../../../constants";
+import { OrderItem } from "./OrderItem";
+import Lottie from "react-lottie";
+import animationData from "../../../assets/loading.json";
 // import "moment/locale/en";
 
 export const Order = () => {
-  const [orders, setOrders] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [payment, setPayment] = useState('')
+  const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [payment, setPayment] = useState("");
   // const [paymentFilter, setPaymentFilter] = useState("");
-  const [mode, setMode] = useState('')
+  const [mode, setMode] = useState("");
   // const [modeFilter, setModeFilter] = useState("");
-  const [status, setStatus] = useState('')
-  const [totalPage, setTotalPage] = useState(0)
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-  const [startOrder, setStartOrder] = useState(0)
-  const [endOrder, setEndOrder] = useState(0)
-  const [listPage, setListPage] = useState([])
+  const [status, setStatus] = useState("");
+  const [totalPage, setTotalPage] = useState(0);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [startOrder, setStartOrder] = useState(0);
+  const [endOrder, setEndOrder] = useState(0);
+  const [listPage, setListPage] = useState([]);
 
   const defaultOptions = {
     loop: true,
     autoplay: true,
     animationData: animationData,
     rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
+      preserveAspectRatio: "xMidYMid slice",
     },
-  }
+  };
   const [filter, setFilter] = useState({
-    date: '',
-    payment: '',
-    status: '',
-    mode: '',
-  })
+    date: "",
+    payment: "",
+    status: "",
+    mode: "",
+  });
   // const [statusFilter, setStatusFilter] = useState("");
   // const [dateFilter, setDateFilter] = useState("");
 
-  const interviewDateRef = useRef()
+  const interviewDateRef = useRef();
 
   const options = [
-    { label: 'Tất cả', value: -1 },
-    { label: 'Tiền Mặt(COD)', value: 0 },
-    { label: 'VN Pay', value: 1 },
-  ]
+    { label: "Tất cả", value: -1 },
+    { label: "Thu hộ Tiền Mặt", value: 0 },
+    { label: "Thu hộ chuyển khoản", value: 1 },
+    { label: "Đã thanh toán", value: 2 },
+  ];
   const optionsMode = [
-    { label: 'Tất cả', value: 0 },
-    { label: 'Gọi Món', value: 1 },
-    { label: 'Đi Chợ', value: 2 },
+    { label: "Tất cả", value: 0 },
+    { label: "Gọi Món", value: 1 },
+    { label: "Đi Chợ", value: 2 },
     //{ label: "Đặt Hàng", value: 3 },
-  ]
+  ];
 
   const sizeOptions = [
-    { label: '10', value: 10 },
-    { label: '50', value: 50 },
-    { label: '100', value: 100 },
-  ]
+    { label: "10", value: 10 },
+    { label: "50", value: 50 },
+    { label: "100", value: 100 },
+  ];
 
   const optionsStatus = statusTypeOptions.map((item) => {
-    return { label: item.value, value: item.id }
-  })
+    return { label: item.value, value: item.id };
+  });
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-    return () => {}
-  }, [])
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return () => {};
+  }, []);
 
   const handleGetOrder = (date, payment, status, mode, pageIndex, size) => {
-    let dateFilter = ''
-    let paymentFilter = ''
-    let statusFilter = ''
-    let modeFilter = ''
-    dateFilter = date
-    paymentFilter = payment
-    statusFilter = status
-    modeFilter = mode
-    setIsLoading(true)
+    let dateFilter = "";
+    let paymentFilter = "";
+    let statusFilter = "";
+    let modeFilter = "";
+    dateFilter = date;
+    paymentFilter = payment;
+    statusFilter = status;
+    modeFilter = mode;
+    setIsLoading(true);
 
     getListOrder(
-      dateFilter === '' ? '' : dateFilter.replace('-', '/').replace('-', '/'),
-      paymentFilter === -1 ? '' : paymentFilter,
+      dateFilter === "" ? "" : dateFilter.replace("-", "/").replace("-", "/"),
+      paymentFilter === -1 ? "" : paymentFilter,
       statusFilter === -1 ? -1 : statusFilter,
-      modeFilter === 0 ? '' : modeFilter,
+      modeFilter === 0 ? "" : modeFilter,
       pageIndex,
       size
     )
       .then((res) => {
         setTimeout(() => {
-          setStartOrder(res.data.startOrder)
-          setEndOrder(res.data.endOrder)
-          const { data } = res.data
-          const orders = data
-          const { totalOrder } = res.data
-          setTotalPage(totalOrder)
-          let newList = []
+          setStartOrder(res.data.startOrder);
+          setEndOrder(res.data.endOrder);
+          const { data } = res.data;
+          const orders = data;
+          const { totalOrder } = res.data;
+          setTotalPage(totalOrder);
+          let newList = [];
 
           for (
             let index = 1;
             index <= Math.ceil(totalOrder / pageSize);
             index++
           ) {
-            newList = [...newList, index]
+            newList = [...newList, index];
           }
-          setListPage(newList)
-          setOrders(orders)
-          setIsLoading(false)
-        }, 100)
+          setListPage(newList);
+          setOrders(orders);
+          setIsLoading(false);
+        }, 100);
       })
-      .catch((error) => console.log(error))
-  }
+      .catch((error) => console.log(error));
+  };
 
   useEffect(() => {
     // const date = new Date();
@@ -137,90 +138,90 @@ export const Order = () => {
     // const defaultValue = date.toLocaleDateString("en-CA");
     // setDateOrder("");
     // handleGetOrder("");
-    getListOrder('', '', '', '', page, pageSize)
+    getListOrder("", "", "", "", page, pageSize)
       .then((res) => {
-        const { data } = res.data
-        const orders = data
-        setStartOrder(res.data.startOrder)
-        setEndOrder(res.data.endOrder)
-        const { totalOrder } = res.data
-        setTotalPage(totalOrder)
-        let newList = []
+        const { data } = res.data;
+        const orders = data;
+        setStartOrder(res.data.startOrder);
+        setEndOrder(res.data.endOrder);
+        const { totalOrder } = res.data;
+        setTotalPage(totalOrder);
+        let newList = [];
         for (
           let index = 1;
           index <= Math.ceil(totalOrder / pageSize);
           index++
         ) {
-          newList = [...newList, index]
+          newList = [...newList, index];
         }
-        setListPage(newList)
+        setListPage(newList);
         setTimeout(() => {
-          setOrders(orders)
-          setIsLoading(false)
-        }, 100)
+          setOrders(orders);
+          setIsLoading(false);
+        }, 100);
       })
-      .catch((error) => console.log(error))
+      .catch((error) => console.log(error));
 
-    return () => {}
-  }, [])
+    return () => {};
+  }, []);
 
   const customStylesPayment = {
     control: (provided, state) => ({
       ...provided,
-      background: '#fff',
-      borderColor: '#9e9e9e',
-      minHeight: '30px',
-      height: '46px',
-      width: '200px',
+      background: "#fff",
+      borderColor: "#9e9e9e",
+      minHeight: "30px",
+      height: "46px",
+      width: "200px",
       boxShadow: state.isFocused ? null : null,
-      borderRadius: '0.5rem',
+      borderRadius: "0.5rem",
     }),
 
     input: (provided, state) => ({
       ...provided,
-      margin: '5px',
+      margin: "5px",
     }),
-  }
+  };
 
   const customStylesOrder = {
     control: (provided, state) => ({
       ...provided,
-      background: '#fff',
-      borderColor: '#9e9e9e',
-      minHeight: '30px',
-      height: '40px',
-      width: '80px',
+      background: "#fff",
+      borderColor: "#9e9e9e",
+      minHeight: "30px",
+      height: "40px",
+      width: "80px",
       boxShadow: state.isFocused ? null : null,
-      borderRadius: '0.5rem',
-      zIndex: '1',
+      borderRadius: "0.5rem",
+      zIndex: "1",
     }),
 
     input: (provided, state) => ({
       ...provided,
     }),
-  }
+  };
 
   const customStylesStatus = {
     control: (provided, state) => ({
       ...provided,
-      background: '#fff',
-      borderColor: '#9e9e9e',
-      minHeight: '30px',
-      height: '46px',
-      width: '250px',
+      background: "#fff",
+      borderColor: "#9e9e9e",
+      minHeight: "30px",
+      height: "46px",
+      width: "250px",
       boxShadow: state.isFocused ? null : null,
-      borderRadius: '0.5rem',
+      borderRadius: "0.5rem",
     }),
 
     input: (provided, state) => ({
       ...provided,
-      margin: '5px',
+      margin: "5px",
     }),
-  }
+  };
 
   const handleInterviewDateClick = () => {
-    interviewDateRef.current.focus()
-  }
+    interviewDateRef.current.focus();
+  };
 
   return (
     <>
@@ -231,21 +232,21 @@ export const Order = () => {
             <Card>
               <div
                 style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                  padding: '20px 0px',
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  padding: "20px 0px",
                   zIndex: 2,
                 }}
                 className="align-items-center"
               >
                 <CardHeader
                   className=""
-                  style={{ padding: '0 0 0 20px', border: 'none' }}
+                  style={{ padding: "0 0 0 20px", border: "none" }}
                 >
                   <Form
                     className="flex"
-                    style={{ alignItems: 'center', gap: 20 }}
+                    style={{ alignItems: "center", gap: 20 }}
                   >
                     {/* <FormGroup className="mb-0">
                                             <InputGroup className="input-group-lg input-group-flush" style={{ border: "2px solid #dce0e8" }}>
@@ -265,41 +266,41 @@ export const Order = () => {
                     <ReactDatetime
                       closeOnSelect={true}
                       inputProps={{
-                        placeholder: 'Lọc theo ngày',
+                        placeholder: "Lọc theo ngày",
                       }}
                       className="ReactDatetime"
-                      style={{ border: 'none' }}
+                      style={{ border: "none" }}
                       timeFormat={false}
                       onChange={(e) => {
-                        let date = ''
-                        moment.locale('en')
+                        let date = "";
+                        moment.locale("en");
                         // Nếu input không empty
                         if (e) {
                           // Ngày hợp lệ
                           if (e._d) {
-                            date = new Date(e._d + '')
-                            console.log(date)
-                            let dateConvert = moment(date).format('ll')
+                            date = new Date(e._d + "");
+                            console.log(date);
+                            let dateConvert = moment(date).format("ll");
                             date =
-                              dateConvert.split(',')[0] +
-                              dateConvert.split(',')[1]
-                            console.log(date)
-                            setFilter({ ...filter, date: date })
+                              dateConvert.split(",")[0] +
+                              dateConvert.split(",")[1];
+                            console.log(date);
+                            setFilter({ ...filter, date: date });
                           }
                           // Ngày không hợp lệ thì set date là ngày tiếp theo để UI hiển thị không có đơn hàng nào
                           else {
                             let dateConvert = moment()
-                              .add(1, 'days')
-                              .format('ll')
+                              .add(1, "days")
+                              .format("ll");
                             date =
-                              dateConvert.split(',')[0] +
-                              dateConvert.split(',')[1]
-                            console.log(date)
+                              dateConvert.split(",")[0] +
+                              dateConvert.split(",")[1];
+                            console.log(date);
                           }
                         }
                         // Nếu input empty thì hiển thị toàn bộ đơn hàng
                         else {
-                          date = ''
+                          date = "";
                         }
 
                         handleGetOrder(
@@ -309,8 +310,8 @@ export const Order = () => {
                           filter.mode,
                           1,
                           pageSize
-                        )
-                        setPage(1)
+                        );
+                        setPage(1);
                       }}
                     />
 
@@ -322,8 +323,8 @@ export const Order = () => {
                       onChange={(e) => {
                         // setIsLoading(true);
                         // setOrders([]);
-                        setPayment(e)
-                        setFilter({ ...filter, payment: e.value })
+                        setPayment(e);
+                        setFilter({ ...filter, payment: e.value });
                         handleGetOrder(
                           filter.date,
                           e.value,
@@ -331,8 +332,8 @@ export const Order = () => {
                           filter.mode,
                           1,
                           pageSize
-                        )
-                        setPage(1)
+                        );
+                        setPage(1);
                         // if (e.value !== -1) {
                         //     getListOrderByPayment(e.value, page,pageSize)
                         //         .then((res) => {
@@ -358,11 +359,11 @@ export const Order = () => {
                       styles={customStylesStatus}
                       value={status}
                       onChange={(e) => {
-                        console.log(e)
+                        console.log(e);
                         // setIsLoading(true);
                         // setOrders([]);
-                        setStatus(e)
-                        setFilter({ ...filter, status: e.value })
+                        setStatus(e);
+                        setFilter({ ...filter, status: e.value });
                         // setStatusFilter(e.value);
                         handleGetOrder(
                           filter.date,
@@ -371,8 +372,8 @@ export const Order = () => {
                           filter.mode,
                           1,
                           pageSize
-                        )
-                        setPage(1)
+                        );
+                        setPage(1);
                         // if (e.value !== "Tất cả") {
                         //     getListOrderByStatus(e.value, page,pageSize)
                         //         .then((res) => {
@@ -398,10 +399,10 @@ export const Order = () => {
                       styles={customStylesStatus}
                       value={mode}
                       onChange={(e) => {
-                        console.log(e)
-                        setMode(e)
+                        console.log(e);
+                        setMode(e);
                         // setModeFilter(e.value);
-                        setFilter({ ...filter, mode: e.value })
+                        setFilter({ ...filter, mode: e.value });
                         handleGetOrder(
                           filter.date,
                           filter.payment,
@@ -409,8 +410,8 @@ export const Order = () => {
                           e.value,
                           1,
                           pageSize
-                        )
-                        setPage(1)
+                        );
+                        setPage(1);
                         // setIsLoading(true);
                         // setOrders([]);
                         // setStatus(e);
@@ -450,7 +451,7 @@ export const Order = () => {
               >
                 <div
                   className={`loading-spin ${
-                    !isLoading && 'loading-spin-done'
+                    !isLoading && "loading-spin-done"
                   }`}
                 ></div>
                 <thead className="thead-light">
@@ -504,7 +505,9 @@ export const Order = () => {
                 <tbody className="list">
                   {orders.length > 0 &&
                     orders.map((item, index) => {
-                      return <OrderItem data={item} index={index} key={index} />
+                      return (
+                        <OrderItem data={item} index={index} key={index} />
+                      );
                     })}
                 </tbody>
               </Table>
@@ -513,20 +516,20 @@ export const Order = () => {
                 <>
                   <div
                     className="center_flex"
-                    style={{ padding: '50px 0 0 0' }}
+                    style={{ padding: "50px 0 0 0" }}
                   >
                     <img
                       src="/icons/empty.png"
                       alt=""
-                      style={{ textAlign: 'center', width: 300 }}
+                      style={{ textAlign: "center", width: 300 }}
                     />
                   </div>
                   <h1
                     className="description"
                     style={{
                       fontSize: 18,
-                      textAlign: 'center',
-                      padding: '20px 0 50px 0',
+                      textAlign: "center",
+                      padding: "20px 0 50px 0",
                     }}
                   >
                     Không có đơn hàng nào!!!
@@ -539,13 +542,13 @@ export const Order = () => {
                   className=" center_flex"
                   style={{
                     zIndex: 1,
-                    position: 'absolute',
+                    position: "absolute",
                     top: 0,
                     left: 0,
                     bottom: 0,
                     right: 0,
-                    background: '#fff',
-                    padding: '330px 0 300px 0',
+                    background: "#fff",
+                    padding: "330px 0 300px 0",
                   }}
                 >
                   <Lottie options={defaultOptions} height={400} width={400} />
@@ -565,15 +568,15 @@ export const Order = () => {
                       styles={customStylesOrder}
                       value={pageSize}
                       onChange={(e) => {
-                        setPageSize(e.value)
+                        setPageSize(e.value);
                         handleGetOrder(
-                          '',
+                          "",
                           filter.payment,
                           filter.status,
                           filter.mode,
                           page,
                           e.value
-                        )
+                        );
                       }}
                     />
 
@@ -585,20 +588,20 @@ export const Order = () => {
                       className="pagination justify-content-end mb-0"
                       listClassName="justify-content-end mb-0"
                     >
-                      <PaginationItem className={`${page === 1 && 'disabled'}`}>
+                      <PaginationItem className={`${page === 1 && "disabled"}`}>
                         <PaginationLink
                           href="#pablo"
                           onClick={(e) => {
-                            e.preventDefault()
-                            setPage(page - 1)
+                            e.preventDefault();
+                            setPage(page - 1);
                             handleGetOrder(
-                              '',
+                              "",
                               filter.payment,
                               filter.status,
                               filter.mode,
                               page - 1,
                               pageSize
-                            )
+                            );
                           }}
                           tabIndex="1"
                         >
@@ -609,22 +612,22 @@ export const Order = () => {
 
                       <PaginationItem
                         className={`${
-                          page === Math.ceil(totalPage / pageSize) && 'disabled'
+                          page === Math.ceil(totalPage / pageSize) && "disabled"
                         }`}
                       >
                         <PaginationLink
                           href="#pablo"
                           onClick={(e) => {
-                            e.preventDefault()
-                            setPage(page + 1)
+                            e.preventDefault();
+                            setPage(page + 1);
                             handleGetOrder(
-                              '',
+                              "",
                               filter.payment,
                               filter.status,
                               filter.mode,
                               page + 1,
                               pageSize
-                            )
+                            );
                           }}
                         >
                           <i className="fas fa-angle-right" />
@@ -640,5 +643,5 @@ export const Order = () => {
         </Row>
       </Container>
     </>
-  )
-}
+  );
+};

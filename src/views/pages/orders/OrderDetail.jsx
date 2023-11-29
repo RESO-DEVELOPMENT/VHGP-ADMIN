@@ -82,8 +82,12 @@ const OrderDetail = () => {
 
   const paymentTypeList = [
     {
-      label: "Tiền mặt",
+      label: "Thu hộ Tiền mặt",
       value: 0,
+    },
+    {
+      label: "Thu hộ chuyển khoản",
+      value: 1,
     },
     {
       label: "Đã thanh toán",
@@ -811,7 +815,7 @@ const OrderDetail = () => {
                 className="btn-neutral"
                 color="default"
                 size="lg"
-                disabled={isLoadingCircle || !canCancel}
+                disabled={isLoadingCircle}
                 style={{
                   background: "var(--primary)",
                   color: "#000",

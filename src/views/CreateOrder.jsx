@@ -7,201 +7,201 @@ import {
   Input,
   Row,
   Spinner,
-} from 'reactstrap'
-import SimpleHeader from '../components/Headers/SimpleHeader'
-import { useContext, useState } from 'react'
-import { AppContext } from '../context/AppProvider'
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
-import { notify } from '../components/Toast/ToastCustom'
-import { postMenu } from '../apis/menuApiService'
-import Select from 'react-select'
-import { createOrder } from '../apis/orderApiService'
+} from "reactstrap";
+import SimpleHeader from "../components/Headers/SimpleHeader";
+import { useContext, useState } from "react";
+import { AppContext } from "../context/AppProvider";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { notify } from "../components/Toast/ToastCustom";
+import { postMenu } from "../apis/menuApiService";
+import Select from "react-select";
+import { createOrder } from "../apis/orderApiService";
 
 const CreateOrder = () => {
-  const { buildingList, storeList } = useContext(AppContext)
+  const { buildingList, storeList } = useContext(AppContext);
 
-  const [store, setStore] = useState('')
-  const [storeState, setStoreState] = useState('')
-  const [building, setBuilding] = useState('')
-  const [buildingState, setBuildingState] = useState('')
-  const [name, setName] = useState('')
-  const [nameState, setNameState] = useState('')
-  const [phone, setPhone] = useState('')
-  const [phoneState, setPhoneState] = useState('')
-  const [phoneMessage, setPhoneMessage] = useState('')
-  const [total, setTotal] = useState('')
-  const [totalState, setTotalState] = useState('')
-  const [note, setNote] = useState('')
-  const [payment, setPayment] = useState('')
-  const [paymentState, setPaymentState] = useState('')
-  const [shipCost, setShipCost] = useState('')
-  const [shipCostState, setShipCostState] = useState('')
-  const [isLoadingCircle, setIsLoadingCircle] = useState(false)
+  const [store, setStore] = useState("");
+  const [storeState, setStoreState] = useState("");
+  const [building, setBuilding] = useState("");
+  const [buildingState, setBuildingState] = useState("");
+  const [name, setName] = useState("");
+  const [nameState, setNameState] = useState("");
+  const [phone, setPhone] = useState("");
+  const [phoneState, setPhoneState] = useState("");
+  const [phoneMessage, setPhoneMessage] = useState("");
+  const [total, setTotal] = useState("");
+  const [totalState, setTotalState] = useState("");
+  const [note, setNote] = useState("");
+  const [payment, setPayment] = useState("");
+  const [paymentState, setPaymentState] = useState("");
+  const [shipCost, setShipCost] = useState("");
+  const [shipCostState, setShipCostState] = useState("");
+  const [isLoadingCircle, setIsLoadingCircle] = useState(false);
 
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
-      background: '#fff',
-      borderColor: '#dee2e6',
-      minHeight: '30px',
-      height: '46px',
+      background: "#fff",
+      borderColor: "#dee2e6",
+      minHeight: "30px",
+      height: "46px",
       // width: "200px",
       boxShadow: state.isFocused ? null : null,
-      borderRadius: '0.5rem',
+      borderRadius: "0.5rem",
     }),
 
     input: (provided, state) => ({
       ...provided,
-      margin: '5px',
+      margin: "5px",
     }),
-  }
+  };
 
   const optionsStore = storeList.map((item) => {
     return {
       label: item.name,
       value: item.id,
-    }
-  })
+    };
+  });
 
   const optionsBuilding = buildingList.map((item) => {
     return {
       label: item.name,
       value: item.id,
-    }
-  })
+    };
+  });
 
   const getPaymentName = (item) => {
     switch (item) {
       case 0:
-        return 'Thu hộ'
+        return "Thu hộ tiền mặt";
       case 1:
-        return 'VNPAY'
+        return "Thu hộ chuyển khoản";
       case 2:
-        return 'Đã thanh toán'
+        return "Đã thanh toán";
     }
-  }
+  };
 
   const optionsPayment = [0, 1, 2].map((item) => {
     return {
       label: getPaymentName(item),
       value: item,
-    }
-  })
+    };
+  });
 
   const checkPhoneValid = () => {
     if (phone.match(/^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$/im)) {
-      return true
+      return true;
     }
-    return false
-  }
+    return false;
+  };
 
   const validateCustomStylesForm = () => {
-    let valid = true
+    let valid = true;
 
     // STORE
-    if (store === '') {
-      valid = false
-      setStoreState('invalid')
+    if (store === "") {
+      valid = false;
+      setStoreState("invalid");
     } else {
-      setStoreState('valid')
+      setStoreState("valid");
     }
 
     // BUILDING
-    if (building === '') {
-      valid = false
-      setBuildingState('invalid')
+    if (building === "") {
+      valid = false;
+      setBuildingState("invalid");
     } else {
-      setBuildingState('valid')
+      setBuildingState("valid");
     }
 
     // NAME
-    if (name === '') {
-      valid = false
-      setNameState('invalid')
+    if (name === "") {
+      valid = false;
+      setNameState("invalid");
     } else {
-      setNameState('valid')
+      setNameState("valid");
     }
 
     // PHONE NUMBER
-    if (phone === '') {
-      setPhoneState('invalid')
-      setPhoneMessage('Số điện thoại không được để trống')
+    if (phone === "") {
+      setPhoneState("invalid");
+      setPhoneMessage("Số điện thoại không được để trống");
     } else if (!checkPhoneValid()) {
-      valid = false
-      setPhoneState('invalid')
-      setPhoneMessage('Số điện thoại không hợp lệ')
+      valid = false;
+      setPhoneState("invalid");
+      setPhoneMessage("Số điện thoại không hợp lệ");
     } else {
-      setPhoneState('valid')
-      setPhoneMessage('Số điện thoại không được để trống')
+      setPhoneState("valid");
+      setPhoneMessage("Số điện thoại không được để trống");
     }
 
     // PAYMENT
-    if (payment === '') {
-      valid = false
-      setPaymentState('invalid')
+    if (payment === "") {
+      valid = false;
+      setPaymentState("invalid");
     } else {
-      setPaymentState('valid')
+      setPaymentState("valid");
     }
 
     // TOTAL
-    if (total === '') {
-      valid = false
-      setTotalState('invalid')
+    if (total === "") {
+      valid = false;
+      setTotalState("invalid");
     } else if (total < 0) {
-      setTotal(0)
-      setTotalState('invalid')
+      setTotal(0);
+      setTotalState("invalid");
     } else {
-      setTotalState('valid')
+      setTotalState("valid");
     }
 
     // SHIP COST
-    if (shipCost === '') {
-      valid = false
-      setShipCostState('invalid')
+    if (shipCost === "") {
+      valid = false;
+      setShipCostState("invalid");
     } else {
-      setShipCostState('valid')
+      setShipCostState("valid");
     }
 
-    return valid
-  }
+    return valid;
+  };
 
   const handleSubmit = () => {
     if (validateCustomStylesForm()) {
-      setIsLoadingCircle(true)
+      setIsLoadingCircle(true);
       let order = {
         phoneNumber: phone,
         total: parseFloat(total),
         buildingId: building.value,
         note: note,
         fullName: name,
-        deliveryTimeId: '1',
+        deliveryTimeId: "1",
         paymentType: payment.value,
         shipCost: shipCost,
-      }
+      };
 
       createOrder(store.value, order)
         .then((res) => {
-          console.log(res)
+          console.log(res);
           if (res.data) {
-            setIsLoadingCircle(false)
-            notify('Thêm mới thành công', 'Success')
-            setStore('')
-            setBuilding('')
-            setName('')
-            setPhone('')
-            setTotal('')
-            setNote('')
-            setPayment('')
-            setShipCost('')
+            setIsLoadingCircle(false);
+            notify("Thêm mới thành công", "Success");
+            setStore("");
+            setBuilding("");
+            setName("");
+            setPhone("");
+            setTotal("");
+            setNote("");
+            setPayment("");
+            setShipCost("");
           }
         })
         .catch((error) => {
-          console.log(error)
-          setIsLoadingCircle(false)
-          notify('Đã xảy ra lỗi gì đó!!', 'Error')
-        })
+          console.log(error);
+          setIsLoadingCircle(false);
+          notify("Đã xảy ra lỗi gì đó!!", "Error");
+        });
     }
-  }
+  };
 
   return (
     <>
@@ -213,14 +213,14 @@ const CreateOrder = () => {
               {/* TITLE */}
               <div
                 style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                  padding: '10px 0px',
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  padding: "10px 0px",
                 }}
                 className="align-items-center"
               >
-                <CardHeader className="border-0" style={{ padding: '15px' }}>
+                <CardHeader className="border-0" style={{ padding: "15px" }}>
                   <h2 className="mb-0">Thông tin đơn </h2>
                 </CardHeader>
               </div>
@@ -233,11 +233,11 @@ const CreateOrder = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Cửa hàng <span style={{ color: 'red' }}>*</span>
+                          Cửa hàng <span style={{ color: "red" }}>*</span>
                         </label>
                         <div
                           className={`${
-                            storeState === 'invalid' && 'error-select'
+                            storeState === "invalid" && "error-select"
                           }`}
                         >
                           <Select
@@ -246,17 +246,17 @@ const CreateOrder = () => {
                             styles={customStyles}
                             value={store}
                             onChange={(e) => {
-                              setStore(e)
+                              setStore(e);
                             }}
                           />
                         </div>
-                        {storeState === 'invalid' && (
+                        {storeState === "invalid" && (
                           <div
                             className="invalid"
                             style={{
-                              fontSize: '80%',
-                              color: '#fb6340',
-                              marginTop: '0.25rem',
+                              fontSize: "80%",
+                              color: "#fb6340",
+                              marginTop: "0.25rem",
                             }}
                           >
                             Cửa hàng không được để trống
@@ -269,11 +269,11 @@ const CreateOrder = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Địa điểm giao <span style={{ color: 'red' }}>*</span>
+                          Địa điểm giao <span style={{ color: "red" }}>*</span>
                         </label>
                         <div
                           className={`${
-                            buildingState === 'invalid' && 'error-select'
+                            buildingState === "invalid" && "error-select"
                           }`}
                         >
                           <Select
@@ -282,17 +282,17 @@ const CreateOrder = () => {
                             styles={customStyles}
                             value={building}
                             onChange={(e) => {
-                              setBuilding(e)
+                              setBuilding(e);
                             }}
                           />
                         </div>
-                        {buildingState === 'invalid' && (
+                        {buildingState === "invalid" && (
                           <div
                             className="invalid"
                             style={{
-                              fontSize: '80%',
-                              color: '#fb6340',
-                              marginTop: '0.25rem',
+                              fontSize: "80%",
+                              color: "#fb6340",
+                              marginTop: "0.25rem",
                             }}
                           >
                             Địa điểm giao không được để trống
@@ -305,17 +305,17 @@ const CreateOrder = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Tên khách hàng <span style={{ color: 'red' }}>*</span>
+                          Tên khách hàng <span style={{ color: "red" }}>*</span>
                         </label>
                         <Input
-                          valid={nameState === 'valid'}
-                          invalid={nameState === 'invalid'}
+                          valid={nameState === "valid"}
+                          invalid={nameState === "invalid"}
                           className="form-control"
                           type="search"
                           id="example-search-input"
                           value={`${name}`}
                           onChange={(e) => {
-                            setName(e.target.value)
+                            setName(e.target.value);
                           }}
                         />
                         <div className="invalid-feedback">
@@ -328,26 +328,26 @@ const CreateOrder = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Số điện thoại <span style={{ color: 'red' }}>*</span>
+                          Số điện thoại <span style={{ color: "red" }}>*</span>
                         </label>
                         <Input
-                          valid={phoneState === 'valid'}
-                          invalid={phoneState === 'invalid'}
+                          valid={phoneState === "valid"}
+                          invalid={phoneState === "invalid"}
                           className="form-control"
                           type="search"
                           id="example-search-input"
                           value={`${phone}`}
                           onChange={(e) => {
-                            setPhone(e.target.value)
+                            setPhone(e.target.value);
                           }}
                         />
-                        {phoneState === 'invalid' && (
+                        {phoneState === "invalid" && (
                           <div
                             className="invalid"
                             style={{
-                              fontSize: '80%',
-                              color: '#fb6340',
-                              marginTop: '0.25rem',
+                              fontSize: "80%",
+                              color: "#fb6340",
+                              marginTop: "0.25rem",
                             }}
                           >
                             {phoneMessage}
@@ -360,22 +360,22 @@ const CreateOrder = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Giá trị đơn hàng{' '}
-                          <span style={{ color: 'red' }}>*</span>
+                          Giá trị đơn hàng{" "}
+                          <span style={{ color: "red" }}>*</span>
                         </label>
                         <Input
                           min={0}
-                          valid={totalState === 'valid'}
-                          invalid={totalState === 'invalid'}
+                          valid={totalState === "valid"}
+                          invalid={totalState === "invalid"}
                           className="form-control"
                           type="number"
                           id="example-search-input"
                           value={`${total}`}
                           onChange={(e) => {
                             if (parseFloat(e.target.value) < 0) {
-                              setTotal('0')
+                              setTotal("0");
                             } else {
-                              setTotal(e.target.value)
+                              setTotal(e.target.value);
                             }
                           }}
                         />
@@ -389,21 +389,21 @@ const CreateOrder = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Phí ship <span style={{ color: 'red' }}>*</span>
+                          Phí ship <span style={{ color: "red" }}>*</span>
                         </label>
                         <Input
                           min={0}
-                          valid={shipCostState === 'valid'}
-                          invalid={shipCostState === 'invalid'}
+                          valid={shipCostState === "valid"}
+                          invalid={shipCostState === "invalid"}
                           className="form-control"
                           type="number"
                           id="example-search-input"
                           value={`${shipCost}`}
                           onChange={(e) => {
                             if (parseFloat(e.target.value) < 0) {
-                              setShipCost('0')
+                              setShipCost("0");
                             } else {
-                              setShipCost(e.target.value)
+                              setShipCost(e.target.value);
                             }
                           }}
                         />
@@ -421,7 +421,7 @@ const CreateOrder = () => {
                         </label>
                         <div
                           className={`${
-                            paymentState === 'invalid' && 'error-select'
+                            paymentState === "invalid" && "error-select"
                           }`}
                         >
                           <Select
@@ -430,17 +430,17 @@ const CreateOrder = () => {
                             styles={customStyles}
                             value={payment}
                             onChange={(e) => {
-                              setPayment(e)
+                              setPayment(e);
                             }}
                           />
                         </div>
-                        {paymentState === 'invalid' && (
+                        {paymentState === "invalid" && (
                           <div
                             className="invalid"
                             style={{
-                              fontSize: '80%',
-                              color: '#fb6340',
-                              marginTop: '0.25rem',
+                              fontSize: "80%",
+                              color: "#fb6340",
+                              marginTop: "0.25rem",
                             }}
                           >
                             Trạng thái thanh toán không được để trống
@@ -453,7 +453,7 @@ const CreateOrder = () => {
                     <div className="col-md-12">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Ghi chú <span style={{ color: 'red' }}>*</span>
+                          Ghi chú <span style={{ color: "red" }}>*</span>
                         </label>
                         <textarea
                           rows={3}
@@ -462,7 +462,7 @@ const CreateOrder = () => {
                           id="example-search-input"
                           value={`${note}`}
                           onChange={(e) => {
-                            setNote(e.target.value)
+                            setNote(e.target.value);
                           }}
                         />
                       </div>
@@ -474,32 +474,32 @@ const CreateOrder = () => {
                     {/* CREATE BUTTON */}
                     <Button
                       onClick={() => {
-                        handleSubmit()
+                        handleSubmit();
                       }}
                       className="btn-neutral"
                       color="default"
                       size="lg"
                       disabled={isLoadingCircle}
                       style={{
-                        background: 'var(--primary)',
-                        color: '#000',
-                        padding: '0.875rem 2rem',
+                        background: "var(--primary)",
+                        color: "#000",
+                        padding: "0.875rem 2rem",
                       }}
                     >
                       <div
                         className="flex"
                         style={{
-                          alignItems: 'center',
+                          alignItems: "center",
                           width: 99,
-                          justifyContent: 'center',
+                          justifyContent: "center",
                         }}
                       >
                         {isLoadingCircle ? (
                           <Spinner
                             style={{
-                              color: '#fff',
-                              width: '1.31rem',
-                              height: '1.31rem',
+                              color: "#fff",
+                              width: "1.31rem",
+                              height: "1.31rem",
                             }}
                           >
                             Loading...
@@ -508,9 +508,9 @@ const CreateOrder = () => {
                           <>
                             <i
                               className="fa-solid fa-square-plus"
-                              style={{ fontSize: 18, color: '#fff' }}
+                              style={{ fontSize: 18, color: "#fff" }}
                             ></i>
-                            <span style={{ color: '#fff' }}>Thêm mới</span>
+                            <span style={{ color: "#fff" }}>Thêm mới</span>
                           </>
                         )}
                       </div>
@@ -523,6 +523,6 @@ const CreateOrder = () => {
         </Row>
       </Container>
     </>
-  )
-}
-export default CreateOrder
+  );
+};
+export default CreateOrder;
