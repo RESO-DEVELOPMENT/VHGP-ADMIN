@@ -360,7 +360,7 @@ const CreateOrder = () => {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label className="form-control-label">
-                          Giá trị đơn hàng{" "}
+                          Giá trị đơn hàng chưa tính phí ship{" "}
                           <span style={{ color: "red" }}>*</span>
                         </label>
                         <Input

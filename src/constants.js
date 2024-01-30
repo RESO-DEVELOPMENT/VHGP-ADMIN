@@ -230,9 +230,9 @@ export const getTimeConvert = (time) => {
 export const getPaymentStatusName = (payment) => {
   switch (payment) {
     case 0:
-      return "Thu hộ Tiền mặt";
+      return "THTM";
     case 1:
-      return "Thu hộ chuyển khoản";
+      return "THCK";
     case 2:
       return "Đã Thanh Toán";
 

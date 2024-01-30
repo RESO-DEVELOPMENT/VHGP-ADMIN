@@ -138,6 +138,7 @@ export const Order = () => {
     // const defaultValue = date.toLocaleDateString("en-CA");
     // setDateOrder("");
     // handleGetOrder("");
+
     getListOrder("", "", "", "", page, pageSize)
       .then((res) => {
         const { data } = res.data;
@@ -268,6 +269,7 @@ export const Order = () => {
                       inputProps={{
                         placeholder: "Lọc theo ngày",
                       }}
+                      initialValue={new Date()}
                       className="ReactDatetime"
                       style={{ border: "none" }}
                       timeFormat={false}
@@ -473,6 +475,12 @@ export const Order = () => {
                     </th>
                     <th className="sort table-title" scope="col">
                       Giá trị Đơn hàng
+                    </th>
+                    <th className="sort table-title" scope="col">
+                      Phí ship
+                    </th>
+                    <th className="sort table-title" scope="col">
+                      Tổng cộng
                     </th>
                     <th className="sort table-title" scope="col">
                       Ngày Tạo
