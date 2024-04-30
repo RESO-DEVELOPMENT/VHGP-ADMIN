@@ -30,6 +30,8 @@
     "react-dropzone": "^14.2.2",
     "react-images-uploading": "^3.1.7",
     "react-jvectormap": "0.0.16",
+    "react-leaflet": "^4.2.1",
+    "react-leaflet-cluster": "^2.1.0",
     "react-lottie": "^1.2.3",
     "react-perfect-scrollbar": "^1.5.8",
     "react-router": "^5.2.0",

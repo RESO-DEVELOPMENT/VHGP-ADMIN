@@ -21,6 +21,7 @@ import CategoryManage from './views/pages/categories/CategoryManage.jsx'
 import Dashboard from './views/pages/dashboards/Dashboard.jsx'
 import DriverManage from './views/pages/drivers/DriverManage.jsx'
 import HubManage from './views/pages/hubs/HubManage.jsx'
+import { ShipperLocation } from './views/pages/map/ShipperLocation.jsx'
 import { Menus } from './views/pages/menus/Menu.jsx'
 import { Order } from './views/pages/orders/Order.jsx'
 import StoreCategoryManage from './views/pages/store-category/StoreCategoryManage.jsx'
@@ -119,6 +120,13 @@ const routes = [
     name: 'Hub',
     icon: 'fa-solid fa-warehouse',
     component: HubManage,
+    layout: '/admin',
+  },
+  {
+    path: '/map',
+    name: 'Vị trí shipper',
+    icon: 'fa-solid fa-map',
+    component: ShipperLocation,
     layout: '/admin',
   },
 ]
